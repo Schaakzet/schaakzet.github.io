@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schaken Danny & Sandro</title>
+  </head>
+  <body>
+    <schaak-stuk is="zwart-toren"> </schaak-stuk>
+    <div id="schaakbord"></div>
+    <script>
+      const colors = ["wit", "zwart"];
+      const pieces = ["pion", "toren", "paard", "loper", "koningin", "koning"];
+
+      // output: ["wit-pion","wit-toren","wit-paard"]
+
+      const coloredPieces = pieces
+        .map((x) => colors.map((color) => color + "-" + x))
+        .flat();
+      console.log(coloredPieces);
+
+      function onePiece(coloredPiece) {
+        return `<img src="./img/${coloredPiece}.png">`;
+      }
+      
+      function showPiece(piece) {
+        let stuk = document.createElement("schaak-stuk");
+        stuk.setAttribute("is", piece);
+        document.body.appendChild(stuk);
+      }
+
+      let stukken = ["wit-paard", "zwart-loper", "zwart-koningin", "wit-pion"];
+      // met array stukken 3x showPiece aanroepen
+      stukken.map(showPiece);
+
+      customElements.define(
+        "schaak-stuk",
+        class extends HTMLElement {
+          connectedCallback() {
+            this.innerHTML = onePiece(this.getAttribute("is"));
+          }
+        }
+      );
+    </script>
+  </body>
+</html>
