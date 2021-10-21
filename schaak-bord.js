@@ -1,6 +1,5 @@
 /*
  <schaak-bord> Web Component
- 
 */
 customElements.define("schaak-bord", class extends HTMLElement {
     connectedCallback() {
