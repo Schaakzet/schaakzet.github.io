@@ -1,7 +1,7 @@
 const files = ["A","B","C","D","E","F","G","H"];
 const ranks = ["1","2","3","4","5","6","7","8"].reverse();
 
-let gewenste_output = [ "A8","A7", "A6", "....","H1"];
+let squares = [ "A8","A7", "A6", "....","H1"];
 
 
 /*
