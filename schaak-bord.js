@@ -1,7 +1,7 @@
-const files = ["A","B","C","D","E","F","G","H"];
-const ranks = ["1","2","3","4","5","6","7","8"].reverse();
+const files = ["A", "B", "C", "D", "E", "F", "G", "H"];
+const ranks = ["1", "2", "3", "4", "5", "6", "7", "8"].reverse();
 
-let squares = [ "A8","A7", "A6", "....","H1"];
+let squares = ["A8", "A7", "A6", "....", "H1"];
 
 
 /*
@@ -9,9 +9,9 @@ let squares = [ "A8","A7", "A6", "....","H1"];
 */
 customElements.define("schaak-bord", class extends HTMLElement {
     connectedCallback() {
-        this.create("SCHAAKBORD_ROB");
+        this.createboard("SCHAAKBORD_ROB");
     }
-    create(name) {
+    createboard(name) {
         let templ = document.querySelector(`template[id="${name}"]`).content;
         this.append(templ.cloneNode(true));
         this.board = document.querySelector("#schaakbord");
@@ -22,4 +22,17 @@ customElements.define("schaak-bord", class extends HTMLElement {
         schaakstuk.setAttribute("at", position);
         return this.board.appendChild(schaakstuk);
     }
+    set fen(fenstring = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR") {
+
+    }
+    get fen() {
+        // return fen string
+    }
+    move(fromsquare, tosquare) {
+
+    }
+    movePiece(piece, tosquare) {
+
+    }
+
 })
