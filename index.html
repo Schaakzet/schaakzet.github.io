@@ -1,14 +1,22 @@
 <html>
   <head>
     <title>RT SchaakZet</title>
+    <script>
+      console.clear();
+    </script>
     <script src="./webcomponents.js"></script>
+    <style>
+      body {
+        font: 16px Arial;
+      }
+    </style>
   </head>
 
   <body>
     <template id="ROB2">
       <style id="chessboard_definition">
         chess-board {
-          --width: 20vw;
+          --width: 30vw;
           width: var(--width);
           height: var(--width);
           /* display <chess-board> as blocks next to eachother */
@@ -83,22 +91,23 @@
       <div id="chessboard_pieces" class="chessboard_layer"></div>
     </template>
     <header>
-      <h1>Roads-Technology Schaakzet</h1>
-      <h3>
-        <a href="https://github.com/Schaakzet/schaakzet.github.io"
-          >https://github.com/Schaakzet/schaakzet.github.io</a
-        >
-      </h3>
-      <h3>
-        <a href="https://jsfiddle.net/RvdSf/fx1bvqgm/"
-          >JSFiddle Rob - hardcoded CSS & HTML</a
-        >
-      </h3>
-      <h3>
-        <a href="https://jsfiddle.net/RvdSf/kz97ao0t/"
-          >JSFiddle Rob - CSS & HTML met JavaScript</a
-        >
-      </h3>
+      <h2>Roads-Technology Schaakzet - <a href="https://github.com/Schaakzet/schaakzet.github.io"
+        >https://github.com/Schaakzet/schaakzet.github.io</a
+      ></h2>
+      <h3>Development steps:</h3>
+      <ol>
+        <li>HTML & CSS design
+          <a href="https://jsfiddle.net/RvdSf/fx1bvqgm/"
+            >JSFiddle Rob</a
+          > - Completed
+        </li>
+        <li>Create long CSS with JavaScipt
+          <a href="https://jsfiddle.net/RvdSf/kz97ao0t/"
+            >JSFiddle Rob</a
+          > - completed
+        </li>
+        <li>Position pieces in start position with FEN notation</li>
+      </ol>
     </header>
 
     <main>
@@ -145,7 +154,6 @@
     </main>
 
     <script>
-        console.clear();
       // make sure our dev code executes after all chess boards are 100% created
       window.addEventListener("load", () => {
         let chessboard = document.querySelector("#board2");
@@ -177,10 +185,15 @@
         // als het een "n"
         //     zet "zwart-paard" op squares[ squarenr ]
 
-
         // controleer de stukken op het bord
-        console.assert(chessboard.getPiece("a8").is == "zwart-toren", "Op a8 staat geen zwart-toren");
-        console.assert(chessboard.getPiece("h2").is == "wit-pio", "Op h2 staat geen wit-pion");
+        console.assert(
+          chessboard.getPiece("a8").is == "zwart-toren",
+          "Op a8 staat geen zwart-toren"
+        );
+        console.assert(
+          chessboard.getPiece("h2").is == "wit-pio",
+          "Op h2 staat geen wit-pion"
+        );
       });
     </script>
   </body>

@@ -1,5 +1,6 @@
-/*
-    <schaak-stuk is="wit-paard" at="D5"> Web Component
+console.log('webcomponents.js');
+/*************************************************************************
+    <chess-piece is="wit-paard" at="D5"> Web Component
 */
 customElements.define(
   "chess-piece",
@@ -23,8 +24,8 @@ customElements.define(
   }
 );
 
-/*
- <schaak-bord> Web Component
+/*************************************************************************
+ <chess-board> Web Component
 */
 customElements.define(
   "chess-board",
@@ -94,8 +95,7 @@ customElements.define(
     // ======================================================== <chess-board>.addPiece
     addPiece(piece_name, at) {
       //if piecenname is one FEN letter
-      if (piece_name.length == 1) {
-        piece_name = this.FENconversion(piece_name);
+      if (piece_name.length == 1) piece_name = this.FENconversion(piece_name);
       // create <chess-piece is="wit-koning" at="d5">
       let newpiece = document.createElement("chess-piece");
       newpiece.setAttribute("is", piece_name);
