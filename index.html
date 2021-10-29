@@ -1,195 +1,187 @@
 <html>
   <head>
     <title>RT SchaakZet</title>
-    <script src="//schaakzet.github.io/schaak-bord.js"></script>
-    <script src="//schaakzet.github.io/schaak-stuk.js"></script>
+    <script src="./webcomponents.js"></script>
   </head>
 
   <body>
-    <h1>Roads-Technology Schaakzet</h1>
-    <h3>
-      <a href="https://github.com/Schaakzet/schaakzet.github.io"
-        >https://github.com/Schaakzet/schaakzet.github.io</a
-      >
-    </h3>
-    <h3>
-      <a href="https://jsfiddle.net/RvdSf/fx1bvqgm/"
-        >JSFiddle Rob - hardcoded CSS & HTML</a
-      >
-    </h3>
-    <h3>
-      <a href="https://jsfiddle.net/RvdSf/kz97ao0t/"
-        >JSFiddle Rob - CSS & HTML met JavaScript</a
-      >
-    </h3>
-
-    <!-- Deze 64 grid-area definities gaan we maken met de Array squares = [ "A8","B8","C8", ... , "G1" , "H1" ] -->
-    <style id="chessboard_gridareas">
-      /* deze innerHTML wordt vervangen door 64 velddefinities:
-                [at="a8"] {
-                    grid-area: a8;
-                }
-        */
-    </style>
-    <style>
-      #chessboard_fields {
-        display: grid;
-        grid-template-areas:
-          "a8 b8 c8 d8 e8 f8 g8 h8"
-          "a7 b7 c7 d7 e7 f7 g7 h7"
-          "a6 b6 c6 d6 e6 f6 g6 h6"
-          "a5 b5 c5 d5 e5 f5 g5 h5"
-          "a4 b4 c4 d4 e4 f4 g4 h4"
-          "a3 b3 c3 d3 e3 f3 g3 h3"
-          "a2 b2 c2 d2 e2 f2 g2 h2"
-          "a1 b1 c1 d1 e1 f1 g1 h1";
-
-        background-color: gray;
-        padding: 5px;
-        width: 400px;
-        height: 400px;
-      }
-    </style>
-    <template id="SCHAAKBORD_ROB">
-      <style>
-        img {
-          width: 45px;
+    <template id="ROB2">
+      <style id="chessboard_definition">
+        chess-board {
+          --width: 20vw;
+          width: var(--width);
+          height: var(--width);
+          /* display <chess-board> as blocks next to eachother */
+          display: inline-block;
+          /* all my child elements are relative to my size */
           position: relative;
+          border: calc(var(--width) / 40) solid gray;
         }
-
-        .fieldBlack {
+        .chessboard_layer {
+          /* position multiple layers on top of eachother */
+          position: absolute;
+          /* width/height is 100% of <chess-board> */
+          width: 100%;
+          height: 100%;
+          /* display all elements inside a layer in a 8x8 grid */
+          display: grid;
+          grid-template-columns: repeat(8, 1fr);
+          grid-template-rows: repeat(8, 1fr);
+          grid-template-areas:
+            "a8 b8 c8 d8 e8 f8 g8 h8"
+            "a7 b7 c7 d7 e7 f7 g7 h7"
+            "a6 b6 c6 d6 e6 f6 g6 h6"
+            "a5 b5 c5 d5 e5 f5 g5 h5"
+            "a4 b4 c4 d4 e4 f4 g4 h4"
+            "a3 b3 c3 d3 e3 f3 g3 h3"
+            "a2 b2 c2 d2 e2 f2 g2 h2"
+            "a1 b1 c1 d1 e1 f1 g1 h1";
+        }
+        chess-square {
+          /* keep the square square no matter what is put inside it */
+          overflow: hidden;
+          max-height: 100%;
+        }
+        .black_square {
           background-color: darkgray;
         }
 
-        .fieldWhite {
+        .white_square {
           background-color: white;
+        }
+        chess-piece > * {
+          width: 100%;
+          position: relative;
         }
       </style>
       <style id="squarelabels">
-        chess-square {
-          text-align: right;
-          width: 50px;
-          height: 50px;
+        chess-square:after {
+          content: attr(at);
+          height: 100%;
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           font-size: 15px;
         }
       </style>
+      <!-- Deze 64 grid-area definities gaan we maken met de Array squares = [ "A8","B8","C8", ... , "G1" , "H1" ] -->
+      <style id="chessboard_gridareas">
+        /* deze innerHTML wordt vervangen door 64 velddefinities:
+                  [at="a8"] {
+                      grid-area: a8;
+                  }
+          */
+      </style>
 
-      <div id="chessboard_fields">
+      <div id="chessboard_squares" class="chessboard_layer">
         <!-- squares JS loop maakt 64 velden:
-            <div class="fieldWhite" at="a8">a8</div>
-            <div class="fieldBlack" at="b8">b8</div>
-              -->
-
-        <!-- schaakstukken -->
-
-        <schaak-stuk is="wit-toren" at="a8"></schaak-stuk>
-        <schaak-stuk is="wit-toren" at="h8"></schaak-stuk>
-        <schaak-stuk is="wit-paard" at="b8"></schaak-stuk>
-        <schaak-stuk is="wit-paard" at="g8"></schaak-stuk>
-        <schaak-stuk is="wit-loper" at="c8"></schaak-stuk>
-        <schaak-stuk is="wit-loper" at="f8"></schaak-stuk>
-        <schaak-stuk is="wit-koning" at="d8"></schaak-stuk>
-        <schaak-stuk is="wit-koningin" at="e8"></schaak-stuk>
-
-        <schaak-stuk is="wit-pion" at="a7"></schaak-stuk>
-        <schaak-stuk is="wit-pion" at="b7"></schaak-stuk>
-        <schaak-stuk is="wit-pion" at="c7"></schaak-stuk>
-        <schaak-stuk is="wit-pion" at="d7"></schaak-stuk>
-        <schaak-stuk is="wit-pion" at="e7"></schaak-stuk>
-        <schaak-stuk is="wit-pion" at="f7"></schaak-stuk>
-        <schaak-stuk is="wit-pion" at="g7"></schaak-stuk>
-        <schaak-stuk is="wit-pion" at="h7"></schaak-stuk>
-
-        <schaak-stuk is="zwart-toren" at="a1"></schaak-stuk>
-        <schaak-stuk is="zwart-toren" at="h1"></schaak-stuk>
-        <schaak-stuk is="zwart-paard" at="b1"></schaak-stuk>
-        <schaak-stuk is="zwart-paard" at="g1"></schaak-stuk>
-        <schaak-stuk is="zwart-loper" at="c1"></schaak-stuk>
-        <schaak-stuk is="zwart-loper" at="f1"></schaak-stuk>
-        <schaak-stuk is="zwart-koning" at="d1"></schaak-stuk>
-        <schaak-stuk is="zwart-koningin" at="e1"></schaak-stuk>
-
-        <schaak-stuk is="zwart-pion" at="a2"></schaak-stuk>
-        <schaak-stuk is="zwart-pion" at="b2"></schaak-stuk>
-        <schaak-stuk is="zwart-pion" at="c2"></schaak-stuk>
-        <schaak-stuk is="zwart-pion" at="d2"></schaak-stuk>
-        <schaak-stuk is="zwart-pion" at="e2"></schaak-stuk>
-        <schaak-stuk is="zwart-pion" at="f2"></schaak-stuk>
-        <schaak-stuk is="zwart-pion" at="g2"></schaak-stuk>
-        <schaak-stuk is="zwart-pion" at="h2"></schaak-stuk>
+              <div class="white_square" at="a8">a8</div>
+              <div class="black_square" at="b8">b8</div>
+                -->
       </div>
+      <div id="chessboard_pieces" class="chessboard_layer"></div>
     </template>
+    <header>
+      <h1>Roads-Technology Schaakzet</h1>
+      <h3>
+        <a href="https://github.com/Schaakzet/schaakzet.github.io"
+          >https://github.com/Schaakzet/schaakzet.github.io</a
+        >
+      </h3>
+      <h3>
+        <a href="https://jsfiddle.net/RvdSf/fx1bvqgm/"
+          >JSFiddle Rob - hardcoded CSS & HTML</a
+        >
+      </h3>
+      <h3>
+        <a href="https://jsfiddle.net/RvdSf/kz97ao0t/"
+          >JSFiddle Rob - CSS & HTML met JavaScript</a
+        >
+      </h3>
+    </header>
 
-    <schaak-bord> </schaak-bord>
+    <main>
+      <chess-board id="board1" template="ROB2">
+        <chess-piece is="wit-toren" at="a8"></chess-piece>
+        <chess-piece is="wit-toren" at="h8"></chess-piece>
+        <chess-piece is="wit-paard" at="b8"></chess-piece>
+        <chess-piece is="wit-paard" at="g8"></chess-piece>
+        <chess-piece is="wit-loper" at="c8"></chess-piece>
+        <chess-piece is="wit-loper" at="f8"></chess-piece>
+        <chess-piece is="wit-koning" at="d8"></chess-piece>
+        <chess-piece is="wit-koningin" at="e8"></chess-piece>
+
+        <chess-piece is="wit-pion" at="a7"></chess-piece>
+        <chess-piece is="wit-pion" at="b7"></chess-piece>
+        <chess-piece is="wit-pion" at="c7"></chess-piece>
+        <chess-piece is="wit-pion" at="d7"></chess-piece>
+        <chess-piece is="wit-pion" at="e7"></chess-piece>
+        <chess-piece is="wit-pion" at="f7"></chess-piece>
+        <chess-piece is="wit-pion" at="g7"></chess-piece>
+        <chess-piece is="wit-pion" at="h7"></chess-piece>
+
+        <chess-piece is="zwart-toren" at="a1"></chess-piece>
+        <chess-piece is="zwart-toren" at="h1"></chess-piece>
+        <chess-piece is="zwart-paard" at="b1"></chess-piece>
+        <chess-piece is="zwart-paard" at="g1"></chess-piece>
+        <chess-piece is="zwart-loper" at="c1"></chess-piece>
+        <chess-piece is="zwart-loper" at="f1"></chess-piece>
+        <chess-piece is="zwart-koning" at="d1"></chess-piece>
+        <chess-piece is="zwart-koningin" at="e1"></chess-piece>
+
+        <chess-piece is="zwart-pion" at="a2"></chess-piece>
+        <chess-piece is="zwart-pion" at="b2"></chess-piece>
+        <chess-piece is="zwart-pion" at="c2"></chess-piece>
+        <chess-piece is="zwart-pion" at="d2"></chess-piece>
+        <chess-piece is="zwart-pion" at="e2"></chess-piece>
+        <chess-piece is="zwart-pion" at="f2"></chess-piece>
+        <chess-piece is="zwart-pion" at="g2"></chess-piece>
+        <chess-piece is="zwart-pion" at="h2"></chess-piece>
+      </chess-board>
+
+      <!-- developing on board2 -->
+      <chess-board id="board2" template="ROB2"></chess-board>
+    </main>
 
     <script>
-      console.clear();
-      let chessboard = document.querySelector("schaak-bord");
-      let chessboard_fields = document.querySelector("#chessboard_fields");
-      let style_areas = document.querySelector("#chessboard_gridareas");
+        console.clear();
+      // make sure our dev code executes after all chess boards are 100% created
+      window.addEventListener("load", () => {
+        let chessboard = document.querySelector("#board2");
 
-      const files = ["a", "b", "c", "d", "e", "f", "g", "h"]; // Kolommen
-      const ranks = ["8", "7", "6", "5", "4", "3", "2", "1"]; // Rijen
+        // Je kunt een schaak stuk toevoegen met:
+        chessboard.addPiece("zwart-toren", "c4");
+        chessboard.addPiece("wit-toren", "c4");
+        chessboard.addPiece("r", "c5");
 
-      var squares = [];
-      console.log(
-        'Maak de squares array met 64 veldnotaties : ["a8","b8","c8"]'
-      );
-      for (var r = 0; r < ranks.length; r++) {
-        for (var f = 0; f < files.length; f++) {
-          const square = files[f] + ranks[r];
-          squares.push(square);
-        }
-      }
-      console.log("squares", squares); // [ "A8","B8","C8", ... , "G1" , "H1" ]
+        // ===================================================================== PIECES
+        // ===================================================================== FEN
+        // Volgende JavaScript uitdaging:
+        // TODO plaats alle stukken op het bord met de FEN (Forsyth Edwards Notation)
+        // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+        let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR".split(""); //Array: ["r","n","b",...
 
-      // ===================================================================== CSS
-      console.log("Maak CSS voor 64 at= definities");
-      let styles = squares
-        .map((square) => `[at="${square}"] { grid-area: ${square} }`)
-        .join(" ");
-      console.log("styles", styles);
-      style_areas.innerHTML = styles;
+        // de conversie van FEN letter naar <chess-piece> naam krijg je kado:
+        console.warn("R is: ", chessboard.FENconversion("R")); // "wit-toren"
+        console.warn("k is: ", chessboard.FENconversion("k")); // "zwart-koning"
+        // de squares staan in:
+        console.warn("squares:", chessboard.squares);
+        let squarenr = 0;
+        // loop alle fen elementen als fenletter
+        // console.log(squarenr,fenletter)
+        // als het een "/" is sla code over
+        // als het een "8" is sla 8 lege squares over (squarenr += 8)
+        // als het een "r" is
+        //     zet "zwart-toren" op squares[ squarenr ]
+        // als het een "n"
+        //     zet "zwart-paard" op squares[ squarenr ]
 
-      // ===================================================================== FIELDS
-      let fieldColor = true; // alternate white/black colors
-      let chessboardFields = squares
-        .map((square, index) => {
-          // if not row 8 and column is A then do an extra True/False toggle
-          if (index != 0 && index % 8 == 0) fieldColor = !fieldColor;
-          let fieldClass = fieldColor ? "fieldWhite" : "fieldBlack";
-          //console.log(square, index, fieldColor, fieldClass);
-          let field = `<chess-square class="${fieldClass}" at="${square}">${square}</chess-square>`;
-          fieldColor = !fieldColor;
-          return field;
-        })
-        .join(" ");
-      console.log(chessboardFields);
 
-      chessboard_fields.innerHTML = chessboardFields;
-      //WARNING!! WE HAVE JUST OVERWRITTEN ALL HTML IN id="schaakbord" AND DESTROYED ALL <schaak-stuk> ELEMENTS
-console.log(chessboard.add);
-      chessboard.addPiece("wit-toren", "a8");
-      // ===================================================================== PIECES
-      // Dus de volgende opdracht is; voeg alle schaakstukken weer toe met JavaScript Code
-      let pieceColors = ["wit", "zwart"];
-      let pieceNames = [""];
-
-      // ===================================================================== FEN
-      // Volgende JavaScript uitdaging:
-      // plaats alle stukken op het bord met de FEN (Forsyth Edwards Notation)
-      // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
-      let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR".split(""); //Array: ["r","n","b",...
-
-      let squarenr = 0;
-      // loop alle fen elementen als fenletter
-      // console.log(squarenr,fenletter)
-      // als het een "/" is sla code over
-      // als het een "8" is sla 8 lege squares over (squarenr += 8)
-      // als het een "r" is
-      //     zet "zwart-toren" op squares[ squarenr ]
-      // als het een "n"
-      //     zet "zwart-paard" op squares[ squarenr ]
+        // controleer de stukken op het bord
+        console.assert(chessboard.getPiece("a8").is == "zwart-toren", "Op a8 staat geen zwart-toren");
+        console.assert(chessboard.getPiece("h2").is == "wit-pio", "Op h2 staat geen wit-pion");
+      });
     </script>
   </body>
 </html>

@@ -11,11 +11,11 @@ customElements.define("schaak-bord", class extends HTMLElement {
         this.board = document.querySelector("#schaakbord");
     }
     addPiece(piece, position = "d5") {
-        let chess_square = document.querySelector(`[at="${position}"]`);
+        let layer_pieces = this.querySelector("#layer_pieces");	
         let schaakstuk = document.createElement("schaak-stuk");
         schaakstuk.setAttribute("is", piece);
         schaakstuk.setAttribute("at", position);
-        return chess_square.appendChild(schaakstuk);
+        return layer_pieces.appendChild(schaakstuk);
     }
     set fen(fenstring = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR") {
 
