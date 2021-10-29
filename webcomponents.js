@@ -1,4 +1,4 @@
-console.log('webcomponents.js');
+console.log("execute webcomponents.js");
 /*************************************************************************
     <chess-piece is="wit-paard" at="D5"> Web Component
 */
@@ -78,7 +78,7 @@ customElements.define(
       this.querySelectorBoard("#chessboard_squares").innerHTML =
         chess_squaresHTML;
       this.querySelectorBoard("#chessboard_pieces").innerHTML = userHTMLpieces;
-      console.log(`created board ${this.id}`);
+      console.log(`created `, this);
     }
     // ======================================================== <chess-board>.getSquare
     getSquare(square) {
