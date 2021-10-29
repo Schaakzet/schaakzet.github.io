@@ -10,11 +10,12 @@ customElements.define("schaak-bord", class extends HTMLElement {
         this.append(templ.cloneNode(true));
         this.board = document.querySelector("#schaakbord");
     }
-    add(piece, position = "d5") {
+    addPiece(piece, position = "d5") {
+        let chess_square = document.querySelector(`[at="${position}"]`);
         let schaakstuk = document.createElement("schaak-stuk");
         schaakstuk.setAttribute("is", piece);
         schaakstuk.setAttribute("at", position);
-        return this.board.appendChild(schaakstuk);
+        return chess_square.appendChild(schaakstuk);
     }
     set fen(fenstring = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR") {
 
