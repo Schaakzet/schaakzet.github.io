@@ -1,0 +1,440 @@
+<script src="./schaak-bord.js"></script>
+<script src="./schaak-stuk.js"></script>
+
+<template id="SCHAAKBORD_ROB">
+<style>
+img {
+  width: 45px;
+  position: relative;
+}
+
+.grid-stu {
+  display: grid;
+  
+  grid-template-areas:
+    'a8 b8 c8 d8 e8 f8 g8 h8'
+    'a7 b7 c7 d7 e7 f7 g7 h7'
+    'a6 b6 c6 d6 e6 f6 g6 h6'
+    'a5 b5 c5 d5 e5 f5 g5 h5'
+    'a4 b4 c4 d4 e4 f4 g4 h4'
+    'a3 b3 c3 d3 e3 f3 g3 h3'
+    'a2 b2 c2 d2 e2 f2 g2 h2'
+    'a1 b1 c1 d1 e1 f1 g1 h1';
+  
+  
+  background-color: gray;
+  padding: 5px;
+  width: 400px;
+  height: 400px;
+  
+}
+.veldb{
+  background-color: darkgray;
+}
+
+.veldw{
+  background-color: white;
+}
+
+[is]{
+  background-size: 50px 50px;  
+}
+
+/* Grid Areas */
+
+[at="a8"] {
+  grid-area: a8;
+}
+
+[at="b8"] {
+  grid-area: b8;
+}
+
+[at="c8"] {
+  grid-area: c8;
+}
+
+[at="d8"] {
+  grid-area: d8; 
+}
+
+[at="e8"] {
+  grid-area: e8;
+}
+
+[at="f8"] {
+  grid-area: f8; 
+}
+
+[at="g8"] {
+  grid-area: g8;
+}
+
+[at="h8"] {
+  grid-area: h8;
+}
+
+
+
+[at="a7"] {
+  grid-area: a7;
+}
+
+[at="b7"] {
+  grid-area: b7;
+}
+
+[at="c7"] {
+  grid-area: c7;
+}
+
+[at="d7"] {
+  grid-area: d7;
+}
+
+[at="e7"] {
+  grid-area: e7;
+}
+
+[at="f7"] {
+  grid-area: f7;
+}
+
+[at="g7"] {
+  grid-area: g7;
+}
+
+[at="h7"] {
+  grid-area: h7;
+}
+
+
+
+[at="a6"] {
+  grid-area: a6;
+}
+
+[at="b6"] {
+  grid-area: b6;
+}
+
+[at="c6"] {
+  grid-area: c6;
+}
+
+[at="d6"] {
+  grid-area: d6;
+}
+
+[at="e6"] {
+  grid-area: e6;
+  
+}
+
+[at="f6"] {
+  grid-area: f6;
+}
+
+[at="g6"] {
+  grid-area: g6;
+}
+
+[at="h6"] {
+  grid-area: h6;
+}
+
+
+
+[at="a5"] {
+  grid-area: a5;
+}
+
+[at="b5"] {
+  grid-area: b5;
+}
+
+[at="c5"] {
+  grid-area: c5;
+}
+
+[at="d5"] {
+  grid-area: d5;
+}
+
+[at="e5"] {
+  grid-area: e5;
+}
+
+[at="f5"] {
+  grid-area: f5;
+}
+
+[at="g5"] {
+  grid-area: g5;
+}
+
+[at="h5"] {
+  grid-area: h5;
+}
+
+
+
+[at="a4"] {
+  grid-area: a4;
+}
+
+[at="b4"] {
+  grid-area: b4;
+}
+
+[at="c4"] {
+  grid-area: c4;
+}
+
+[at="d4"] {
+  grid-area: d4;
+}
+
+[at="e4"] {
+  grid-area: e4;
+}
+
+[at="f4"] {
+  grid-area: f4;
+}
+
+[at="g4"] {
+  grid-area: g4;
+}
+
+[at="h4"] {
+  grid-area: h4;
+}
+
+
+
+[at="a3"] {
+  grid-area: a3;
+}
+
+[at="b3"] {
+  grid-area: b3;
+}
+
+[at="c3"] {
+  grid-area: c3;
+}
+
+[at="d3"] {
+  grid-area: d3;
+}
+
+[at="e3"] {
+  grid-area: e3;
+}
+
+[at="f3"] {
+  grid-area: f3;
+}
+
+[at="g3"] {
+  grid-area: g3;
+}
+
+[at="h3"] {
+  grid-area: h3;
+}
+
+
+
+[at="a2"] {
+  grid-area: a2;
+}
+
+[at="b2"] {
+  grid-area: b2;
+}
+
+[at="c2"] {
+  grid-area: c2;
+}
+
+[at="d2"] {
+  grid-area: d2;
+}
+
+[at="e2"] {
+  grid-area: e2;
+}
+
+[at="f2"] {
+  grid-area: f2;
+}
+
+[at="g2"] {
+  grid-area: g2;
+}
+
+[at="h2"] {
+  grid-area: h2;
+}
+
+
+
+[at="a1"] {
+  grid-area: a1;
+}
+
+[at="b1"] {
+  grid-area: b1;
+}
+
+[at="c1"] {
+  grid-area: c1;
+}
+
+[at="d1"] {
+  grid-area: d1;
+}
+
+[at="e1"] {
+  grid-area: e1;
+}
+
+[at="f1"] {
+  grid-area: f1;
+}
+
+[at="g1"] {
+  grid-area: g1;
+}
+
+[at="h1"] {
+  grid-area: h1;
+}
+
+.grid-stu > div {
+
+  text-align: right;
+  width: 50px;
+  height: 50px;
+  font-size: 15px;
+}
+
+
+
+</style>
+
+<div id="schaakbord" class="grid-stu">
+<schaak-stuk is="wit-toren" at="a8"></schaak-stuk>
+<schaak-stuk is="wit-toren" at="h8"></schaak-stuk>
+<schaak-stuk is="wit-paard" at="b8"></schaak-stuk>
+<schaak-stuk is="wit-paard" at="g8"></schaak-stuk>
+<schaak-stuk is="wit-loper" at="c8"></schaak-stuk>
+<schaak-stuk is="wit-loper" at="f8"></schaak-stuk>
+<schaak-stuk is="wit-koning" at="d8"></schaak-stuk>
+<schaak-stuk is="wit-koningin" at="e8"></schaak-stuk>
+
+<schaak-stuk is="wit-pion" at="a7"></schaak-stuk>
+<schaak-stuk is="wit-pion" at="b7"></schaak-stuk>
+<schaak-stuk is="wit-pion" at="c7"></schaak-stuk>
+<schaak-stuk is="wit-pion" at="d7"></schaak-stuk>
+<schaak-stuk is="wit-pion" at="e7"></schaak-stuk>
+<schaak-stuk is="wit-pion" at="f7"></schaak-stuk>
+<schaak-stuk is="wit-pion" at="g7"></schaak-stuk>
+<schaak-stuk is="wit-pion" at="h7"></schaak-stuk>
+
+<schaak-stuk is="zwart-toren" at="a1"></schaak-stuk>
+<schaak-stuk is="zwart-toren" at="h1"></schaak-stuk>
+<schaak-stuk is="zwart-paard" at="b1"></schaak-stuk>
+<schaak-stuk is="zwart-paard" at="g1"></schaak-stuk>
+<schaak-stuk is="zwart-loper" at="c1"></schaak-stuk>
+<schaak-stuk is="zwart-loper" at="f1"></schaak-stuk>
+<schaak-stuk is="zwart-koning" at="d1"></schaak-stuk>
+<schaak-stuk is="zwart-koningin" at="e1"></schaak-stuk>
+
+<schaak-stuk is="zwart-pion" at="a2"></schaak-stuk>
+<schaak-stuk is="zwart-pion" at="b2"></schaak-stuk>
+<schaak-stuk is="zwart-pion" at="c2"></schaak-stuk>
+<schaak-stuk is="zwart-pion" at="d2"></schaak-stuk>
+<schaak-stuk is="zwart-pion" at="e2"></schaak-stuk>
+<schaak-stuk is="zwart-pion" at="f2"></schaak-stuk>
+<schaak-stuk is="zwart-pion" at="g2"></schaak-stuk>
+<schaak-stuk is="zwart-pion" at="h2"></schaak-stuk>
+
+
+<div class="veldw" at="a8">a8</div>
+<div class="veldb" at="b8">b8</div>
+<div class="veldw" at="c8">c8</div>
+<div class="veldb" at="d8">d8</div>
+<div class="veldw" at="e8">e8</div>
+<div class="veldb" at="f8">f8</div>
+<div class="veldw" at="g8">g8</div>
+<div class="veldb" at="h8">h8</div>
+
+<div class="veldb" at="a7">a7</div>
+<div class="veldw" at="b7">b7</div>
+<div class="veldb" at="c7">c7</div>
+<div class="veldw" at="d7">d7</div>
+<div class="veldb" at="e7">e7</div>
+<div class="veldw" at="f7">f7</div>
+<div class="veldb" at="g7">g7</div>
+<div class="veldw" at="h7">h7</div>
+
+<div class="veldw" at="a6">a6</div>
+<div class="veldb" at="b6">b6</div>
+<div class="veldw" at="c6">c6</div>
+<div class="veldb" at="d6">d6</div>
+<div class="veldw" at="e6">e6</div>
+<div class="veldb" at="f6">f6</div>
+<div class="veldw" at="g6">g6</div>
+<div class="veldb" at="h6">h6</div>
+
+<div class="veldb" at="a5">a5</div>
+<div class="veldw" at="b5">b5</div>
+<div class="veldb" at="c5">c5</div>
+<div class="veldw" at="d5">d5</div>
+<div class="veldb" at="e5">e5</div>
+<div class="veldw" at="f5">f5</div>
+<div class="veldb" at="g5">g5</div>
+<div class="veldw" at="h5">h5</div>
+
+<div class="veldw" at="a4">a4</div>
+<div class="veldb" at="b4">b4</div>
+<div class="veldw" at="c4">c4</div>
+<div class="veldb" at="d4">d4</div>
+<div class="veldw" at="e4">e4</div>
+<div class="veldb" at="f4">f4</div>
+<div class="veldw" at="g4">g4</div>
+<div class="veldb" at="h4">h4</div>
+
+<div class="veldb" at="a3">a3</div>
+<div class="veldw" at="b3">b3</div>
+<div class="veldb" at="c3">c3</div>
+<div class="veldw" at="d3">d3</div>
+<div class="veldb" at="e3">e3</div>
+<div class="veldw" at="f3">f3</div>
+<div class="veldb" at="g3">g3</div>
+<div class="veldw" at="h3">h3</div>
+
+<div class="veldw" at="a2">a2</div>
+<div class="veldb" at="b2">b2</div>
+<div class="veldw" at="c2">c2</div>
+<div class="veldb" at="d2">d2</div>
+<div class="veldw" at="e2">e2</div>
+<div class="veldb" at="f2">f2</div>
+<div class="veldw" at="g2">g2</div>
+<div class="veldb" at="h2">h2</div>
+
+<div class="veldb" at="a1">a1</div>
+<div class="veldw" at="b1">b1</div>
+<div class="veldb" at="c1">c1</div>
+<div class="veldw" at="d1">d1</div>
+<div class="veldb" at="e1">e1</div>
+<div class="veldw" at="f1">f1</div>
+<div class="veldb" at="g1">g1</div>
+<div class="veldw" at="h1">h1</div>
+</div>
+</template>
+
+<schaak-bord></schaak-bord>
