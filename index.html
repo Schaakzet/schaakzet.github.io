@@ -1,10 +1,11 @@
 <html>
-  <head>
+  <head id="SchaakZet">
     <title>RT SchaakZet</title>
     <script>
       console.clear();
     </script>
-    <script src="./webcomponents.js"></script>
+    <script src="./console.js"></script>
+    <script src="./webcomponents/v03.js"></script>
     <style>
       body {
         font: 16px Arial;
@@ -171,10 +172,10 @@
         let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR".split(""); //Array: ["r","n","b",...
 
         // de conversie van FEN letter naar <chess-piece> naam krijg je kado:
-        console.warn("R is: ", chessboard.FENconversion("R")); // "wit-toren"
-        console.warn("k is: ", chessboard.FENconversion("k")); // "zwart-koning"
+        console.log("R is: ", chessboard.FENconversion("R")); // "wit-toren"
+        console.log("k is: ", chessboard.FENconversion("k")); // "zwart-koning"
         // de squares staan in:
-        console.warn("squares:", chessboard.squares);
+        console.log("squares:", chessboard.squares);
         let squarenr = 0;
         // loop alle fen elementen als fenletter
         // console.log(squarenr,fenletter)

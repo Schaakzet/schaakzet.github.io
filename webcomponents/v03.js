@@ -119,10 +119,11 @@ customElements.define(
       }
       let toSquare = this.getSquare(square);
       if (toSquare.hasAttribute("piece")) {
-        console.warn(pieceName, "captured:", toSquare.getAttribute("piece"));
+        console.log(pieceName, "captured:", toSquare.getAttribute("piece"));
         this.clearSquare(toSquare);
       }
       toSquare.setAttribute("piece", pieceName);
+      console.log("movePiece", pieceName, "to", square);
       return toSquare.appendChild(chessPiece);
     }
     // ======================================================== <chess-board>.move
