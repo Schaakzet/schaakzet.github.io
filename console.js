@@ -20,7 +20,7 @@ console.log =
         .map((logline,idx,lines) => {
           // console.warn(logline) // if starts with HTMLElement extract method
           let [funcname, uri] = logline.split(" ");
-          console.LOG(logline);
+          //console.LOG(logline);
           try {
             if (uri) {
                 file = uri.split("/");
