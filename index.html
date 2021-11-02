@@ -46,6 +46,10 @@
             "a2 b2 c2 d2 e2 f2 g2 h2"
             "a1 b1 c1 d1 e1 f1 g1 h1";
         }
+        .chessboard_layer:empty {
+          /* hide empty layers */
+          display: none;
+        }
         chess-square {
           /* keep the square square no matter what is put inside it */
           overflow: hidden;
@@ -82,7 +86,6 @@
                   }
           */
       </style>
-
       <div id="chessboard_squares" class="chessboard_layer">
         <!-- squares JS loop maakt 64 velden:
               <div class="white_square" at="a8">a8</div>
@@ -92,22 +95,28 @@
       <div id="chessboard_pieces" class="chessboard_layer"></div>
     </template>
     <header>
-      <h2>Roads-Technology Schaakzet - <a href="https://github.com/Schaakzet/schaakzet.github.io"
-        >https://github.com/Schaakzet/schaakzet.github.io</a
-      ></h2>
+      <h2>
+        Roads-Technology Schaakzet -
+        <a href="https://github.com/Schaakzet/schaakzet.github.io"
+          >https://github.com/Schaakzet/schaakzet.github.io</a
+        >
+      </h2>
       <h3>Development steps:</h3>
       <ol>
-        <li>HTML & CSS design
-          <a href="https://jsfiddle.net/RvdSf/fx1bvqgm/"
-            >JSFiddle Rob</a
-          > - Completed
+        <li>
+          HTML & CSS design
+          <a href="https://jsfiddle.net/RvdSf/fx1bvqgm/">JSFiddle Rob</a> -
+          Completed
         </li>
-        <li>Create long CSS with JavaScipt
-          <a href="https://jsfiddle.net/RvdSf/kz97ao0t/"
-            >JSFiddle Rob</a
-          > - completed
+        <li>
+          Create long CSS with JavaScipt
+          <a href="https://jsfiddle.net/RvdSf/kz97ao0t/">JSFiddle Rob</a> -
+          completed
         </li>
-        <li style="color:green;font-size:120%">Position pieces in start position with FEN notation; see HTML page-source</li>
+        <li style="color: green; font-size: 120%">
+          Position pieces in start position with FEN notation; see HTML
+          page-source
+        </li>
       </ol>
     </header>
 
