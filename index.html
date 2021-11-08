@@ -5,7 +5,7 @@
       console.clear();
     </script>
     <script src="./console.js"></script>
-    <script src="./webcomponents/schaakzet.js"></script>
+    <script src="./webcomponents/v05.js"></script>
     <style>
       body {
         font: 16px Arial;
@@ -17,7 +17,7 @@
     <template id="ROB2">
       <style id="chessboard_definition">
         chess-board {
-          --width: 90vw;
+          --width: 30vw;
           width: var(--width);
           height: var(--width);
           /* display <chess-board> as blocks next to eachother */
@@ -95,46 +95,68 @@
       <div id="chessboard_pieces" class="chessboard_layer"></div>
     </template>
     <header>
-      <h2>Roads-Technology Schaakzet</h2>
+      <h2>
+        Roads-Technology Schaakzet -
+        <a href="https://github.com/Schaakzet/schaakzet.github.io"
+          >https://github.com/Schaakzet/schaakzet.github.io</a
+        >
+      </h2>
+      <h3>Development steps:</h3>
+      <ol>
+        <li>
+          HTML & CSS design
+          <a href="https://jsfiddle.net/RvdSf/fx1bvqgm/">JSFiddle Rob</a> -
+          Completed
+        </li>
+        <li>
+          Create long CSS with JavaScipt
+          <a href="https://jsfiddle.net/RvdSf/kz97ao0t/">JSFiddle Rob</a> -
+          completed
+        </li>
+        <li style="color: green; font-size: 120%">
+          Position pieces in start position with FEN notation; see HTML
+          page-source
+        </li>
+      </ol>
     </header>
 
     <main>
-      <chess-board id="board1" template="ROB2">
-        <chess-piece is="wit-toren" at="a8"></chess-piece>
-        <chess-piece is="wit-toren" at="h8"></chess-piece>
-        <chess-piece is="wit-paard" at="b8"></chess-piece>
-        <chess-piece is="wit-paard" at="g8"></chess-piece>
-        <chess-piece is="wit-loper" at="c8"></chess-piece>
-        <chess-piece is="wit-loper" at="f8"></chess-piece>
-        <chess-piece is="wit-koning" at="d8"></chess-piece>
-        <chess-piece is="wit-koningin" at="e8"></chess-piece>
+      <chess-board id="board1" template="ROB2" style="display: none">
+        <chess-piece is="zwart-toren" at="a8"></chess-piece>
+        <chess-piece is="zwart-toren" at="h8"></chess-piece>
+        <chess-piece is="zwart-paard" at="b8"></chess-piece>
+        <chess-piece is="zwart-paard" at="g8"></chess-piece>
+        <chess-piece is="zwart-loper" at="c8"></chess-piece>
+        <chess-piece is="zwart-loper" at="f8"></chess-piece>
+        <chess-piece is="zwart-koning" at="e8"></chess-piece>
+        <chess-piece is="zwart-koningin" at="d8"></chess-piece>
 
-        <chess-piece is="wit-pion" at="a7"></chess-piece>
-        <chess-piece is="wit-pion" at="b7"></chess-piece>
-        <chess-piece is="wit-pion" at="c7"></chess-piece>
-        <chess-piece is="wit-pion" at="d7"></chess-piece>
-        <chess-piece is="wit-pion" at="e7"></chess-piece>
-        <chess-piece is="wit-pion" at="f7"></chess-piece>
-        <chess-piece is="wit-pion" at="g7"></chess-piece>
-        <chess-piece is="wit-pion" at="h7"></chess-piece>
+        <chess-piece is="zwart-pion" at="a7"></chess-piece>
+        <chess-piece is="zwart-pion" at="b7"></chess-piece>
+        <chess-piece is="zwart-pion" at="c7"></chess-piece>
+        <chess-piece is="zwart-pion" at="d7"></chess-piece>
+        <chess-piece is="zwart-pion" at="e7"></chess-piece>
+        <chess-piece is="zwart-pion" at="f7"></chess-piece>
+        <chess-piece is="zwart-pion" at="g7"></chess-piece>
+        <chess-piece is="zwart-pion" at="h7"></chess-piece>
 
-        <chess-piece is="zwart-toren" at="a1"></chess-piece>
-        <chess-piece is="zwart-toren" at="h1"></chess-piece>
-        <chess-piece is="zwart-paard" at="b1"></chess-piece>
-        <chess-piece is="zwart-paard" at="g1"></chess-piece>
-        <chess-piece is="zwart-loper" at="c1"></chess-piece>
-        <chess-piece is="zwart-loper" at="f1"></chess-piece>
-        <chess-piece is="zwart-koning" at="d1"></chess-piece>
-        <chess-piece is="zwart-koningin" at="e1"></chess-piece>
+        <chess-piece is="wit-toren" at="a1"></chess-piece>
+        <chess-piece is="wit-toren" at="h1"></chess-piece>
+        <chess-piece is="wit-paard" at="b1"></chess-piece>
+        <chess-piece is="wit-paard" at="g1"></chess-piece>
+        <chess-piece is="wit-loper" at="c1"></chess-piece>
+        <chess-piece is="wit-loper" at="f1"></chess-piece>
+        <chess-piece is="wit-koning" at="e1"></chess-piece>
+        <chess-piece is="wit-koningin" at="d1"></chess-piece>
 
-        <chess-piece is="zwart-pion" at="a2"></chess-piece>
-        <chess-piece is="zwart-pion" at="b2"></chess-piece>
-        <chess-piece is="zwart-pion" at="c2"></chess-piece>
-        <chess-piece is="zwart-pion" at="d2"></chess-piece>
-        <chess-piece is="zwart-pion" at="e2"></chess-piece>
-        <chess-piece is="zwart-pion" at="f2"></chess-piece>
-        <chess-piece is="zwart-pion" at="g2"></chess-piece>
-        <chess-piece is="zwart-pion" at="h2"></chess-piece>
+        <chess-piece is="wit-pion" at="a2"></chess-piece>
+        <chess-piece is="wit-pion" at="b2"></chess-piece>
+        <chess-piece is="wit-pion" at="c2"></chess-piece>
+        <chess-piece is="wit-pion" at="d2"></chess-piece>
+        <chess-piece is="wit-pion" at="e2"></chess-piece>
+        <chess-piece is="wit-pion" at="f2"></chess-piece>
+        <chess-piece is="wit-pion" at="g2"></chess-piece>
+        <chess-piece is="wit-pion" at="h2"></chess-piece>
       </chess-board>
 
       <!-- developing on board2 -->
@@ -146,17 +168,19 @@
       window.addEventListener("load", () => {
         let chessboard = document.querySelector("#board2");
 
-        // Je kunt een schaak stuk toevoegen met:
-        chessboard.addPiece("zwart-toren", "c4");
-        chessboard.addPiece("wit-toren", "c4");
-        chessboard.addPiece("r", "c5");
-
-        // ===================================================================== PIECES
-        // ===================================================================== FEN
-        // Volgende JavaScript uitdaging:
-        // TODO plaats alle stukken op het bord met de FEN (Forsyth Edwards Notation)
+        // Plaatst alle stukken op het bord met de FEN (Forsyth Edwards Notation)
         // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
-        let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR".split(""); //Array: ["r","n","b",...
+        chessboard.fen = "r1b1k1nr/p2p1pNp/n2B4/1p1NP2P/6P1/3P1Q2/P1P1K3/q5b1";
+
+        // Code woensdag 3 november. Gekopieerd naar v04.js!!!
+        // set fen() {code}
+
+        // Code maandag 8 november. Gekopieerd naar v05.js!!!
+        // get fen() {code} en chessboard.clear();
+        chessboard.fen;
+
+        // Code woensdag 10 november.
+        // Beweeg een willekeurig stuk naar een willekeurig veld. Indien vijandig stuk > SLAAN.
 
         // de conversie van FEN letter naar <chess-piece> naam krijg je kado:
         console.log("R is: ", chessboard.FENconversion("R")); // "wit-toren"
@@ -164,14 +188,6 @@
         // de squares staan in:
         console.log("squares:", chessboard.squares);
         let squarenr = 0;
-        // loop alle fen elementen als fenletter
-        // console.log(squarenr,fenletter)
-        // als het een "/" is sla code over
-        // als het een "8" is sla 8 lege squares over (squarenr += 8)
-        // als het een "r" is
-        //     zet "zwart-toren" op squares[ squarenr ]
-        // als het een "n"
-        //     zet "zwart-paard" op squares[ squarenr ]
 
         // controleer de stukken op het bord
         console.assert(
@@ -179,14 +195,10 @@
           "Op a8 staat geen zwart-toren"
         );
         console.assert(
-          chessboard.getPiece("h2").is == "wit-pio",
+          chessboard.getPiece("h2").is == "wit-pion",
           "Op h2 staat geen wit-pion"
         );
       });
     </script>
-    <hr />
-    <a href="https://github.com/Schaakzet/schaakzet.github.io"
-      >https://github.com/Schaakzet/schaakzet.github.io</a
-    >
   </body>
 </html>
