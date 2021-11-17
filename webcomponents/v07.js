@@ -13,13 +13,18 @@ customElements.define(
       this.innerHTML = `<img src="https://schaakzet.github.io/img/${newValue}.png">`;
     }
     movePieceTo(at) {
-      this.closest("chess-board").movePiece(this, at);
+      this.chessboard.movePiece(this, at);
     }
-    get at(){
+
+    get chessboard() {
+      return this.closest("chess-board");
+    }
+
+    get at() {
       return this.closest("chess-square").getAttribute("at");
     }
-    set at(at){
-      this.closest("chess-board").movePiece(this,at);
+    set at(at) {
+      this.chessboard.movePiece(this, at);
     }
     get is() {
       return this.getAttribute("is");
@@ -27,12 +32,47 @@ customElements.define(
     set is(value) {
       this.setAttribute("is", value);
     }
-    moves(){
-      console.log(this.is,this.at);
-      console.warn(["e7","f6","f4","e3","c3","b4","b6","c7"])
-      // if "is" is "horse"
-      // if on GridArea:
-      // rank+2 & file+1, rank+2 & file-1, rank-2 & file+1, rank-2 & file-1, rank+1 & file+2, rank+1 & file-2, rank-1 & file+2, rank-1 & file-2
+    potentialMoves() {
+      console.log(this.is, this.at);
+      const chessboard = this.chessboard;
+      const fromSquare = this.at;
+
+      function possibleMove(x_move, y_move) {
+        const files = chessboard.files;
+        const ranks = chessboard.ranks;
+
+        const x = files.indexOf(fromSquare[0]);
+        const y = ranks.indexOf(fromSquare[1]);
+
+        return files[x + x_move] + ranks[y + y_move];
+      }
+
+      let axesTranslate;
+      if (this.is.includes("paard")) {
+        axesTranslate = [
+          [2, 1],
+          [2, -1],
+          [-2, 1],
+          [-2, -1],
+          [1, 2],
+          [1, -2],
+          [-1, 2],
+          [-1, -2],
+        ];
+      } else if (this.is.includes("koning")) {
+      }
+
+      for (let i = 0; i < axesTranslate.length; i++) {
+        let xAxis = axesTranslate[i][0];
+        let yAxis = axesTranslate[i][1];
+        let potentialMove = possibleMove(xAxis, yAxis);
+        if (chessboard.squares.includes(potentialMove)) {
+          console.log(chessboard.getSquare(potentialMove).highlight(true));
+          console.warn("Yeah",potentialMove);
+        }
+      }
+
+      // return ARRAY!!!
     }
   }
 );
@@ -46,23 +86,30 @@ customElements.define(
         console.log(this, chessboard.pieceClicked);
         if (this.hasAttribute("piece")) {
           // move piece if pieceClicked
-          if (chessboard.pieceClicked ) {
-            chessboard.movePiece(chessboard.pieceClicked, this.getAttribute("at"));
+          if (chessboard.pieceClicked) {
+            chessboard.movePiece(
+              chessboard.pieceClicked,
+              this.getAttribute("at")
+            );
             delete chessboard.pieceClicked;
           } else {
             chessboard.pieceClicked = this.querySelector("chess-piece");
           }
-
         } else {
-
           // move piece if pieceClicked
-          if (chessboard.pieceClicked ) {
-            chessboard.movePiece(chessboard.pieceClicked, this.getAttribute("at"));
+          if (chessboard.pieceClicked) {
+            chessboard.movePiece(
+              chessboard.pieceClicked,
+              this.getAttribute("at")
+            );
             delete chessboard.pieceClicked;
           }
-
         }
       });
+    }
+    highlight(state=false){
+      if(state) this.style.border="5px solid green";
+      else this.style.border="";
     }
   }
 );
@@ -75,10 +122,10 @@ customElements.define(
   class extends HTMLElement {
     connectedCallback() {
       // when this Component is added to the DOM, create the board
-      setTimeout(() => {
-        // we need a settimeout out to check if the user has already added HTML <chess-piece>s
-        this.createboard(this.getAttribute("template")); // id="Rob2"
-      });
+      // setTimeout(() => {
+      // we need a settimeout out to check if the user has already added HTML <chess-piece>s
+      this.createboard(this.getAttribute("template")); // id="Rob2"
+      // });
     }
     // ======================================================== <chess-board>.querySelectorBoard
     querySelectorBoard(selector) {
@@ -180,15 +227,14 @@ customElements.define(
     // ======================================================== <chess-board>.move
     move(fromsquare, tosquare) {
       // TODO: move piece from fromsquare to tosquare
+      // if move is potentialMove, move().
     }
     // ======================================================== <chess-board>.FENconversion
     FENconversion(name) {
       if (!this._FENConversionMap) {
-        /* create a lookup Map ONCE 
-        to lookup BOTH letters OR piecename
+        /* create a lookup Map ONCE to lookup BOTH letters OR piecename
         "R" -> "wit-toren"
-        "wit-toren" -> "R"
-        */
+        "wit-toren" -> "R" */
         this._FENConversionMap = new Map(); // see MDN documentation
         let FENletters = "RNBQKPrnbqkp".split(""); // create an array of letters
         ["wit", "zwart"].map((color) =>
