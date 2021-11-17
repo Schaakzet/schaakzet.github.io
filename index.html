@@ -5,7 +5,7 @@
       console.clear();
     </script>
     <script src="./console.js"></script>
-    <script src="./webcomponents/v06.js"></script>
+    <script src="./webcomponents/v07.js"></script>
     <style>
       body {
         font: 16px Arial;
@@ -176,13 +176,9 @@
         // make sure our dev code executes after all chess boards are 100% created
         window.addEventListener("load", () => {
           let chessboard = document.querySelector("#board2");
-
           // Plaatst alle stukken op het bord met de FEN (Forsyth Edwards Notation)
           // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
           chessboard.fen = "r1b1k1nr/p2p1pNp/n2B4/1p1NP2P/6P1/3P1Q2/P1P1K3/q5b1";
-
-          let horse = chessboard.getPiece("d5");
-          console.log(horse.moves());
 
           // Code woensdag 3 november. Gekopieerd naar v04.js!!!
           // set fen() {code}
@@ -194,6 +190,9 @@
 
           // Code maandag 15 november. Enter FEN index.html. Put userFEN on board.
           
+          // Code woensdag 17 november. potentialMoves voor paard en andere stukken. v07.js!!!
+          let piece = chessboard.getPiece("g7");
+          piece.potentialMoves();
         });
     </script>
   </body>
