@@ -1,4 +1,180 @@
 //console.log("execute webcomponents.js");
+
+// moves for all pieces
+const __HORSEMOVES__ = [
+  [
+    [2, 1],
+    [2, -1],
+    [-2, 1],
+    [-2, -1],
+    [1, 2],
+    [1, -2],
+    [-1, 2],
+    [-1, -2],
+  ],
+];
+const __BISHOPMOVES__ = [
+  [
+    [1, 1],
+    [2, 2],
+    [3, 3],
+    [4, 4],
+    [5, 5],
+    [6, 6],
+    [7, 7],
+  ],
+  [
+    [-1, -1],
+    [-2, -2],
+    [-3, -3],
+    [-4, -4],
+    [-5, -5],
+    [-6, -6],
+    [-7, -7],
+  ],
+  [
+    [-1, 1],
+    [-2, 2],
+    [-3, 3],
+    [-4, 4],
+    [-5, 5],
+    [-6, 6],
+    [-7, 7],
+  ],
+  [
+    [1, -1],
+    [2, -2],
+    [3, -3],
+    [4, -4],
+    [5, -5],
+    [6, -6],
+    [7, -7],
+  ],
+];
+const __ROOKMOVES__ = [
+  [
+    [0, 1],
+    [0, 2],
+    [0, 3],
+    [0, 4],
+    [0, 5],
+    [0, 6],
+    [0, 7],
+  ],
+  [
+    [1, 0],
+    [2, 0],
+    [3, 0],
+    [4, 0],
+    [5, 0],
+    [6, 0],
+    [7, 0],
+  ],
+  [
+    [0, -1],
+    [0, -2],
+    [0, -3],
+    [0, -4],
+    [0, -5],
+    [0, -6],
+    [0, -7],
+  ],
+  [
+    [-1, 0],
+    [-2, 0],
+    [-3, 0],
+    [-4, 0],
+    [-5, 0],
+    [-6, 0],
+    [-7, 0],
+  ],
+];
+const __QUEENMOVES__ = [
+  [
+    [0, 1],
+    [0, 2],
+    [0, 3],
+    [0, 4],
+    [0, 5],
+    [0, 6],
+    [0, 7],
+  ],
+  [
+    [1, 0],
+    [2, 0],
+    [3, 0],
+    [4, 0],
+    [5, 0],
+    [6, 0],
+    [7, 0],
+  ],
+  [
+    [0, -1],
+    [0, -2],
+    [0, -3],
+    [0, -4],
+    [0, -5],
+    [0, -6],
+    [0, -7],
+  ],
+  [
+    [-1, 0],
+    [-2, 0],
+    [-3, 0],
+    [-4, 0],
+    [-5, 0],
+    [-6, 0],
+    [-7, 0],
+  ],
+  [
+    [1, 1],
+    [2, 2],
+    [3, 3],
+    [4, 4],
+    [5, 5],
+    [6, 6],
+    [7, 7],
+  ],
+  [
+    [-1, -1],
+    [-2, -2],
+    [-3, -3],
+    [-4, -4],
+    [-5, -5],
+    [-6, -6],
+    [-7, -7],
+  ],
+  [
+    [-1, 1],
+    [-2, 2],
+    [-3, 3],
+    [-4, 4],
+    [-5, 5],
+    [-6, 6],
+    [-7, 7],
+  ],
+  [
+    [1, -1],
+    [2, -2],
+    [3, -3],
+    [4, -4],
+    [5, -5],
+    [6, -6],
+    [7, -7],
+  ],
+];
+const __KINGMOVES__ = [
+  [
+    [0, 1],
+    [1, 1],
+    [1, 0],
+    [1, -1],
+    [0, -1],
+    [-1, -1],
+    [-1, 0],
+    [-1, 1],
+  ],
+];
 /*************************************************************************
     <chess-piece is="wit-paard" at="D5"> Web Component
 */
@@ -38,202 +214,21 @@ customElements.define(
     }
     potentialMoves() {
       // De array potentialArray is alle mogelijkheden van possibleMove.
-      console.log(this.is, this.at);
+      console.log("potentialMoves:", this.is, this.at);
       const chessboard = this.chessboard;
       const fromSquare = this.at;
 
-      const possibleMove = (x_move, y_move) => {
-        const files = chessboard.files;
-        const ranks = chessboard.ranks;
-
-        const x = files.indexOf(fromSquare[0]);
-        const y = ranks.indexOf(fromSquare[1]);
-
-        // console.log(this.is, fromSquare, files, ranks, x, y, x_move, y_move)
-
-        return files[x + x_move] + ranks[y + y_move];
-      };
-
       let axesTranslate;
       if (this.is.includes("paard")) {
-        axesTranslate = [
-          [
-            [2, 1],
-            [2, -1],
-            [-2, 1],
-            [-2, -1],
-            [1, 2],
-            [1, -2],
-            [-1, 2],
-            [-1, -2],
-          ],
-        ];
+        axesTranslate = __HORSEMOVES__;
       } else if (this.is.includes("loper")) {
-        axesTranslate = [
-          [
-            [1, 1],
-            [2, 2],
-            [3, 3],
-            [4, 4],
-            [5, 5],
-            [6, 6],
-            [7, 7],
-          ],
-          [
-            [-1, -1],
-            [-2, -2],
-            [-3, -3],
-            [-4, -4],
-            [-5, -5],
-            [-6, -6],
-            [-7, -7],
-          ],
-          [
-            [-1, 1],
-            [-2, 2],
-            [-3, 3],
-            [-4, 4],
-            [-5, 5],
-            [-6, 6],
-            [-7, 7],
-          ],
-          [
-            [1, -1],
-            [2, -2],
-            [3, -3],
-            [4, -4],
-            [5, -5],
-            [6, -6],
-            [7, -7],
-          ],
-        ];
+        axesTranslate = __BISHOPMOVES__;
       } else if (this.is.includes("toren")) {
-        axesTranslate = [
-          [
-            [0, 1],
-            [0, 2],
-            [0, 3],
-            [0, 4],
-            [0, 5],
-            [0, 6],
-            [0, 7],
-          ],
-          [
-            [1, 0],
-            [2, 0],
-            [3, 0],
-            [4, 0],
-            [5, 0],
-            [6, 0],
-            [7, 0],
-          ],
-          [
-            [0, -1],
-            [0, -2],
-            [0, -3],
-            [0, -4],
-            [0, -5],
-            [0, -6],
-            [0, -7],
-          ],
-          [
-            [-1, 0],
-            [-2, 0],
-            [-3, 0],
-            [-4, 0],
-            [-5, 0],
-            [-6, 0],
-            [-7, 0],
-          ],
-        ];
+        axesTranslate = __ROOKMOVES__;
       } else if (this.is.includes("koningin")) {
-        axesTranslate = [
-          [
-            [0, 1],
-            [0, 2],
-            [0, 3],
-            [0, 4],
-            [0, 5],
-            [0, 6],
-            [0, 7],
-          ],
-          [
-            [1, 0],
-            [2, 0],
-            [3, 0],
-            [4, 0],
-            [5, 0],
-            [6, 0],
-            [7, 0],
-          ],
-          [
-            [0, -1],
-            [0, -2],
-            [0, -3],
-            [0, -4],
-            [0, -5],
-            [0, -6],
-            [0, -7],
-          ],
-          [
-            [-1, 0],
-            [-2, 0],
-            [-3, 0],
-            [-4, 0],
-            [-5, 0],
-            [-6, 0],
-            [-7, 0],
-          ],
-          [
-            [1, 1],
-            [2, 2],
-            [3, 3],
-            [4, 4],
-            [5, 5],
-            [6, 6],
-            [7, 7],
-          ],
-          [
-            [-1, -1],
-            [-2, -2],
-            [-3, -3],
-            [-4, -4],
-            [-5, -5],
-            [-6, -6],
-            [-7, -7],
-          ],
-          [
-            [-1, 1],
-            [-2, 2],
-            [-3, 3],
-            [-4, 4],
-            [-5, 5],
-            [-6, 6],
-            [-7, 7],
-          ],
-          [
-            [1, -1],
-            [2, -2],
-            [3, -3],
-            [4, -4],
-            [5, -5],
-            [6, -6],
-            [7, -7],
-          ],
-        ];
+        axesTranslate = __QUEENMOVES__;
       } else if (this.is.includes("koning")) {
-        axesTranslate = [
-          [
-            [0, 1],
-            [1, 1],
-            [1, 0],
-            [1, -1],
-            [0, -1],
-            [-1, -1],
-            [-1, 0],
-            [-1, 1],
-          ],
-        ];
+        axesTranslate = __KINGMOVES__;
       } else if (this.is === "wit-pion") {
         axesTranslate = [[[0, 1]]];
       } else if (this.is === "zwart-pion") {
@@ -246,18 +241,17 @@ customElements.define(
         for (let j = 0; j < axesTranslate[i].length; j++) {
           let xAxis = axesTranslate[i][j][0]; // Van de i-de axesTranslate en de j-de array, pak de x-coordinaat
           let yAxis = axesTranslate[i][j][1]; // Van de i-de axesTranslate en de j-de array, pak de y-coordinaat
-          let potentialMove = possibleMove(xAxis, yAxis);
+          let potentialMove = chessboard.possibleMove(xAxis, yAxis);
           if (chessboard.squares.includes(potentialMove)) {
             const square = chessboard.getSquare(potentialMove);
             console.log(potentialMove, square);
             // Eerst kijken of er een piece staat, en dan kijken of het dezelfde kleur heeft.
             if (square.hasAttribute("piece")) {
-              let pieceInSquare = square.querySelector("chess-piece");
-              if (this.color === pieceInSquare.color) {
+              if (this.color === square.piece.color) {
                 break;
               } else {
-                // Als het een andere kleur heeft, potentialMove! 
-                console.log(this.color, pieceInSquare.color);
+                // Als het een andere kleur heeft, potentialMove!
+                console.log(this.color, square.piece.color);
                 square.highlight(true);
                 potentialArray.push(potentialMove);
                 break;
@@ -266,9 +260,9 @@ customElements.define(
             square.highlight(true);
             potentialArray.push(potentialMove);
           }
-        }
+        } // for j
         console.log(axesTranslate[i]);
-      }
+      } // for i
       console.log(potentialArray);
     }
   }
@@ -303,6 +297,9 @@ customElements.define(
           }
         }
       });
+    }
+    get piece() {
+      return this.querySelector("chess-piece");
     }
     highlight(state = false) {
       if (state) {
@@ -424,6 +421,12 @@ customElements.define(
       //console.log("movePiece", pieceName, "to", square);
       return toSquare.appendChild(chessPiece);
     }
+    // ======================================================== <chess-board>.possibleMove
+    possibleMove = (x_move = 0, y_move = 0) => {
+      const x = this.files.indexOf(fromSquare[0]);
+      const y = this.ranks.indexOf(fromSquare[1]);
+      return this.files[x + x_move] + this.ranks[y + y_move];
+    };
     // ======================================================== <chess-board>.move
     move(fromsquare, tosquare) {
       // TODO: move piece from fromsquare to tosquare
