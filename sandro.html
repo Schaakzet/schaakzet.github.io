@@ -6,7 +6,7 @@
       console.clear();
     </script>
     <script src="./console.js"></script>
-    <script src="https://schaakzet.github.io/webcomponents/schaakzet.js"></script>
+    <script src="./webcomponents/v10.js"></script>
     <style>
       body {
         font: 16px Arial;
@@ -20,7 +20,9 @@
     <main>
       <label for="enterFEN">enter FEN:</label><br />
       <input id="fen" type="text" onkeyup="setFEN(this.value)" size="100" />
-      <chess-board fen="r1b1k1nr/p2p1pNp/n4B2/1p1NP2P/6P1/3P1Q2/P1P1K3/q5b1"></chess-board>
+      <chess-board
+        fen="r1b1k1nr/p2p1pNp/3n1B2/1p1NP2P/6P1/3P1Q2/P1P1K3/q5b1"
+      ></chess-board>
     </main>
 
     <script>
@@ -29,9 +31,9 @@
         // define a GLOBAL setFEN function so all inputs can call this function
         window.setFEN = function (fenString) {
           document.querySelector("chess-board").fen = fenString;
-        }
-        let chessboard = document.querySelector("chess-board");
-        chessboard.showmoves("a1");
+        };
+        // let chessboard = document.querySelector("chess-board");
+        // chessboard.showmoves("a1");
       });
     </script>
   </body>
