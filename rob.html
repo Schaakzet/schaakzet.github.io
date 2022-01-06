@@ -209,6 +209,105 @@
       <h1 id="schaakzet">SchaakZet</h1>
 
       <template id="CHESS-EXERCISE">
+
+
+        <style>
+            @media screen and (min-width: 1024px) {
+              #board2 {
+                --width: 45vw;
+                width: var(--width);
+                height: var(--width);
+                /* display <chess-board> as blocks next to eachother */
+                display: inline-block;
+                /* all my child elements are relative to my size */
+                position: relative;
+                border: calc(var(--width) / 40) solid gray;
+                user-select: none;
+                pointer-events: none;
+              }
+    
+              .buttonKeuze {
+                font-size: 0.85em;
+              }
+    
+              .informatieBlok {
+                position: relative;
+                text-align: left;
+                font-size: 1em;
+                margin-top: -48.5vw;
+                margin-left: 48vw;
+              }
+    
+              .outerDiv {
+                padding: 1em;
+              }
+    
+              h1 {
+                text-align: center;
+                font-size: 1.25em;
+                background-color: darkgrey;
+              }
+    
+              #schaakzet {
+                text-align: center;
+                background-color: white;
+                font-size: 1.25em;
+              }
+    
+              .showZet {
+                margin-left: 5vw;
+                margin-top: -18vw;
+              }
+    
+              p {
+                text-align: justify;
+                font-size: 1em;
+              }
+            }
+          </style>
+          <style>
+            @media screen and (min-width: 300px) and (max-width: 1024px) {
+              chess-board {
+                user-select: none;
+                pointer-events: none;
+              }
+    
+              .buttonKeuze {
+                font-size: 1.45em;
+              }
+    
+              h1 {
+                text-align: center;
+                background-color: darkgrey;
+                font-size: 1.5em;
+              }
+    
+              #schaakzet {
+                text-align: center;
+                background-color: white;
+                font-size: 1.5em;
+              }
+    
+              .outerDiv {
+                padding: 0em 1.5em 0em 1.5em;
+              }
+    
+              .informatieBlok {
+                width: 100%;
+                height: 100%;
+              }
+    
+              p {
+                text-align: justify;
+                font-size: 1.75em;
+              }
+    
+              .stukken {
+                text-align: center;
+              }
+            }
+          </style>
+
         <chess-board id="board2" template="ROB2"></chess-board>
         <div class="outerDiv">
           <div class="informatieBlok">
@@ -228,43 +327,89 @@
 
             <button class="buttonKeuze" onclick="setF()">Pion</button>
 
-            <h1 id="stenen">De stukken</h1>
-            <p id="uitleg"><slot name="uitleg"></slot></p>
+            <h1 id="qPieces"><slot name="qPieces"></slot></h1>
+            <p id="explanation"><slot name="explanation"></slot></p>
 
-            <h1 id="zetten">De zetten</h1>
+            <h1 id="moveWays"><slot name="moveWays"></slot></h1>
 
-            <p id="opdracht"></p>
+            <p>
+              Denk eventjes over de verschillende mogelijke zetten na. Is de zet
+              mogelijk? Of waarom juist niet? Is de zet sinnvoll?
+            </p>
             <p><b>Controleer jouw conclusies hier onder:</b></p>
-            <button class="buttonKeuze" id="A"></button>
+            <div id="buttons">
+              <button class="buttonKeuze" id="buttonA">
+                <slot name="A"></slot>
+              </button>
 
-            <button class="buttonKeuze" id="B"></button>
+              <button class="buttonKeuze" id="buttonB">
+                <slot name="B"></slot>
+              </button>
 
-            <button class="buttonKeuze" id="C"></button>
+              <button class="buttonKeuze" id="buttonC">
+                <slot name="C"></slot>
+              </button>
 
-            <button class="buttonKeuze" id="D"></button>
+              <button class="buttonKeuze" id="buttonD">
+                <slot name="D"></slot>
+              </button>
 
-            <button class="buttonKeuze" id="E"></button>
-
-            <p id="e"></p>
+              <button class="buttonKeuze" id="buttonE">
+                <slot name="E"></slot>
+              </button>
+            </div>
+            <p id="conclusion"></p>
+            <slot name="conclusion"></slot>
           </div>
         </div>
       </template>
 
       <chess-exercise fen="3Q4/8/1B6/1Rk5/8/8/8">
-          <span slot="uitleg">De koning is het belangrijkste schaakstuk maar ook een van de zwakste. De koning beweegt slechts één veld tegelijk in elke richting - vooruit, achteruit, opzij en diagonaal. De koning mag nooit zichzelf schaak zetten (waar hij geslagen zou kunnen worden). Zodra de koning wordt aangevallen door een ander stuk staat hij "schaak".</span>
+        <span slot="qPieces">De koning</span>
+        <span slot="explanation"
+          >De koning is het belangrijkste schaakstuk maar ook een van de
+          zwakste. De koning beweegt slechts één veld tegelijk in elke richting
+          - vooruit, achteruit, opzij en diagonaal. De koning mag nooit zichzelf
+          schaak zetten (waar hij geslagen zou kunnen worden). Zodra de koning
+          wordt aangevallen door een ander stuk staat hij "schaak".</span
+        >
+        <span slot="moveWays">De verschillende zetten van de koning</span>
+        <span slot="A">C5 - B6</span>
+        <span slot="B">C5 - B5</span>
+        <span slot="C">C5 - B4</span>
+        <span slot="D">C5 - C6</span>
+        <span slot="E">C5 - C4</span>
+        <span slot="conclusion">
+          <span hidden id="A"
+            >Kan niet omdat de loper gedekt wordt door de dame</span
+          >
+          <span hidden id="B"
+            >Kan wel omdat de koning met deze zet de toren slaat en niet meer
+            schaak staat</span
+          >
+          <span hidden id="C"
+            >Kan niet omdat de koning dan door de toren schaak staat</span
+          >
+          <span hidden id="D"
+            >Kan wel, omdat de koning dan niet meer schaak staat, maar wit kan
+            je dan weer schaak zetten met de dame</span
+          >
+          <span hidden id="E"
+            >Kan wel, omdat de koning dan niet meer schaak staat, maar wit kan
+            je dan weer schaak zetten met de dame</span
+          >
+        </span>
       </chess-exercise>
-
     </main>
 
     <script>
-
       function setA() {
         setQuiz({
           FENs: "3Q4/8/1B6/1Rk5/8/8/8",
-          stenen: "De koning",
-          uitleg:
+          qPieces: "De koning",
+          explanation:
             'De koning is het belangrijkste schaakstuk maar ook een van de zwakste. De koning beweegt slechts één veld tegelijk in elke richting - vooruit, achteruit, opzij en diagonaal. De koning mag nooit zichzelf schaak zetten (waar hij geslagen zou kunnen worden). Zodra de koning wordt aangevallen door een ander stuk staat hij "schaak".',
-          zetten: "De verschillende zetten van de koning",
+          moveWays: "De verschillende zetten van de koning",
           buttonA: "A: C5 - B6",
           buttonB: "B: C5 - B5",
           buttonC: "C: C5 - B4",
@@ -397,7 +542,6 @@
             "De zwarte pion slaat de witte pion. Als wit aan de beurt is slaat de witte pion de zwarte pion",
         });
       }
-
     </script>
   </body>
 </html>

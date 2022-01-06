@@ -15,47 +15,61 @@ customElements.define(
     }
     connectedCallback() {
       console.error("connected");
-      setTimeout(() => this.setQuiz({}));
+      setTimeout(() => {
+        this.setQuiz({});
+        this.getElement("#buttons").onclick = (event) => {
+
+            console.error(event.target.getAttribute("slot")); // dit is jouw input
+
+            let letter = "A"; // bepaal de letter
+            
+            this.querySelector("#"+letter).removeAttribute("hidden");
+        };
+      });
+
+      
     }
+
+    
     setQuiz() {
       let chessboard = this.getElement("#board2");
       chessboard.clear();
       chessboard.fen = this.getAttribute("fen");
-      this.addClickListeners();
+      //this.addClickListeners();
     }
     loadQuizData(quizConfig) {
+        console.error("loadQuizData(quizConfig)");
       //Information about the chess piece
       this.getElement("#piece").innerHTML = "De stukken";
-      this.getElement("#stenen").innerHTML = quizConfig.stenen;
-      this.getElement("#uitleg").innerHTML = quizConfig.uitleg;
-      this.getElement("#zetten").innerHTML = quizConfig.zetten;
-      this.getElement("#opdracht").innerHTML =
-        "Denk eventjes over de verschillende mogelijke zetten na. Is de zet mogelijk? Of waarom juist niet? Is de zet sinnvoll?";
+      this.getElement("#qPieces").innerHTML = quizConfig.qPieces;
+      this.getElement("#explanation").innerHTML = quizConfig.explanation;
+      this.getElement("#moveWays").innerHTML = quizConfig.moveWays;
+
       //Buttons for displaying the right conclusion
-      this.getElement("#A").innerHTML = quizConfig.buttonA;
-      this.getElement("#B").innerHTML = quizConfig.buttonB;
-      this.getElement("#C").innerHTML = quizConfig.buttonC;
-      this.getElement("#D").innerHTML = quizConfig.buttonD;
-      this.getElement("#E").innerHTML = quizConfig.buttonE;
+      this.getElement("#buttonA").innerHTML = quizConfig.buttonA;
+      this.getElement("#buttonB").innerHTML = quizConfig.buttonB;
+      this.getElement("#buttonC").innerHTML = quizConfig.buttonC;
+      this.getElement("#buttonD").innerHTML = quizConfig.buttonD;
+      this.getElement("#buttonE").innerHTML = quizConfig.buttonE;
     }
     addClickListeners() {
       //conclusion clear!
-      this.getElement("#e").innerHTML = "";
+      this.getElement("#conclusion").innerHTML = "";
       //conclusion controle show
-      this.getElement("#A").onclick = function () {
-        this.getElement("#e").innerHTML = quizConfig.conclusionA;
+      this.getElement("#buttonA").onclick = function () {
+        this.getElement("#conclusion").innerHTML = quizConfig.conclusionA;
       };
-      this.getElement("#B").onclick = function () {
-        this.getElement("#e").innerHTML = quizConfig.conclusionB;
+      this.getElement("#buttonB").onclick = function () {
+        this.getElement("#conclusion").innerHTML = quizConfig.conclusionB;
       };
-      this.getElement("#C").onclick = function () {
-        this.getElement("#e").innerHTML = quizConfig.conclusionC;
+      this.getElement("#buttonC").onclick = function () {
+        this.getElement("#conclusion").innerHTML = quizConfig.conclusionC;
       };
-      this.getElement("#D").onclick = function () {
-        this.getElement("#e").innerHTML = quizConfig.conclusionD;
+      this.getElement("#buttonD").onclick = function () {
+        this.getElement("#conclusion").innerHTML = quizConfig.conclusionD;
       };
       this.getElement("#E").onclick = function () {
-        this.getElement("#e").innerHTML = quizConfig.conclusionE;
+        this.getElement("#conclusion").innerHTML = quizConfig.conclusionE;
       };
     }
   }
