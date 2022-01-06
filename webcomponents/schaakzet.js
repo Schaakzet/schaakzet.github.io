@@ -1,4 +1,4 @@
-//console.log("execute webcomponents.js");
+console.log("load schaakzet.js");
 
 // used to highlight the moves a chesspiece can make
 const __PROTECT_PIECE__ = "p";
@@ -553,7 +553,7 @@ customElements.define(
             }
           });
         }
-        document.querySelector("#fen").value = fenString;
+        document.querySelector("#fen") && (document.querySelector("#fen").value = fenString);
       }
     }
     // ======================================================== <chess-board>.fen SETTER/GETTER
