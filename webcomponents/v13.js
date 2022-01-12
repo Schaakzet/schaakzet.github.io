@@ -1,7 +1,5 @@
 //console.log("execute webcomponents.js");
 
-const TESTSQUARE = "e7";
-
 class ChessBaseElement extends HTMLElement {
   docs(obj) {
     if (obj) {
@@ -699,9 +697,7 @@ customElements.define(
       for (const square of this.squares) {
         this.getSquare(square).clearAttributes();
       }
-      console.error("getSquare", this.getSquare("g7"));
       for (const square of this.squares) {
-        let chessSquare = this.getSquare(square);
         let piece = this.getPiece(square);
         if (piece) {
           piece.potentialMoves();
