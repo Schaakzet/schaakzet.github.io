@@ -1,4 +1,5 @@
 //console.log("execute webcomponents.js");
+const OPT = false;
 
 class ChessBaseElement extends HTMLElement {
   docs(obj) {
@@ -76,9 +77,9 @@ chess-board {
   /* hide empty layers */
   display: none;
 }
-chess-square:before{
+  /* chess-square:before{
   content:"d:" attr(defendedby) " a:" attr(attackedby);
-}
+} */
 chess-square {
   /* keep the square square no matter what is put inside it */
   overflow: hidden;
@@ -381,7 +382,6 @@ customElements.define(
           // Test of we binnen het bord zijn.
           if (squareElement.piece) {
             if (squareElement.piece.color === piececolor) {
-              //console.error(squareName, this);
               squareElement.highlight(__ATTACK_PIECE__);
               squareElement.attackedBy(this);
               potentialMovesArray.push(squareName);
@@ -390,7 +390,6 @@ customElements.define(
               squareElement.defendedBy(this);
             }
           } else {
-            // console.log(squareElement);
             squareElement.defendedBy(this);
           }
         }
@@ -421,20 +420,36 @@ customElements.define(
       this.attackedArray = [];
       this.defendedArray = [];
     }
-
+    // ======================================================== <chess-square>.chessboard
+    get chessboard() {
+      return this.closest("chess-board");
+    }
+    // ======================================================== <chess-square>.at
+    get at() {
+      return this.getAttribute("at");
+    }
+    // ======================================================== <chess-square>.piece
+    get piece() {
+      return this.querySelector("chess-piece");
+    }
+    set piece(piece) {}
     // ======================================================== <chess-square>.attackedBy
     attackedBy(chessPiece) {
-      this.attackedArray.push(
-        this.chessboard.FENconversion(chessPiece.is) + chessPiece.at
-      );
-      this.setAttribute("attackedby", this.attackedArray.join(","));
+      if (OPT) {
+        this.attackedArray.push(
+          this.chessboard.FENconversion(chessPiece.is) + chessPiece.at
+        );
+        this.setAttribute("attackedby", this.attackedArray.join(","));
+      }
     }
     // ======================================================== <chess-square>.attackedBy
     defendedBy(chessPiece) {
-      this.defendedArray.push(
-        this.chessboard.FENconversion(chessPiece.is) + chessPiece.at
-      );
-      this.setAttribute("defendedby", this.defendedArray.join(","));
+      if (OPT) {
+        this.defendedArray.push(
+          this.chessboard.FENconversion(chessPiece.is) + chessPiece.at
+        );
+        this.setAttribute("defendedby", this.defendedArray.join(","));
+      }
     }
     // ======================================================== <chess-square>.connectedCallback
     connectedCallback() {
@@ -446,9 +461,10 @@ customElements.define(
         if (!hasPiece && firstClick) {
           // Leeg veld geklikt. Eerste keer.
         } else if (hasPiece && firstClick) {
-          // chessboard.showMoves(this.at);
+          const chesspiece = this.piece;
           chessboard.calculateBoard();
           chessboard.clearMoves();
+          chesspiece.potentialMoves(this.at);
           chessboard.pieceClicked = this.piece; // Hier wordt pieceClicked pas gedefinieerd.
         } else {
           // Tweede keer klikken.
@@ -464,19 +480,6 @@ customElements.define(
         }
       });
     }
-    // ======================================================== <chess-square>.chessboard
-    get chessboard() {
-      return this.closest("chess-board");
-    }
-    // ======================================================== <chess-square>.at
-    get at() {
-      return this.getAttribute("at");
-    }
-    // ======================================================== <chess-square>.piece
-    get piece() {
-      return this.querySelector("chess-piece");
-    }
-    set piece(piece) {}
     // ======================================================== <chess-square>.translate
     translate(x_move, y_move) {
       const files = this.chessboard.files;
@@ -689,16 +692,14 @@ customElements.define(
       } else {
         this.setAttribute("player", "wit");
       }
-      this.isInCheck();
+      // this.isInCheck();
     }
     // ======================================================== <chess-board>.attackedBy
-    // calculateBoard wordt aangeroepen in FEN en einde Click-event.
+    // calculateBoard wordt aangeroepen in einde Click-event.
     calculateBoard() {
       for (const square of this.squares) {
-        this.getSquare(square).clearAttributes();
-      }
-      for (const square of this.squares) {
         let piece = this.getPiece(square);
+        this.getSquare(square).clearAttributes();
         if (piece) {
           piece.potentialMoves();
         }
@@ -769,8 +770,6 @@ customElements.define(
         }
         document.querySelector("#fen").value = fenString;
         this.changePlayerTurn("zwart");
-        // this.calculateBoard();
-        // this.clearMoves();
       }
       // documentatie van class Methods en Properties in console.log
       this.docs(this);
