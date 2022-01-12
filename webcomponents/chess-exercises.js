@@ -17,12 +17,46 @@ customElements.define(
       console.error("connected");
       setTimeout(() => {
         this.setQuiz({});
+        console.error(this.shadowRoot.querySelector(`#conclusion`))
         this.getElement("#buttons").onclick = (event) => {
 
             console.error(event.target.getAttribute("slot")); // dit is jouw input
+           
+            let letter = event.target.getAttribute("slot"); // bepaal de letter
+            if(letter == "A"){
+              this.querySelector( `[id="B"]`).setAttribute("hidden","true"); 
+              this.querySelector( `[id="C"]`).setAttribute("hidden","true");
+              this.querySelector( `[id="D"]`).setAttribute("hidden","true");
+              this.querySelector( `[id="E"]`).setAttribute("hidden","true");
+            }
 
-            let letter = "A"; // bepaal de letter
-            
+            if(letter == "B"){
+              this.querySelector( `[id="A"]`).setAttribute("hidden","true"); 
+              this.querySelector( `[id="C"]`).setAttribute("hidden","true");
+              this.querySelector( `[id="D"]`).setAttribute("hidden","true");
+              this.querySelector( `[id="E"]`).setAttribute("hidden","true");
+            }
+
+            if(letter == "C"){
+              this.querySelector( `[id="A"]`).setAttribute("hidden","true"); 
+              this.querySelector( `[id="B"]`).setAttribute("hidden","true");
+              this.querySelector( `[id="D"]`).setAttribute("hidden","true");
+              this.querySelector( `[id="E"]`).setAttribute("hidden","true");
+            }
+
+            if(letter == "D"){
+              this.querySelector( `[id="A"]`).setAttribute("hidden","true"); 
+              this.querySelector( `[id="C"]`).setAttribute("hidden","true");
+              this.querySelector( `[id="B"]`).setAttribute("hidden","true");
+              this.querySelector( `[id="E"]`).setAttribute("hidden","true");
+            }
+
+            if(letter == "E"){
+              this.querySelector( `[id="A"]`).setAttribute("hidden","true"); 
+              this.querySelector( `[id="C"]`).setAttribute("hidden","true");
+              this.querySelector( `[id="D"]`).setAttribute("hidden","true");
+              this.querySelector( `[id="B"]`).setAttribute("hidden","true");
+            }
             this.querySelector("#"+letter).removeAttribute("hidden");
         };
       });
