@@ -10,7 +10,7 @@
 
     <style>
       body {
-        font: 16px Arial;
+        font: 1.25em Arial;
       }
     </style>
   </head>
@@ -125,13 +125,13 @@
           }
 
           .buttonKeuze {
-            font-size: 0.85em;
+            font-size: 1.45em;
           }
 
           .informatieBlok {
             position: relative;
             text-align: left;
-            font-size: 1em;
+
             margin-top: -48.5vw;
             margin-left: 48vw;
           }
@@ -203,129 +203,118 @@
           .stukken {
             text-align: center;
           }
+
+          #conclusion {
+            font-size: 1.35em;
+          }
         }
       </style>
 
       <h1 id="schaakzet">SchaakZet</h1>
 
-      <template id="CHESS-EXERCISE">
-
-
+      <template id="EXERCISE1">
         <style>
-            @media screen and (min-width: 1024px) {
-              #board2 {
-                --width: 45vw;
-                width: var(--width);
-                height: var(--width);
-                /* display <chess-board> as blocks next to eachother */
-                display: inline-block;
-                /* all my child elements are relative to my size */
-                position: relative;
-                border: calc(var(--width) / 40) solid gray;
-                user-select: none;
-                pointer-events: none;
-              }
-    
-              .buttonKeuze {
-                font-size: 0.85em;
-              }
-    
-              .informatieBlok {
-                position: relative;
-                text-align: left;
-                font-size: 1em;
-                margin-top: -48.5vw;
-                margin-left: 48vw;
-              }
-    
-              .outerDiv {
-                padding: 1em;
-              }
-    
-              h1 {
-                text-align: center;
-                font-size: 1.25em;
-                background-color: darkgrey;
-              }
-    
-              #schaakzet {
-                text-align: center;
-                background-color: white;
-                font-size: 1.25em;
-              }
-    
-              .showZet {
-                margin-left: 5vw;
-                margin-top: -18vw;
-              }
-    
-              p {
-                text-align: justify;
-                font-size: 1em;
-              }
+          @media screen and (min-width: 1024px) {
+            #board2 {
+              --width: 45vw;
+              width: var(--width);
+              height: var(--width);
+              /* display <chess-board> as blocks next to eachother */
+              display: inline-block;
+              /* all my child elements are relative to my size */
+              position: relative;
+              border: calc(var(--width) / 40) solid gray;
+              user-select: none;
+              pointer-events: none;
             }
-          </style>
-          <style>
-            @media screen and (min-width: 300px) and (max-width: 1024px) {
-              chess-board {
-                user-select: none;
-                pointer-events: none;
-              }
-    
-              .buttonKeuze {
-                font-size: 1.45em;
-              }
-    
-              h1 {
-                text-align: center;
-                background-color: darkgrey;
-                font-size: 1.5em;
-              }
-    
-              #schaakzet {
-                text-align: center;
-                background-color: white;
-                font-size: 1.5em;
-              }
-    
-              .outerDiv {
-                padding: 0em 1.5em 0em 1.5em;
-              }
-    
-              .informatieBlok {
-                width: 100%;
-                height: 100%;
-              }
-    
-              p {
-                text-align: justify;
-                font-size: 1.75em;
-              }
-    
-              .stukken {
-                text-align: center;
-              }
+
+            .buttonKeuze {
+              font-size: 1em;
             }
-          </style>
+
+            .informatieBlok {
+              position: relative;
+              text-align: left;
+
+              margin-top: -48.5vw;
+              margin-left: 48vw;
+            }
+
+            .outerDiv {
+              padding: 1em;
+            }
+
+            h1 {
+              text-align: center;
+              font-size: 1.25em;
+              background-color: darkgrey;
+            }
+
+            #schaakzet {
+              text-align: center;
+              background-color: white;
+              font-size: 1.25em;
+            }
+
+            .showZet {
+              margin-left: 5vw;
+              margin-top: -18vw;
+            }
+
+            p {
+              text-align: justify;
+              font-size: 1em;
+            }
+          }
+        </style>
+        <style>
+          @media screen and (min-width: 300px) and (max-width: 1024px) {
+            chess-board {
+              user-select: none;
+              pointer-events: none;
+            }
+
+            .buttonKeuze {
+              font-size: 1.45em;
+            }
+
+            h1 {
+              text-align: center;
+              background-color: darkgrey;
+              font-size: 1.1em;
+            }
+
+            #schaakzet {
+              text-align: center;
+              background-color: white;
+              font-size: 1.25em;
+            }
+
+            .outerDiv {
+              padding: 0em 1.5em 0em 1.5em;
+            }
+
+            .informatieBlok {
+              width: 100%;
+              height: 100%;
+              font-size: 1.5em;
+            }
+
+            span {
+              font-size: 1.45em;
+            }
+
+            .stukken {
+              text-align: center;
+            }
+          }
+        </style>
 
         <chess-board id="board2" template="ROB2"></chess-board>
         <div class="outerDiv">
           <div class="informatieBlok">
             <p id="FENs" slot="FENs" style="display: none"></p>
             <p id="fen"></p>
-            <h1 id="piece">De stukken</h1>
-
-            <button class="buttonKeuze" onclick="setB()">Toren</button>
-
-            <button class="buttonKeuze" onclick="setC()">Paard</button>
-
-            <button class="buttonKeuze" onclick="setD()">Loper</button>
-
-            <button class="buttonKeuze" onclick="setE()">Dame</button>
-
-            <button class="buttonKeuze" onclick="setA()">Koning</button>
-
-            <button class="buttonKeuze" onclick="setF()">Pion</button>
 
             <h1 id="qPieces"><slot name="qPieces"></slot></h1>
             <p id="explanation"><slot name="explanation"></slot></p>
@@ -364,7 +353,40 @@
         </div>
       </template>
 
-      <chess-exercise fen="3Q4/8/1B6/1Rk5/8/8/8">
+      
+        <chess-exercise fen="4R3/8/5B2/K3r3/3Rq3/8/8/8">
+          <span slot="qPieces">De toren</span>
+          <span slot="explanation"
+            >"De toren mag zich zo ver verplaatsen als hij maar wil, maar alleen
+            naar boven, naar beneden en naar de zijkanten. De torens zijn vooral
+            erg sterk wanneer ze samen werken en elkaar beschermen!"</span
+          >
+          <span slot="moveWays">De verschillende zetten van de toren</span>
+          <span slot="A">E5 - E8</span>
+          <span slot="B">E5 - F6</span>
+          <span slot="C">E5 - E4</span>
+          <span slot="D">E5 - D4</span>
+          <span slot="E">E5 - A5</span>
+          <span slot="conclusion">
+            <span hidden id="A">De zwarte toren slaat de witte toren</span>
+            <span hidden id="B"
+              >De zwarte toren kan de witte loper niet slaan, maar de witte
+              loper kan de zwarte toren wel slaan. De zwarte toren moet dus
+              worden verplaatst</span
+            >
+            <span hidden id="C"
+              >De zwarte toren kan de zwarte dame niet passeren of slaan</span
+            >
+            <span hidden id="D"
+              >De zwarte toren en de witte toren kunnen elkaar niet slaan</span
+            >
+            <span hidden id="E"
+              >De zwarte toren zet de witte koning schaak</span
+            >
+          </span>
+        </chess-exercise>
+      
+      <chess-exercise id="sete" fen="3Q4/8/1B6/1Rk5/8/8/8">
         <span slot="qPieces">De koning</span>
         <span slot="explanation"
           >De koning is het belangrijkste schaakstuk maar ook een van de
@@ -384,11 +406,12 @@
             >Kan niet omdat de loper gedekt wordt door de dame</span
           >
           <span hidden id="B"
-            >Kan wel omdat de koning met deze zet de toren slaat en niet meer
-            schaak staat</span
+            >De zwarte toren kan de witte loper niet slaan, maar de witte loper
+            kan de zwarte toren wel slaan. De zwarte toren moet dus worden
+            verplaatst</span
           >
           <span hidden id="C"
-            >Kan niet omdat de koning dan door de toren schaak staat</span
+            >De zwarte toren kan de zwarte dame niet passeren of slaan</span
           >
           <span hidden id="D"
             >Kan wel, omdat de koning dan niet meer schaak staat, maar wit kan
