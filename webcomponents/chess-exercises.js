@@ -14,16 +14,29 @@ customElements.define(
     }
     hidden(hidden = true) {
       if (hidden) this.setAttribute("hidden", "true");
-      else this.removeAttribute("hidden");
+      else { this.removeAttribute("hidden");
+      
     }
+    }
+
+
 
     connectedCallback() {
       console.error("connected");
-      this.hidden(true);
+      //this.hidden(true);
+      
+      this.querySelector(`[id]`)
+
+
+
+
       setTimeout(() => {
         this.setQuiz({});
         console.error(this.shadowRoot.querySelector(`#conclusion`));
 
+
+
+        
         this.getElement("#buttons").onclick = (event) => {
           console.error(event.target.getAttribute("slot")); // dit is jouw input
 
@@ -37,7 +50,65 @@ customElements.define(
         };
       });
     }
+    
+      
+   
+    setQuiz() {
+      let chessboard = this.getElement("#board2");
+      chessboard.clear();
+      chessboard.fen = this.getAttribute("fen");
+    }
+  }
+);
 
+customElements.define(
+  "chess-exerciseSelector",
+  class extends HTMLElement {
+    constructor() {
+      super()
+        .attachShadow({ mode: "open" })
+        .append(document.querySelector(`#exerciseSelector`).content.cloneNode(true));
+    }
+
+    getElement(str) {
+      return this.shadowRoot.querySelector(str);
+    }
+    hidden(hidden = true) {
+      if (hidden) this.setAttribute("hidden", "true");
+      else { this.removeAttribute("hidden");
+      
+    }
+    }
+
+
+
+    connectedCallback() {
+      console.error("connected");
+      this.hidden(true);
+      
+      this.querySelector(`[id]`)
+
+
+
+
+      setTimeout(() => {
+        this.setQuiz({});
+        console.error(this.shadowRoot.querySelector(`#conclusion`));
+
+        
+
+        this.getElement("#buttonsExercise").onclick = (event) => {
+          let exercise = event.target.getAttribute("slot");
+
+          this.querySelector(`[id="tower"]`).setAttribute("hidden", "true");
+          this.querySelector("#" + exercise).removeAttribute("hidden");          
+        };
+        
+      });
+    }
+    
+      
+   
     setQuiz() {
       let chessboard = this.getElement("#board2");
       chessboard.clear();

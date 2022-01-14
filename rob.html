@@ -210,7 +210,44 @@
         }
       </style>
 
+      <style>
+        #buttonsExercise{
+          position: relative;
+              text-align: left;
+
+              margin-top: -47.5vw;
+              margin-left: 48vw;
+        }
+
+        #neutralQuiz{
+          --width: 45vw;
+              width: var(--width);
+              height: var(--width);
+              /* display <chess-board> as blocks next to eachother */
+              display: inline-block;
+              /* all my child elements are relative to my size */
+              position: relative;
+              border: calc(var(--width) / 40) solid gray;
+              user-select: none;
+              pointer-events: none;
+        }
+      </style>
+      
+      
       <h1 id="schaakzet">SchaakZet</h1>
+      <template id="exerciseSelector">
+      <chess-board id="neutralQuiz" template="ROB2" fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"></chess-board>
+      
+      <div id="buttonsExercise">
+      <button id="tower"><slot name toren></slot></button>
+      <button slot="paard">Paard</button>
+      <button slot="loper">Loper</button>
+      <button slot="koning">Koning</button>
+      <button slot="dame">Dame</button>
+      <button slot="pion">Pion</button>
+      </div>
+
+    </template>
 
       <template id="EXERCISE1">
         <style>
@@ -236,7 +273,7 @@
               position: relative;
               text-align: left;
 
-              margin-top: -48.5vw;
+              margin-top: -45vw;
               margin-left: 48vw;
             }
 
@@ -309,8 +346,9 @@
             }
           }
         </style>
-
+        
         <chess-board id="board2" template="ROB2"></chess-board>
+
         <div class="outerDiv">
           <div class="informatieBlok">
             <p id="FENs" slot="FENs" style="display: none"></p>
@@ -352,9 +390,11 @@
           </div>
         </div>
       </template>
-
+      <chess-exerciseSelector>
+        <span slot="toren">Toren</span>
+      </chess-exerciseSelector>
       
-        <chess-exercise fen="4R3/8/5B2/K3r3/3Rq3/8/8/8">
+        <chess-exercise id="tower" fen="4R3/8/5B2/K3r3/3Rq3/8/8/8" hidden>
           <span slot="qPieces">De toren</span>
           <span slot="explanation"
             >"De toren mag zich zo ver verplaatsen als hij maar wil, maar alleen
@@ -386,7 +426,7 @@
           </span>
         </chess-exercise>
       
-      <chess-exercise id="sete" fen="3Q4/8/1B6/1Rk5/8/8/8">
+      <chess-exercise id="sete" fen="3Q4/8/1B6/1Rk5/8/8/8" hidden>
         <span slot="qPieces">De koning</span>
         <span slot="explanation"
           >De koning is het belangrijkste schaakstuk maar ook een van de
@@ -406,12 +446,10 @@
             >Kan niet omdat de loper gedekt wordt door de dame</span
           >
           <span hidden id="B"
-            >De zwarte toren kan de witte loper niet slaan, maar de witte loper
-            kan de zwarte toren wel slaan. De zwarte toren moet dus worden
-            verplaatst</span
+            >Kan wel omdat de koning met deze zet de toren slaat en niet meer schaak staat</span
           >
           <span hidden id="C"
-            >De zwarte toren kan de zwarte dame niet passeren of slaan</span
+            >Kan niet omdat de koning dan door de toren schaak staat</span
           >
           <span hidden id="D"
             >Kan wel, omdat de koning dan niet meer schaak staat, maar wit kan
