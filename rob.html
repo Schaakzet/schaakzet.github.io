@@ -1,0 +1,608 @@
+<html>
+  <head id="SchaakZet">
+    <title>RT SchaakZet</title>
+    <script>
+      console.clear();
+    </script>
+    <script src="./console.js"></script>
+    <script src="./webcomponents/schaakzet.js"></script>
+    <script src="./webcomponents/chess-exercises.js"></script>
+
+    <style>
+      body {
+        font: 1.25em Arial;
+      }
+    </style>
+  </head>
+
+  <body>
+    <template id="ROB2">
+      <style id="chessboard_definition">
+        chess-board {
+          --width: 90vw;
+          width: var(--width);
+          height: var(--width);
+          margin: 0 auto;
+          /* display <chess-board> as blocks next to eachother */
+          display: table;
+          /* all my child elements are relative to my size */
+          position: relative;
+          border: calc(var(--width) / 40) solid gray;
+        }
+        .chessboard_layer {
+          /* position multiple layers on top of eachother */
+          position: absolute;
+          /* width/height is 100% of <chess-board> */
+          width: 100%;
+          height: 100%;
+          /* display all elements inside a layer in a 8x8 grid */
+          display: grid;
+          grid-template-columns: repeat(8, 1fr);
+          grid-template-rows: repeat(8, 1fr);
+          grid-template-areas:
+            "a8 b8 c8 d8 e8 f8 g8 h8"
+            "a7 b7 c7 d7 e7 f7 g7 h7"
+            "a6 b6 c6 d6 e6 f6 g6 h6"
+            "a5 b5 c5 d5 e5 f5 g5 h5"
+            "a4 b4 c4 d4 e4 f4 g4 h4"
+            "a3 b3 c3 d3 e3 f3 g3 h3"
+            "a2 b2 c2 d2 e2 f2 g2 h2"
+            "a1 b1 c1 d1 e1 f1 g1 h1";
+        }
+        .chessboard_layer:empty {
+          /* hide empty layers */
+          display: none;
+        }
+        chess-square {
+          /* keep the square square no matter what is put inside it */
+          overflow: hidden;
+          max-height: 100%;
+        }
+
+        .black_square {
+          background-color: darkgray;
+        }
+
+        .white_square {
+          background-color: white;
+        }
+        chess-piece > * {
+          width: 100%;
+          position: relative;
+        }
+      </style>
+
+      <style id="squarelabels">
+        chess-square:after {
+          content: attr(at);
+          height: 100%;
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 15px;
+        }
+
+        @media screen and (min-width: 300px) and (max-width: 1024px) {
+          chess-square:after {
+            font-size: 1.45em;
+          }
+        }
+      </style>
+      <!-- Deze 64 grid-area definities gaan we maken met de Array squares = [ "A8","B8","C8", ... , "G1" , "H1" ] -->
+      <style id="chessboard_gridareas">
+        /* deze innerHTML wordt vervangen door 64 velddefinities:
+                  [at="a8"] {
+                      grid-area: a8;
+                  }
+          */
+      </style>
+      <div id="chessboard_squares" class="chessboard_layer">
+        <!-- squares JS loop maakt 64 velden:
+              <div class="white_square" at="a8">a8</div>
+              <div class="black_square" at="b8">b8</div>
+                -->
+      </div>
+      <div id="chessboard_pieces" class="chessboard_layer"></div>
+    </template>
+
+    <main>
+      <!-- developing on board2 -->
+
+      <style>
+        @media screen and (min-width: 1024px) {
+          #board2 {
+            --width: 45vw;
+            width: var(--width);
+            height: var(--width);
+            /* display <chess-board> as blocks next to eachother */
+            display: inline-block;
+            /* all my child elements are relative to my size */
+            position: relative;
+            border: calc(var(--width) / 40) solid gray;
+            user-select: none;
+            pointer-events: none;
+          }
+
+          .buttonKeuze {
+            font-size: 1.45em;
+          }
+
+          .informatieBlok {
+            position: relative;
+            text-align: left;
+
+            margin-top: -48.5vw;
+            margin-left: 48vw;
+          }
+
+          .outerDiv {
+            padding: 1em;
+          }
+
+          h1 {
+            text-align: center;
+            font-size: 1.25em;
+            background-color: darkgrey;
+          }
+
+          #schaakzet {
+            text-align: center;
+            background-color: white;
+            font-size: 1.25em;
+          }
+
+          .showZet {
+            margin-left: 5vw;
+            margin-top: -18vw;
+          }
+
+          p {
+            text-align: justify;
+            font-size: 1em;
+          }
+        }
+      </style>
+      <style>
+        @media screen and (min-width: 300px) and (max-width: 1024px) {
+          chess-board {
+            user-select: none;
+            pointer-events: none;
+          }
+
+          .buttonKeuze {
+            font-size: 1.45em;
+          }
+
+          h1 {
+            text-align: center;
+            background-color: darkgrey;
+            font-size: 1.5em;
+          }
+
+          #schaakzet {
+            text-align: center;
+            background-color: white;
+            font-size: 1.5em;
+          }
+
+          .outerDiv {
+            padding: 0em 1.5em 0em 1.5em;
+          }
+
+          .informatieBlok {
+            width: 100%;
+            height: 100%;
+          }
+
+          p {
+            text-align: justify;
+            font-size: 1.75em;
+          }
+
+          .stukken {
+            text-align: center;
+          }
+
+          #conclusion {
+            font-size: 1.35em;
+          }
+        }
+      </style>
+
+      <style>
+        #buttonsExercise{
+          position: relative;
+              text-align: left;
+
+              margin-top: -47.5vw;
+              margin-left: 48vw;
+        }
+
+        #neutralQuiz{
+          --width: 45vw;
+              width: var(--width);
+              height: var(--width);
+              /* display <chess-board> as blocks next to eachother */
+              display: inline-block;
+              /* all my child elements are relative to my size */
+              position: relative;
+              border: calc(var(--width) / 40) solid gray;
+              user-select: none;
+              pointer-events: none;
+        }
+      </style>
+      
+      
+      <h1 id="schaakzet">SchaakZet</h1>
+      <template id="exerciseSelector">
+      <chess-board id="neutralQuiz" template="ROB2" fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"></chess-board>
+      
+      <div id="buttonsExercise">
+      <button id="tower"><slot name toren></slot></button>
+      <button slot="paard">Paard</button>
+      <button slot="loper">Loper</button>
+      <button slot="koning">Koning</button>
+      <button slot="dame">Dame</button>
+      <button slot="pion">Pion</button>
+      </div>
+
+    </template>
+
+      <template id="EXERCISE1">
+        <style>
+          @media screen and (min-width: 1024px) {
+            #board2 {
+              --width: 45vw;
+              width: var(--width);
+              height: var(--width);
+              /* display <chess-board> as blocks next to eachother */
+              display: inline-block;
+              /* all my child elements are relative to my size */
+              position: relative;
+              border: calc(var(--width) / 40) solid gray;
+              user-select: none;
+              pointer-events: none;
+            }
+
+            .buttonKeuze {
+              font-size: 1em;
+            }
+
+            .informatieBlok {
+              position: relative;
+              text-align: left;
+
+              margin-top: -45vw;
+              margin-left: 48vw;
+            }
+
+            .outerDiv {
+              padding: 1em;
+            }
+
+            h1 {
+              text-align: center;
+              font-size: 1.25em;
+              background-color: darkgrey;
+            }
+
+            #schaakzet {
+              text-align: center;
+              background-color: white;
+              font-size: 1.25em;
+            }
+
+            .showZet {
+              margin-left: 5vw;
+              margin-top: -18vw;
+            }
+
+            p {
+              text-align: justify;
+              font-size: 1em;
+            }
+          }
+        </style>
+        <style>
+          @media screen and (min-width: 300px) and (max-width: 1024px) {
+            chess-board {
+              user-select: none;
+              pointer-events: none;
+            }
+
+            .buttonKeuze {
+              font-size: 1.45em;
+            }
+
+            h1 {
+              text-align: center;
+              background-color: darkgrey;
+              font-size: 1.1em;
+            }
+
+            #schaakzet {
+              text-align: center;
+              background-color: white;
+              font-size: 1.25em;
+            }
+
+            .outerDiv {
+              padding: 0em 1.5em 0em 1.5em;
+            }
+
+            .informatieBlok {
+              width: 100%;
+              height: 100%;
+              font-size: 1.5em;
+            }
+
+            span {
+              font-size: 1.45em;
+            }
+
+            .stukken {
+              text-align: center;
+            }
+          }
+        </style>
+        
+        <chess-board id="board2" template="ROB2"></chess-board>
+
+        <div class="outerDiv">
+          <div class="informatieBlok">
+            <p id="FENs" slot="FENs" style="display: none"></p>
+            <p id="fen"></p>
+
+            <h1 id="qPieces"><slot name="qPieces"></slot></h1>
+            <p id="explanation"><slot name="explanation"></slot></p>
+
+            <h1 id="moveWays"><slot name="moveWays"></slot></h1>
+
+            <p>
+              Denk eventjes over de verschillende mogelijke zetten na. Is de zet
+              mogelijk? Of waarom juist niet? Is de zet sinnvoll?
+            </p>
+            <p><b>Controleer jouw conclusies hier onder:</b></p>
+            <div id="buttons">
+              <button class="buttonKeuze" id="buttonA">
+                <slot name="A"></slot>
+              </button>
+
+              <button class="buttonKeuze" id="buttonB">
+                <slot name="B"></slot>
+              </button>
+
+              <button class="buttonKeuze" id="buttonC">
+                <slot name="C"></slot>
+              </button>
+
+              <button class="buttonKeuze" id="buttonD">
+                <slot name="D"></slot>
+              </button>
+
+              <button class="buttonKeuze" id="buttonE">
+                <slot name="E"></slot>
+              </button>
+            </div>
+            <p id="conclusion"></p>
+            <slot name="conclusion"></slot>
+          </div>
+        </div>
+      </template>
+      <chess-exerciseSelector>
+        <span slot="toren">Toren</span>
+      </chess-exerciseSelector>
+      
+        <chess-exercise id="tower" fen="4R3/8/5B2/K3r3/3Rq3/8/8/8" hidden>
+          <span slot="qPieces">De toren</span>
+          <span slot="explanation"
+            >"De toren mag zich zo ver verplaatsen als hij maar wil, maar alleen
+            naar boven, naar beneden en naar de zijkanten. De torens zijn vooral
+            erg sterk wanneer ze samen werken en elkaar beschermen!"</span
+          >
+          <span slot="moveWays">De verschillende zetten van de toren</span>
+          <span slot="A">E5 - E8</span>
+          <span slot="B">E5 - F6</span>
+          <span slot="C">E5 - E4</span>
+          <span slot="D">E5 - D4</span>
+          <span slot="E">E5 - A5</span>
+          <span slot="conclusion">
+            <span hidden id="A">De zwarte toren slaat de witte toren</span>
+            <span hidden id="B"
+              >De zwarte toren kan de witte loper niet slaan, maar de witte
+              loper kan de zwarte toren wel slaan. De zwarte toren moet dus
+              worden verplaatst</span
+            >
+            <span hidden id="C"
+              >De zwarte toren kan de zwarte dame niet passeren of slaan</span
+            >
+            <span hidden id="D"
+              >De zwarte toren en de witte toren kunnen elkaar niet slaan</span
+            >
+            <span hidden id="E"
+              >De zwarte toren zet de witte koning schaak</span
+            >
+          </span>
+        </chess-exercise>
+      
+      <chess-exercise id="sete" fen="3Q4/8/1B6/1Rk5/8/8/8" hidden>
+        <span slot="qPieces">De koning</span>
+        <span slot="explanation"
+          >De koning is het belangrijkste schaakstuk maar ook een van de
+          zwakste. De koning beweegt slechts één veld tegelijk in elke richting
+          - vooruit, achteruit, opzij en diagonaal. De koning mag nooit zichzelf
+          schaak zetten (waar hij geslagen zou kunnen worden). Zodra de koning
+          wordt aangevallen door een ander stuk staat hij "schaak".</span
+        >
+        <span slot="moveWays">De verschillende zetten van de koning</span>
+        <span slot="A">C5 - B6</span>
+        <span slot="B">C5 - B5</span>
+        <span slot="C">C5 - B4</span>
+        <span slot="D">C5 - C6</span>
+        <span slot="E">C5 - C4</span>
+        <span slot="conclusion">
+          <span hidden id="A"
+            >Kan niet omdat de loper gedekt wordt door de dame</span
+          >
+          <span hidden id="B"
+            >Kan wel omdat de koning met deze zet de toren slaat en niet meer schaak staat</span
+          >
+          <span hidden id="C"
+            >Kan niet omdat de koning dan door de toren schaak staat</span
+          >
+          <span hidden id="D"
+            >Kan wel, omdat de koning dan niet meer schaak staat, maar wit kan
+            je dan weer schaak zetten met de dame</span
+          >
+          <span hidden id="E"
+            >Kan wel, omdat de koning dan niet meer schaak staat, maar wit kan
+            je dan weer schaak zetten met de dame</span
+          >
+        </span>
+      </chess-exercise>
+    </main>
+
+    <script>
+      function setA() {
+        setQuiz({
+          FENs: "3Q4/8/1B6/1Rk5/8/8/8",
+          qPieces: "De koning",
+          explanation:
+            'De koning is het belangrijkste schaakstuk maar ook een van de zwakste. De koning beweegt slechts één veld tegelijk in elke richting - vooruit, achteruit, opzij en diagonaal. De koning mag nooit zichzelf schaak zetten (waar hij geslagen zou kunnen worden). Zodra de koning wordt aangevallen door een ander stuk staat hij "schaak".',
+          moveWays: "De verschillende zetten van de koning",
+          buttonA: "A: C5 - B6",
+          buttonB: "B: C5 - B5",
+          buttonC: "C: C5 - B4",
+          buttonD: "D: C5 - C6",
+          buttonE: "E: C5 - C4",
+          conclusionA: "Kan niet omdat de loper gedekt wordt door de dame",
+          conclusionB:
+            "Kan wel omdat de koning met deze zet de toren slaat en niet meer schaak staat",
+          conclusionC:
+            "Kan niet omdat de koning dan door de toren schaak staat",
+          conclusionD:
+            "Kan wel, omdat de koning dan niet meer schaak staat, maar wit kan je dan weer schaak zetten met de dame",
+          conclusionE:
+            "Kan wel, omdat de koning dan niet meer schaak staat, maar wit kan je dan weer schaak zetten met de dame",
+        });
+      }
+
+      function setB() {
+        setQuiz({
+          FENs: "4R3/8/5B2/K3r3/3Rq3/8/8/8",
+          stenen: "De toren",
+          uitleg:
+            "De toren mag zich zo ver verplaatsen als hij maar wil, maar alleen naar boven, naar beneden en naar de zijkanten. De torens zijn vooral erg sterk wanneer ze samen werken en elkaar beschermen!",
+          zetten: "De verschillende zetten van de toren",
+          buttonA: "A: E5 - E8",
+          buttonB: "B: E5 - F6",
+          buttonC: "C: E5 - E4",
+          buttonD: "D: E5 - D4",
+          buttonE: "E: E5 - A5",
+          conclusionA: "De zwarte toren slaat de witte toren",
+          conclusionB:
+            "De zwarte toren kan de witte loper niet slaan, maar de witte loper kan de zwarte toren wel slaan. De zwarte toren moet dus worden verplaatst",
+          conclusionC:
+            "De zwarte toren kan de zwarte dame niet passeren of slaan",
+          conclusionD:
+            "De zwarte toren en de witte toren kunnen elkaar niet slaan",
+          conclusionE: "De zwarte toren zet de witte koning schaak",
+        });
+      }
+
+      function setC() {
+        setQuiz({
+          FENs: "8/8/3B1N1P/5n1R/8/6Q1/8/8",
+          stenen: "Het paard",
+          uitleg:
+            "Paarden verplaatsen zich compleet anders dan de andere stukken. Zij verplaatsen zich twee vakjes in een bepaalde richting en dan één vakje in een hoek van 90 graden, alsof het een L-vorm maakt. Paarden zijn ook de enige stukken die over andere stukken heen kunnen springen.",
+          zetten: "De verschillende zetten van het paard",
+          buttonA: "A: F5 - D6",
+          buttonB: "B: F5 - F6",
+          buttonC: "C: F5 - H6",
+          buttonD: "D: F5 - H5",
+          buttonE: "E: F5 - G3",
+          conclusionA: "Het zwarte paard slaat de witte loper",
+          conclusionB: "Het zwarte paard kan het witte paard niet slaan",
+          conclusionC:
+            "Het zwarte paard kan de witte pion slaan maar wordt dan door de witte toren geslagen",
+          conclusionD:
+            "Het zwarte paard kan de witte toren niet slaan, maar de toren kan het zwarte paard wel slaan",
+          conclusionE: "Het zwarte paard kan de witte dame slaan",
+        });
+      }
+
+      function setD() {
+        setQuiz({
+          FENs: "8/4Q3/8/3Kb3/5P2/8/8/4r3",
+          stenen: "De loper",
+          uitleg:
+            "De loper mag zo ver bewegen als hij wil, maar uitsluitend diagonaal. Elke loper begint op een bepaalde kleur (licht of donker) en blijft de hele partij op die kleur. Lopers werken uitstekend samen omdat ze elkaars zwakheden opheffen.",
+          zetten: "De verschillende zetten van de loper",
+          buttonA: "A: E5 - D4",
+          buttonB: "B: E5 - F4",
+          buttonC: "C: E5 - C3",
+          buttonD: "D: E5 - D5",
+          buttonE: "E: E5 - D6",
+          conclusionA: "De zwarte loper ontdsnapt aan de dame",
+          conclusionB:
+            "De zwarte loper wordt door de witte dame en de witte pion bedreigd en ontsnapt door de witte pion te slaan",
+          conclusionC:
+            "De zwarte loper verplaatst zich naar c3 om aan de dame te ontsnappen en zet samen met de toren de dame onder druk door de toren te dekken",
+          conclusionD:
+            "De zwarte loper kan niet door de witte koning geslagen worden omdat de loper gedekt wordt door de zwarte toren",
+          conclusionE:
+            "De zwarte loper loopt gevaar als hij tussen de koning en de dame geplaatst wordt, de loper kan namelijk door beiden geslagen worden.",
+        });
+      }
+
+      function setE() {
+        setQuiz({
+          FENs: "2N1R2K/6Q1/3B4/4q3/8/8/7N/R7",
+          stenen: "De dame",
+          uitleg:
+            "De dame is het machtigste stuk. Ze kan in elke richting bewegen - vooruit, achteruit, opzij en diagonaal - zo ver als mogelijk zolang ze niet door haar eigen stukken wordt belemmerd. En, zoals bij alle stukken, als de dame een stuk van de tegenstander slaat, is haar zet voorbij. Zie hoe de witte dame de zwarte dame slaat en vervolgens de zwarte koning gedwongen wordt om te zetten.",
+          zetten: "De verschillende zetten van de dame",
+          buttonA: "A: E5 - D6",
+          buttonB: "B: E5 - E8",
+          buttonC: "C: E5 - G7",
+          buttonD: "D: E5 - H2",
+          buttonE: "E: E5 - A1",
+          conclusionA:
+            "De zwarte dame zal de witte loper niet slaan omdat de loper gedekt wordt door het paard",
+          conclusionB:
+            "De zwarte dame slaat de witte toren en zet de witte koning schaak",
+          conclusionC:
+            "De zwarte dame zal de witte dame niet slaan omdat de witte koning de zwarte dame dan zal slaan",
+          conclusionD:
+            "De zwarte dame kan het witte paard slaan, maar wordt dan wel ook zelf door de witte loper geslagen",
+          conclusionE:
+            "De zwarte dame zal de witte toren niet slaan, omdat de zwarte dame dan door de witte dame geslagen wordt",
+        });
+      }
+
+      function setF() {
+        setQuiz({
+          FENs: "4R3/2B5/5r2/3bp2R/3P4/8/4p3/8",
+          stenen: "De pion",
+          uitleg:
+            "Pionnen zijn ongewoon, omdat ze bewegen en slaan op verschillende manieren. Ze bewegen alleen vooruit, maar slaan diagonaal. Pionnen kunnen zich per zet maar één vakje vooruitbewegen, met uitzondering van de eerste keer dat ze bewegen: dan kunnen ze twee vakjes vooruit in één zet. Pionnen kunnen alleen een stuk slaan dat één vakje diagonaal voor hen staat. Ze kunnen nooit achteruitslaan. Als een ander stuk direct voor de pion staat, kan de pion niet meer vooruitbewegen.",
+          zetten: "De verschillende zetten van de pion",
+          buttonA: "A: E5 - C7",
+          buttonB: "B: E5 - E8",
+          buttonC: "C: E5 - H5",
+          buttonD: "D: E5 - E2",
+          buttonE: "E: E5 - D4",
+          conclusionA: "De zwarte pion wordt geslagen door de witte loper",
+          conclusionB:
+            "De zwarte pion kan van de aanval door de witte toren gered worden door de zwarte loper of de zwarte toren er tussen te zetten",
+          conclusionC: "De zwarte pion wordt door de witte toren geslagen",
+          conclusionD: "De zwarte pionnen kunnen elkaar niet passeren",
+          conclusionE:
+            "De zwarte pion slaat de witte pion. Als wit aan de beurt is slaat de witte pion de zwarte pion",
+        });
+      }
+    </script>
+  </body>
+</html>

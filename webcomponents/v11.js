@@ -1,14 +1,20 @@
-console.log("load schaakzet.js");
+//console.log("execute webcomponents.js");
 
 // used to highlight the moves a chesspiece can make
-const __EMPTY_SQUARE__ = "e";
-const __ATTACK_PIECE__ = "x";
 const __PROTECT_PIECE__ = "p";
+const __ATTACK_PIECE__ = "x";
+const __EMPTY_SQUARE__ = "e";
 
-// inline HTML so all a HTML file has todo is load this schaakzet.js file
-// and use <chess-board></chess-board>
 const chessboardHTML = `
 <style id="chessboard_definition">
+chess-board[player="wit"] chess-square[piece*="zwart"]:not([state="x"]){
+  pointer-events:none;
+  background:blue;
+}
+chess-board[player="zwart"] chess-square[piece*="wit"]:not([state="x"]){
+  pointer-events:none;
+  background:green;
+}
 chess-board {
   --width: 80vw;
   width: var(--width);
@@ -43,6 +49,7 @@ chess-board {
   /* hide empty layers */
   display: none;
 }
+
 chess-square {
   /* keep the square square no matter what is put inside it */
   overflow: hidden;
@@ -90,16 +97,14 @@ chess-square:after {
 
 // moves for all pieces
 const __HORSEMOVES__ = [
-  [
-    [2, 1],
-    [2, -1],
-    [-2, 1],
-    [-2, -1],
-    [1, 2],
-    [1, -2],
-    [-1, 2],
-    [-1, -2],
-  ],
+  [[2, 1]],
+  [[2, -1]],
+  [[-2, 1]],
+  [[-2, -1]],
+  [[1, 2]],
+  [[1, -2]],
+  [[-1, 2]],
+  [[-1, -2]],
 ];
 const __BISHOPMOVES__ = [
   [
@@ -179,16 +184,14 @@ const __ROOKMOVES__ = [
 ];
 const __QUEENMOVES__ = [...__BISHOPMOVES__, ...__ROOKMOVES__];
 const __KINGMOVES__ = [
-  [
-    [0, 1],
-    [1, 1],
-    [1, 0],
-    [1, -1],
-    [0, -1],
-    [-1, -1],
-    [-1, 0],
-    [-1, 1],
-  ],
+  [[0, 1]],
+  [[1, 1]],
+  [[1, 0]],
+  [[1, -1]],
+  [[0, -1]],
+  [[-1, -1]],
+  [[-1, 0]],
+  [[-1, 1]],
 ];
 /*************************************************************************
     <chess-piece is="wit-paard" at="D5"> Web Component
@@ -214,9 +217,13 @@ customElements.define(
     get chessboard() {
       return this.closest("chess-board");
     }
+    // ======================================================== <chess-piece>.square
+    get square() {
+      return this.closest("chess-square");
+    }
     // ======================================================== <chess-piece>.at
     get at() {
-      return this.closest("chess-square").getAttribute("at");
+      return this.square.getAttribute("at");
     }
     set at(at) {
       this.chessboard.movePiece(this, at);
@@ -262,16 +269,39 @@ customElements.define(
         pieceMoves = __QUEENMOVES__;
       } else if (this.is.includes("koning")) {
         pieceMoves = __KINGMOVES__;
+        // Roqueren.
+      } else if (
+        // Als de pion op de 2e rij staat mag hij 1 of 2 zetten vooruit doen.
+        this.is === "wit-pion" &&
+        this.chessboard.ranks.indexOf(this.at[1]) === 1
+      ) {
+        pieceMoves = [
+          [
+            [0, 1],
+            [0, 2],
+          ],
+        ];
       } else if (this.is === "wit-pion") {
         pieceMoves = [[[0, 1]]];
+      } else if (
+        this.is === "zwart-pion" &&
+        this.chessboard.ranks.indexOf(this.at[1]) === 6
+      ) {
+        pieceMoves = [
+          [
+            [0, -1],
+            [0, -2],
+          ],
+        ];
       } else if (this.is === "zwart-pion") {
         pieceMoves = [[[0, -1]]];
       }
+      // En passant
       return pieceMoves;
     }
     // ======================================================== <chess-piece>.potentialMoves
     potentialMoves() {
-      // De array potentialArray is alle mogelijkheden van possibleMove.
+      // De array potentialMovesArray is alle mogelijkheden van possibleMove.
       console.log("check potentialMoves:", this.is, " on ", this.at);
       let potentialMovesArray = [];
       let pieceMoves = this.pieceMoves;
@@ -286,20 +316,21 @@ customElements.define(
               squareName,
               "line:" + line,
               "move:" + move,
-              squareName,
               squareElement.piece?.is || "leeg"
             );
             // Eerst kijken of er een piece staat, en dan kijken of het dezelfde kleur heeft.
             if (squareElement.piece) {
               if (this.color === squareElement.piece.color) {
                 squareElement.highlight(__PROTECT_PIECE__);
-                break; // Sandro created a logical bug here! try horse on D5
+                break;
+                // Uitzondering pion. IF pion.
+              } else if (this.is === "wit-pion" || this.is === "zwart-pion") {
+                break;
               } else {
-                // Als het een andere kleur heeft, potentialMove!
-                //console.log(this.color, squareElement.piece.color);
+                // Als het een andere kleur heeft, __ATTACK_PIECE__, potentialMove!
                 squareElement.highlight(__ATTACK_PIECE__);
                 potentialMovesArray.push(squareName);
-                break; // Sandro created a logical bug here! try horse on D5
+                break;
               }
             }
             squareElement.highlight(__EMPTY_SQUARE__);
@@ -307,9 +338,43 @@ customElements.define(
           } else {
             // move is outside board
           }
-        } // for j
-      } // for i
-      return potentialMovesArray;
+        } // for move
+      } // for line
+      // Schuin aanvallen van pion.
+      if (this.is === "wit-pion") {
+        const diagonal = (x, y) => {
+          const squareName = this.square.translate(x, y); // "D6"
+          const square = this.chessboard.getSquare(squareName);
+          // console.log(square.piece, square);
+          if (square.piece) {
+            if (square.piece.color === "zwart") {
+              square.highlight(__ATTACK_PIECE__);
+              potentialMovesArray.push(squareName);
+            } else {
+              square.highlight(__PROTECT_PIECE__);
+            }
+          }
+        };
+        diagonal(-1, 1);
+        diagonal(1, 1);
+      } else if (this.is === "zwart-pion") {
+        const diagonal = (x, y) => {
+          const squareName = this.square.translate(x, y); // "D6"
+          const square = this.chessboard.getSquare(squareName);
+          // console.log(square.piece, square);
+          if (square.piece) {
+            if (square.piece.color === "wit") {
+              square.highlight(__ATTACK_PIECE__);
+              potentialMovesArray.push(squareName);
+            } else {
+              square.highlight(__PROTECT_PIECE__);
+            }
+          }
+        };
+        diagonal(1, -1);
+        diagonal(-1, -1);
+      }
+      this.moves = potentialMovesArray;
     }
   }
 );
@@ -320,36 +385,58 @@ customElements.define(
     // ======================================================== <chess-square>.connectedCallback
     connectedCallback() {
       this.addEventListener("click", (event) => {
-        let chessboard = this.closest("chess-board");
-        console.log(this, chessboard.pieceClicked);
-        if (this.hasAttribute("piece")) {
-          // move piece if pieceClicked
-          if (chessboard.pieceClicked) {
-            chessboard.movePiece(
-              chessboard.pieceClicked,
-              this.getAttribute("at")
-            );
-            delete chessboard.pieceClicked;
-          } else {
-            chessboard.pieceClicked = this.querySelector("chess-piece"); // Hier wordt pieceClicked pas gedefinieerd.
-          }
+        let chessboard = this.chessboard;
+        const hasPiece = this.hasAttribute("piece");
+        const firstClick = !chessboard.pieceClicked;
+        console.log(this.at, chessboard.pieceClicked);
+        // Eerste keer klikken
+        if (!hasPiece && firstClick) {
+          // Leeg veld geklikt. Eerste keer.
+        } else if (hasPiece && firstClick) {
+          chessboard.showMoves(this.at);
+          // potentialMoves();
+          chessboard.pieceClicked = this.piece; // Hier wordt pieceClicked pas gedefinieerd.
         } else {
-          // move piece if pieceClicked
-          if (chessboard.pieceClicked) {
-            chessboard.movePiece(
-              chessboard.pieceClicked,
-              this.getAttribute("at")
-            );
-            delete chessboard.pieceClicked;
+          // Tweede keer klikken.
+          // piece on target or not, move piece
+          console.log("Uiteindelijke zetten: ", chessboard.pieceClicked.moves);
+          if (chessboard.pieceClicked.moves.includes(this.at)) {
+            chessboard.movePiece(chessboard.pieceClicked, this.at);
           }
+          delete chessboard.pieceClicked;
+          chessboard.clearMoves();
         }
+        chessboard.check();
       });
+    }
+    // ======================================================== <chess-square>.chessboard
+    get chessboard() {
+      return this.closest("chess-board");
+    }
+    // ======================================================== <chess-square>.at
+    get at() {
+      return this.getAttribute("at");
     }
     // ======================================================== <chess-square>.piece
     get piece() {
       return this.querySelector("chess-piece");
     }
     set piece(piece) {}
+    // ======================================================== <chess-square>.translate
+    translate(x_move, y_move) {
+      const files = this.chessboard.files;
+      const ranks = this.chessboard.ranks;
+      const position = this.at;
+      const x = files.indexOf(position[0]);
+      const y = ranks.indexOf(position[1]);
+      const toFile = files[x + x_move];
+      const toRank = ranks[y + y_move];
+      if (toFile && toRank) {
+        return toFile + toRank; // example: "d5"
+      } else {
+        return false;
+      }
+    }
     // ======================================================== <chess-square>.highlight
     highlight(state = false) {
       let color =
@@ -359,13 +446,17 @@ customElements.define(
           [__PROTECT_PIECE__]: "orange",
         }[state] || "hotpink";
       if (state) {
+        this.setAttribute("state", state);
         this.style.border = "5px solid " + color;
-      } else this.style.border = "";
+      } else {
+        this.style.border = "";
+        this.removeAttribute("state");
+      }
     }
     // ======================================================== <chess-square>.clear
     clear() {
       this.removeAttribute("piece");
-      this.style.border;
+      this.style.border = "";
       this.innerHTML = "";
     }
   }
@@ -460,14 +551,17 @@ customElements.define(
     }
     // ======================================================== <chess-board>.addPiece
     addPiece(piece_name, at) {
-      //if piecenname is one FEN letter
+      //if piecename is one FEN letter
       if (piece_name.length == 1) piece_name = this.FENconversion(piece_name);
       // clear existing square
       this.clearSquare(at);
       // create <chess-piece is="wit-koning" at="d5">
       let newpiece = document.createElement("chess-piece");
       newpiece.setAttribute("is", piece_name);
-      return this.movePiece(newpiece, at);
+      let toSquare = this.getSquare(at);
+      toSquare.setAttribute("piece", piece_name);
+      return toSquare.appendChild(newpiece);
+      // return this.movePiece(newpiece, at); Deze regel is WEG vanwege bug met playerTurn.
     }
     // ======================================================== <chess-board>.clearSquare
     clearSquare(square) {
@@ -495,23 +589,61 @@ customElements.define(
         this.clearSquare(toSquare);
       }
       toSquare.setAttribute("piece", pieceName);
-      //console.log("movePiece", pieceName, "to", square);
+      // console.log("movePiece", pieceName, "to", square);
+      this.changePlayerTurn(chessPiece.color);
       return toSquare.appendChild(chessPiece);
     }
     // ======================================================== <chess-board>.hasSquare
     hasSquare(square) {
       return this.squares.includes(square);
     }
-    // ======================================================== <chess-board>.showmoves
-    showmoves(square) {
+    // ======================================================== <chess-board>.showMoves
+    showMoves(square) {
       let piece = this.getPiece(square);
       if (piece) piece.potentialMoves();
-      else console.log("square " + square, "has no piece");
+      else {
+        console.log("square " + square, "has no piece");
+      }
+    }
+    // ======================================================== <chess-board>.clearMoves
+    clearMoves() {
+      for (let element of this.squares) {
+        let chessSquare = this.getSquare(element);
+        chessSquare.highlight(false);
+      }
     }
     // ======================================================== <chess-board>.move
-    move(fromsquare, tosquare) {
-      // TODO: move piece from fromsquare to tosquare
-      // if move is potentialMove, move().
+    move(chessPiece, fromSquare, toSquare) {
+      // This should be all the actual moves, so move 8 = "wit-paard" from D5 to C7. This to DB or FEN to DB?
+    }
+    // ======================================================== <chess-board>.playerTurn
+    // zet tegenovergestelde kleur in <chess-board player="...">
+    changePlayerTurn(turnColor) {
+      console.log("turn: ", turnColor);
+      if (turnColor == "wit") {
+        this.setAttribute("player", "zwart");
+      } else {
+        this.setAttribute("player", "wit");
+      }
+    }
+    // ======================================================== <chess-board>.underAttack
+    underAttack() {
+      // Check alle squares wat de stukken aanvallen en geef die squares de attribuut "underAttack door welk stuk"
+    }
+    // ======================================================== <chess-board>.check
+
+    // HIER ZIJN WE MEE BEZIG!!! check() wordt aangeroepen in de connectedCallback van <chess-square>.
+    check() {
+      for (let square of this.squares) {
+        if (this.getPiece(square)) {
+          if (
+            this.getPiece(square).is.endsWith("koning") &&
+            squareOfKing == underAttack
+          ) {
+            console.log("koning under attack gevonden");
+          }
+        }
+      }
     }
     // ======================================================== <chess-board>.FENconversion
     FENconversion(name) {
@@ -539,9 +671,8 @@ customElements.define(
     set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR") {
       // make sure we don't run before the board exists, because attributeChangedCallback runs early
       if (this.squares) {
-        if (fenString == "") {
-          this.clear();
-        } else {
+        this.clear();
+        if (fenString !== "") {
           let squareIndex = 0;
           fenString.split("").map((piece) => {
             if (piece !== "/") {
@@ -555,9 +686,8 @@ customElements.define(
             }
           });
         }
-        let fenInput = document.querySelector("#fen");
-        if (fenInput) fenInput.value = fenString;
-        console.log("new fen", fenString);
+        document.querySelector("#fen").value = fenString;
+        this.changePlayerTurn("zwart");
       }
     }
     // ======================================================== <chess-board>.fen SETTER/GETTER
@@ -591,9 +721,5 @@ customElements.define(
       console.log(fenString);
       return fenString;
     }
-    // ======================================================== <chess-board>.playerTurn
-    // turnWhite = true;
-    // if piece on fromSquare = "zwart" then !move();
-    // changeTurn() => after move() turnWhite = !turnWhite
   }
 );
