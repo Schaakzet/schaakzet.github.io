@@ -1,10 +1,12 @@
 console.log("load schaakzet.js");
 
 // used to highlight the moves a chesspiece can make
-const __PROTECT_PIECE__ = "p";
-const __ATTACK_PIECE__ = "x";
 const __EMPTY_SQUARE__ = "e";
+const __ATTACK_PIECE__ = "x";
+const __PROTECT_PIECE__ = "p";
 
+// inline HTML so all a HTML file has todo is load this schaakzet.js file
+// and use <chess-board></chess-board>
 const chessboardHTML = `
 <style id="chessboard_definition">
 chess-board {
@@ -553,7 +555,9 @@ customElements.define(
             }
           });
         }
-        document.querySelector("#fen") && (document.querySelector("#fen").value = fenString);
+        let fenInput = document.querySelector("#fen");
+        if (fenInput) fenInput.value = fenString;
+        console.log("new fen", fenString);
       }
     }
     // ======================================================== <chess-board>.fen SETTER/GETTER
