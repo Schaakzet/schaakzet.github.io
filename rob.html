@@ -182,7 +182,7 @@
 
           #schaakzet {
             text-align: center;
-            background-color: white;
+            
             font-size: 1.5em;
           }
 
@@ -211,15 +211,14 @@
       </style>
 
       <style>
-        #buttonsExercise{
-          position: relative;
-              text-align: left;
+        #buttonsExercise {
+          
+          margin-left: 49vw;
+          font-size: 1.45em;
 
-              margin-top: -47.5vw;
-              margin-left: 48vw;
         }
-
-        #neutralQuiz{
+        #board2exercise {
+          margin-top: -1em;
           --width: 45vw;
               width: var(--width);
               height: var(--width);
@@ -234,25 +233,27 @@
       </style>
       
       
-      <h1 id="schaakzet">SchaakZet</h1>
-      <template id="exerciseSelector">
-      <chess-board id="neutralQuiz" template="ROB2" fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"></chess-board>
+      <h1 id="schaakzet">Schaakstukken en wat ze kunnen doen</h1>
       
-      <div id="buttonsExercise">
-      <button id="tower"><slot name toren></slot></button>
-      <button slot="paard">Paard</button>
-      <button slot="loper">Loper</button>
-      <button slot="koning">Koning</button>
-      <button slot="dame">Dame</button>
-      <button slot="pion">Pion</button>
-      </div>
+      <div id="buttonsExercise" onload="showEXselectors()">
+        <button onclick="toren()">Toren</button>
+        <button onclick="paard()">Paard</button>
+        <button onclick="loper()">Loper</button>
+        <button onclick="koning()">Koning</button>
+        <button onclick="dame()">Dame</button>
+        <button onclick="pion()">Pion</button>
+        </div>
+      <chess-board id="board2exercise" template="ROB2" fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"></chess-board>
+      
+      
 
-    </template>
+    
 
       <template id="EXERCISE1">
         <style>
           @media screen and (min-width: 1024px) {
             #board2 {
+              margin-top: -1em;
               --width: 45vw;
               width: var(--width);
               height: var(--width);
@@ -390,11 +391,9 @@
           </div>
         </div>
       </template>
-      <chess-exerciseSelector>
-        <span slot="toren">Toren</span>
-      </chess-exerciseSelector>
       
-        <chess-exercise id="tower" fen="4R3/8/5B2/K3r3/3Rq3/8/8/8" hidden>
+       
+        <chess-exercise fen="4R3/8/5B2/K3r3/3Rq3/8/8/8">
           <span slot="qPieces">De toren</span>
           <span slot="explanation"
             >"De toren mag zich zo ver verplaatsen als hij maar wil, maar alleen
@@ -425,8 +424,82 @@
             >
           </span>
         </chess-exercise>
+
+      <chess-exercise fen="8/8/3B1N1P/5n1R/8/6Q1/8/8">
+        <span slot="qPieces">Het paard</span>
+        <span slot="explanation"
+          >Paarden verplaatsen zich compleet anders dan de andere stukken. 
+          Zij verplaatsen zich twee vakjes in een bepaalde richting en dan 
+          één vakje in een hoek van 90 graden, alsof het een L-vorm maakt. 
+          Paarden zijn ook de enige stukken die over andere stukken heen 
+          kunnen springen.</span
+        >
+        <span slot="moveWays">De verschillende zetten van het paard</span>
+        <span slot="A">F5 - D6</span>
+        <span slot="B">F5 - F6</span>
+        <span slot="C">F5 - H6</span>
+        <span slot="D">F5 - H5</span>
+        <span slot="E">F5 - G3</span>
+        <span slot="conclusion">
+          <span hidden id="A"
+            >Het zwarte paard slaat de witte loper</span
+          >
+          <span hidden id="B"
+            >Het zwarte paard kan het witte paard niet slaan</span
+          >
+          <span hidden id="C"
+            >Het zwarte paard kan de witte pion slaan maar wordt dan door de witte toren geslagen</span
+          >
+          <span hidden id="D"
+            >Het zwarte paard kan de witte toren niet slaan, 
+            maar de toren kan het zwarte paard wel slaan</span
+          >
+          <span hidden id="E"
+            >Het zwarte paard kan de witte dame slaan</span
+          >
+        </span>
+      </chess-exercise>
+       
+      <chess-exercise fen="8/4Q3/8/3Kb3/5P2/8/8/4r3">
+        <span slot="qPieces">De loper</span>
+        <span slot="explanation"
+          >De loper mag zo ver bewegen als hij wil, maar uitsluitend diagonaal. 
+          Elke loper begint op een bepaalde kleur (licht of donker) en blijft 
+          de hele partij op die kleur. Lopers werken uitstekend samen omdat ze 
+          elkaars zwakheden opheffen.</span
+        >
+        <span slot="moveWays">De verschillende zetten van de loper</span>
+        <span slot="A">E5 - D4</span>
+        <span slot="B">E5 - F4</span>
+        <span slot="C">E5 - C3</span>
+        <span slot="D">E5 - D5</span>
+        <span slot="E">E5 - D6</span>
+        <span slot="conclusion">
+          <span hidden id="A"
+            >De zwarte loper ontdsnapt aan de dame</span
+          >
+          <span hidden id="B"
+            >De zwarte loper wordt door de witte dame en de witte pion bedreigd en 
+            ontsnapt door de witte pion te slaan</span
+          >
+          <span hidden id="C"
+            >De zwarte loper verplaatst zich naar c3 om aan de dame te ontsnappen en 
+            zet samen met de toren de dame onder druk door de toren te dekken</span
+          >
+          <span hidden id="D"
+            >De zwarte loper kan niet door de witte koning geslagen worden omdat 
+            de loper gedekt wordt door de zwarte toren</span
+          >
+          <span hidden id="E"
+            >De zwarte loper loopt gevaar als hij tussen de koning en de dame 
+            geplaatst wordt, de loper kan namelijk door beiden geslagen worden.</span
+          >
+        </span>
+      </chess-exercise>
+
       
-      <chess-exercise id="sete" fen="3Q4/8/1B6/1Rk5/8/8/8" hidden>
+
+      <chess-exercise fen="3Q4/8/1B6/1Rk5/8/8/8">
         <span slot="qPieces">De koning</span>
         <span slot="explanation"
           >De koning is het belangrijkste schaakstuk maar ook een van de
@@ -458,6 +531,75 @@
           <span hidden id="E"
             >Kan wel, omdat de koning dan niet meer schaak staat, maar wit kan
             je dan weer schaak zetten met de dame</span
+          >
+        </span>
+      </chess-exercise>
+
+      <chess-exercise fen="2N1R2K/6Q1/3B4/4q3/8/8/7N/R7">
+        <span slot="qPieces">De dame</span>
+        <span slot="explanation"
+          >De dame is het machtigste stuk. Ze kan in elke richting bewegen - vooruit,
+           achteruit, opzij en diagonaal - zo ver als mogelijk zolang ze niet door 
+           haar eigen stukken wordt belemmerd. En, zoals bij alle stukken, als de dame 
+          een stuk van de tegenstander slaat, is haar zet voorbij.</span
+        >
+        <span slot="moveWays">De verschillende zetten van de dame</span>
+        <span slot="A">E5 - D6</span>
+        <span slot="B">E5 - E8</span>
+        <span slot="C">E5 - G7</span>
+        <span slot="D">E5 - H2</span>
+        <span slot="E">E5 - A1</span>
+        <span slot="conclusion">
+          <span hidden id="A"
+            >De zwarte dame zal de witte loper niet slaan omdat de loper gedekt wordt door het paard</span
+          >
+          <span hidden id="B"
+            >De zwarte dame slaat de witte toren en zet de witte koning schaak</span
+          >
+          <span hidden id="C"
+            >De zwarte dame zal de witte dame niet slaan omdat de witte koning de zwarte dame dan zal slaan</span
+          >
+          <span hidden id="D"
+            >De zwarte dame kan het witte paard slaan, maar wordt dan wel ook zelf door de witte loper geslagen</span
+          >
+          <span hidden id="E"
+            >De zwarte dame zal de witte toren niet slaan, omdat de zwarte dame dan door de witte dame geslagen wordt</span
+          >
+        </span>
+      </chess-exercise>
+
+      <chess-exercise fen="4R3/2B5/5r2/3bp2R/3P4/8/4p3/8">
+        <span slot="qPieces">De pion</span>
+        <span slot="explanation"
+          >Pionnen zijn ongewoon, omdat ze bewegen en slaan op verschillende manieren. 
+          Ze bewegen alleen vooruit, maar slaan diagonaal. Pionnen kunnen zich per zet 
+          maar één vakje vooruitbewegen, met uitzondering van de eerste keer dat ze bewegen: 
+          dan kunnen ze twee vakjes vooruit in één zet. Pionnen kunnen alleen een stuk slaan 
+          dat één vakje diagonaal voor hen staat. Ze kunnen nooit achteruitslaan. Als een ander 
+          stuk direct voor de pion staat, kan de pion niet meer vooruitbewegen.</span
+        >
+        <span slot="moveWays">De verschillende zetten van de pion</span>
+        <span slot="A">E5 - C7</span>
+        <span slot="B">E5 - E8</span>
+        <span slot="C">E5 - H5</span>
+        <span slot="D">E5 - E2</span>
+        <span slot="E">E5 - D4</span>
+        <span slot="conclusion">
+          <span hidden id="A"
+            >De zwarte pion wordt geslagen door de witte loper</span
+          >
+          <span hidden id="B"
+            >De zwarte pion kan van de aanval door de witte toren gered worden door 
+            de zwarte loper of de zwarte toren er tussen te zetten</span
+          >
+          <span hidden id="C"
+            >De zwarte pion wordt door de witte toren geslagen</span
+          >
+          <span hidden id="D"
+            >De zwarte pionnen kunnen elkaar niet passeren</span
+          >
+          <span hidden id="E"
+            >De zwarte pion slaat de witte pion. Als wit aan de beurt is slaat de witte pion de zwarte pion</span
           >
         </span>
       </chess-exercise>
