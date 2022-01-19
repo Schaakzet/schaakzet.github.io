@@ -6,7 +6,8 @@
       console.clear();
     </script>
     <script src="./console.js"></script>
-    <script src="https://schaakzet.github.io/webcomponents/schaakzet.js"></script>
+    <script src="./webcomponents/schaakzet.js"></script>
+
     <style>
       body {
         font: 16px Arial;
@@ -19,39 +20,32 @@
 
     <main>
       <label for="enterFEN">enter FEN:</label><br />
-      <input id="fen" type="text" onkeyup="setFEN(this.value)" size="100" />
-      <chess-board fen="BBBB"></chess-board>
-      <div>
-        Welk bord?
-        <button onclick="setFEN('r1b1k1nr/p2p1pNp/n4B2/1p1NP2P/6P1/3P1Q2/P1P1K3/q5b1')">Bord1</button>
-      </div>
-      <div>
-        Welk zet ga jij doen?
-          <details>
-            <summary>E2 - E4</summary>
-            Goeie zet!
-          </details>
-      </div>
+      <input id="fen" type="text" size="100" />
+      <button onclick="setFEN(fen.value)">Set FEN</button><br />
+      <button onclick="setStart()">Startpositie</button><br />
+      <chess-board
+        id="schaak1"
+        fen="r1b1k1nr/p2p1pNp/1N1n1B2/1p2P2P/6P1/3P1Q2/P1P1K3/q5b1"
+        player="white"
+      ></chess-board>
     </main>
-    <footer>
-      <h2>
-        Roads-Technology Schaakzet -
-        <a href="https://github.com/Schaakzet/schaakzet.github.io"
-          >https://github.com/Schaakzet/schaakzet.github.io</a
-        >
-      </h2>
-    </footer>
-
+    <script>
+      //reset to startposition
+      function setStart() {
+        let chessboard = document.querySelector("chess-board");
+        chessboard.clear();
+        setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+      }
+    </script>
     <script>
       // make sure our dev code executes after all chess boards are 100% created
       window.addEventListener("load", () => {
         // define a GLOBAL setFEN function so all inputs can call this function
         window.setFEN = function (fenString) {
-          console.log("setFEN", fenString);
           document.querySelector("chess-board").fen = fenString;
-        }
-        let chessboard = document.querySelector("chess-board");
-        chessboard.showmoves("a1");
+        };
+        // let chessboard = document.querySelector("chess-board");
+        // chessboard.showmoves("a1");
       });
     </script>
   </body>
