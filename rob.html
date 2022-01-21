@@ -1,9 +1,7 @@
 <html>
   <head id="SchaakZet">
     <title>RT SchaakZet</title>
-    <script>
-      console.clear();
-    </script>
+    
     <script src="./console.js"></script>
     <script src="./webcomponents/schaakzet.js"></script>
     <script src="./webcomponents/chess-exercises.js"></script>
@@ -234,12 +232,12 @@
       <h1 id="schaakzet">Schaakstukken en wat ze kunnen doen</h1>
       
       <div id="buttonsExercise" onload="showEXselectors()">
-        <button onclick="toren()">Toren</button>
-        <button onclick="paard()">Paard</button>
-        <button onclick="loper()">Loper</button>
-        <button onclick="koning()">Koning</button>
-        <button onclick="dame()">Dame</button>
-        <button onclick="pion()">Pion</button>
+        <button onclick="hideAllExercises_and_Show_One(0)">Toren</button>
+        <button onclick="hideAllExercises_and_Show_One(1)">Paard</button>
+        <button onclick="hideAllExercises_and_Show_One(2)">Loper</button>
+        <button onclick="hideAllExercises_and_Show_One(3)">Koning</button>
+        <button onclick="hideAllExercises_and_Show_One(4)">Dame</button>
+        <button onclick="hideAllExercises_and_Show_One(5)">Pion</button>
       </div>
       <chess-board
         id="board2exercise"
