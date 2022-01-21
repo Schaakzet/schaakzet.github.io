@@ -3,18 +3,12 @@ function showEXselectors() {
   document.getElementById("buttonsExercise").style.visibility = "visible";
 }
 
-// function resetQuize() {
 
-//   document.getElementById("board2").setfen= "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-// }
 
-// verschillende exercises aanroepen met de zelfde functie door de verschillende exercises 
-// aan een parameter te koppelen. En de functie met de verschillende knoppen en de desbetreffende 
-// parameter(exercise) aan te roepen
-
-function hideAllExercises_and_Show_One(index){
+function hideAllExercises_and_Show_One(a, b, c, d, e, f){
 
   const quizNodeList = document.querySelectorAll("chess-exercise");
+  document.getElementById("board2exercise").style.display = "none";
 
   quizNodeList.forEach(
     function (currentValue, currentIndex) {
@@ -23,53 +17,16 @@ function hideAllExercises_and_Show_One(index){
     },
 
   );
-  quizNodeList[index].hidden(false);
-  
-}
-
-function toren() {
-  
-  hideAllExercises_and_Show_One(0);
-  
-
-  document.getElementById("board2exercise").style.display = "none";
-  
-  return 0;
+ quizNodeList[a].hidden(false);
+ quizNodeList[b].hidden(false);
+ quizNodeList[c].hidden(false);
+ quizNodeList[d].hidden(false);
+ quizNodeList[e].hidden(false);
+ quizNodeList[f].hidden(false);
 }
 
 
 
-function paard() {
-  hideAllExercises_and_Show_One(1);
-
-  document.getElementById("board2exercise").style.display = "none";
-  return 1;
-}
-
-function loper() {
-  hideAllExercises_and_Show_One(2);
-
-  document.getElementById("board2exercise").style.display = "none";
-  return 2;
-}
-
-function koning() {
-  hideAllExercises_and_Show_One(3);
-  document.getElementById("board2exercise").style.display = "none";
-  return 3;
-}
-
-function dame() {
-  hideAllExercises_and_Show_One(4);
-  document.getElementById("board2exercise").style.display = "none";
-  return 4;
-}
-
-function pion() {
-  hideAllExercises_and_Show_One(5);
-  document.getElementById("board2exercise").style.display = "none";
-  return 5;
-}
 customElements.define(
   "chess-exercise",
   class extends HTMLElement {
@@ -91,15 +48,20 @@ customElements.define(
 
     connectedCallback() {
       console.error("connected");
+      
       this.hidden(true);
 
       this.querySelector(`[id]`);
-
+      
       setTimeout(() => {
+        console.error("connected?")
         this.setQuiz({});
-        console.error(this.shadowRoot.querySelector(`#conclusion`));
 
-        this.getElement("#buttons").onclick = (event) => {
+        
+        console.error(this.shadowRoot.querySelector(`#conclusion`));
+        
+
+        this.getElementById("buttons").onclick = (event) => {
           console.error(event.target.getAttribute("slot")); // dit is jouw input
           
           let letter = event.target.getAttribute("slot"); // bepaal de letter
@@ -109,16 +71,18 @@ customElements.define(
           this.querySelector(`[id="D"]`).setAttribute("hidden", "true");
           this.querySelector(`[id="E"]`).setAttribute("hidden", "true");
           this.querySelector("#" + letter).removeAttribute("hidden");
-
-          console.warn("is de letter er?", letter);
+          
+          console.warn(letter);
         };
       });
     }
 
     setQuiz() {
+      
       let chessboard = this.getElement("#board2");
       chessboard.clear();
       chessboard.fen = this.getAttribute("fen");
+      console.error(chessboard);
     }
   }
 );
