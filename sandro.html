@@ -6,7 +6,7 @@
       console.clear();
     </script>
     <script src="./console.js"></script>
-    <script src="./webcomponents/v15.js"></script>
+    <script src="./webcomponents/v16.js"></script>
 
     <style>
       body {
@@ -25,8 +25,8 @@
       <button onclick="setStart()">Startpositie</button><br />
       <chess-board
         id="schaak1"
-        fen="r1b1k1nr/p2p1pNp/1N1n1B2/1p2P2P/6P1/3P1Q2/P1P1K3/q5b1"
-        player="white"
+        fen="rn2kbnr/ppp2ppp/3pbq2/4p3/4P3/2NPBQ2/PPP2PPP/R3KBNR"
+        player="wit"
       ></chess-board>
     </main>
     <script>
@@ -44,8 +44,6 @@
         window.setFEN = function (fenString) {
           document.querySelector("chess-board").fen = fenString;
         };
-        // let chessboard = document.querySelector("chess-board");
-        // chessboard.showmoves("a1");
       });
     </script>
   </body>
