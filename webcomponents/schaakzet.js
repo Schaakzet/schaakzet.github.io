@@ -37,11 +37,11 @@ const chessboardHTML = `
 <style id="chessboard_definition">
 chess-board[player="wit"] chess-square[piece*="zwart"]:not([state="x"]){
   pointer-events:none;
-  background:blue;
+  
 }
 chess-board[player="zwart"] chess-square[piece*="wit"]:not([state="x"]){
   pointer-events:none;
-  background:green;
+  
 }
 chess-board {
   --width: 80vw;
