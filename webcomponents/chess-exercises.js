@@ -34,7 +34,7 @@ customElements.define(
       }
     }
 
-    connectedCallback(x) {
+    connectedCallback() {
       console.error("connected");
 
       this.hidden(true);
@@ -42,34 +42,26 @@ customElements.define(
       this.querySelector(`[id]`);
 
       setTimeout(() => {
-        console.error("connected?");
+        
         this.setQuiz({});
 
         console.error(this.shadowRoot.querySelector("#buttons"));
 
         this.shadowRoot.getElementById("buttons").onclick = (event) => {
-          console.error(event.target.getAttribute("slot")); // dit is jouw input
-
           const conclusionNodeList = this.querySelectorAll(`[id]`);
-          console.error("is this id", conclusionNodeList);
+         
           conclusionNodeList.forEach(function (conclusion, currentIndex) {
             console.warn("concIndex", currentIndex, conclusion);
-            
-            conclusion.onclick = (evt) => {
-              console.error("CONCLUSION!",evt.target);
-            };
+            conclusion.setAttribute("hidden", "true");
           });
 
           let letter = event.target.getAttribute("slot"); // bepaal de letter
 
-          console.warn(letter);
           
-          let x = this.querySelector("#" + letter).removeAttribute("hidden");
 
-          conclusionNodeList[x];
+          this.querySelector("#" + letter).removeAttribute("hidden");
 
           
-        
         };
       });
     }
