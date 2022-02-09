@@ -16,8 +16,6 @@
   </head>
 
   <body>
-    <header></header>
-
     <main>
       <label for="enterFEN">enter FEN:</label><br />
       <input id="fen" type="text" size="100" />
@@ -25,9 +23,10 @@
       <button onclick="setStart()">Startpositie</button><br />
       <chess-board
         id="schaak1"
-        fen="r1b1k1nr/p2p1pNp/1N1n1B2/1p2P2P/6P1/3P1Q2/P1P1K3/q5b1"
+        fen="rn2kbnr/ppp2ppp/3pbq2/4p3/4P3/2NPBQ2/PPP2PPP/R3KBNR"
         player="white"
       ></chess-board>
+      <div id="message"></div>
     </main>
     <script>
       //reset to startposition

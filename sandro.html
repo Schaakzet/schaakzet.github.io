@@ -6,29 +6,29 @@
       console.clear();
     </script>
     <script src="./console.js"></script>
-    <script src="./webcomponents/v17.js"></script>
+    <script src="./webcomponents/v18.js"></script>
 
     <style>
       body {
-        font: 16px Arial;
+        font: 14px Arial;
       }
     </style>
   </head>
 
   <body>
-    <header></header>
-
     <main>
-      <label for="enterFEN">enter FEN:</label><br />
-      <input id="fen" type="text" size="100" />
-      <button onclick="setFEN(fen.value)">Set FEN</button><br />
-      <button onclick="setStart()">Startpositie</button><br />
-      <chess-board
-        id="schaak1"
-        fen="rn2kbnr/ppp2ppp/3pbq2/4p3/4P3/2NPBQ2/PPP2PPP/R3KBNR"
-        player="zwart"
-      ></chess-board>
-      <div id="message"></div>
+      <div class="schaakbord">
+        <label for="enterFEN">enter FEN:</label><br />
+        <input id="fen" type="text" size="100" />
+        <button onclick="setFEN(fen.value)">Set FEN</button><br />
+        <button onclick="setStart()">Startpositie</button><br />
+        <chess-board
+          id="schaak1"
+          fen="rn2kbnr/ppp2ppp/3pbq2/4p3/4P3/2NPBQ2/PPP2PPP/R3KBNR"
+          player="zwart"
+        ></chess-board>
+        <div id="message"></div>
+      </div>
     </main>
     <script>
       //reset to startposition
