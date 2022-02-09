@@ -1,4 +1,4 @@
-// Get a queen or whatever on the other side
+// V18.js - Check, checkmate and stalemate
 
 class ChessBaseElement extends HTMLElement {
   docs(obj) {
@@ -515,8 +515,6 @@ customElements.define(
             chessBoard.movePiece(chessBoard.pieceClicked, at);
             chessBoard.reduceCastlingArray();
             chessBoard.castlingMove();
-            // chessBoard.clearMoves();
-            console.error("pawn end", this.piece, this.piece.isPawnAtEnd());
             if (this.piece.isPawnAtEnd()) {
               chessBoard.takePiece().then((chosenPiece) => {
                 console.log("chosenPiece:", chosenPiece, this);
@@ -768,6 +766,7 @@ customElements.define(
     // ======================================================== <chess-board>.changePlayer
     changePlayer(piece = this.pieceClicked) {
       this.calculateBoard();
+      this.isInCheck();
       this.setAttribute(
         "player",
         this.pieceClicked.color == "wit" ? "zwart" : "wit"
@@ -815,6 +814,25 @@ customElements.define(
       this.lastMove.enPassantPosition = this.enPassantPosition(this.lastMove); // Was er een en passant square van een pion?
       // console.warn(this.moves);
       return toSquare.appendChild(chessPiece);
+    }
+    // ======================================================== <chess-board>.clearMoves
+    clearMoves() {
+      for (let element of this.squares) {
+        let chessSquare = this.getSquare(element);
+        chessSquare.highlight(false);
+      }
+    }
+    // ======================================================== <chess-board>.calculateBoard
+    // calculateBoard wordt aangeroepen in einde Click-event.
+    calculateBoard() {
+      for (const square of this.squares)
+        this.getSquare(square).clearAttributes();
+      for (const square of this.squares) {
+        let piece = this.getPiece(square);
+        if (piece) {
+          piece.potentialMoves();
+        }
+      }
     }
     // ======================================================== <chess-board>.lastPawnMove
     enPassantPosition(lastMove) {
@@ -945,39 +963,26 @@ customElements.define(
         window.addEventListener(eventName, choosePiece);
       });
     }
-    // ======================================================== <chess-board>.clearMoves
-    clearMoves() {
-      for (let element of this.squares) {
-        let chessSquare = this.getSquare(element);
-        chessSquare.highlight(false);
-      }
-    }
-    // ======================================================== <chess-board>.calculateBoard
-    // calculateBoard wordt aangeroepen in einde Click-event.
-    calculateBoard() {
-      for (const square of this.squares)
-        this.getSquare(square).clearAttributes();
+    // ======================================================== <chess-board>.findPiece
+    findPiece(piece) {
       for (const square of this.squares) {
-        let piece = this.getPiece(square);
-        if (piece) {
-          piece.potentialMoves();
+        const specificPiece = this.getSquare(square).piece;
+        if (specificPiece && specificPiece.is == piece) {
+          return this.getSquare(square);
         }
       }
     }
     // ======================================================== <chess-board>.check
-    // HIER ZIJN WE MEE BEZIG!!!
     isInCheck() {
-      for (let square of this.squares) {
-        if (this.getPiece(square)) {
-          if (
-            this.getPiece(square) // <chess-piece>
-              .is("wit-koning")
-              .endsWith("koning") // Boolean
-            //.hasAttribute("underattack")
-          ) {
-            console.log("koning under attack gevonden");
-          }
-        }
+      const whiteKingSquare = this.findPiece("wit-koning");
+      const blackKingSquare = this.findPiece("zwart-koning");
+      if (whiteKingSquare.getAttribute("attackedBy")) {
+        console.log("Witte koning staat schaak door ", whiteKingSquare.getAttribute("attackedBy"));
+        const whiteInCheck = true;
+      }
+      if (blackKingSquare.getAttribute("attackedBy")) {
+        console.log("Zwarte koning staat schaak door ", blackKingSquare.getAttribute("attackedBy"));
+        const blackInCheck = true;
       }
     }
     // ======================================================== <chess-board>.check-mate
