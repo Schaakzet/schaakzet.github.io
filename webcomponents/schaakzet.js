@@ -1,6 +1,7 @@
-//console.log("execute webcomponents.js");
+// V18.js - Check, checkmate and stalemate
 
 class ChessBaseElement extends HTMLElement {
+  // ======================================================== ChessBaseElement.movePiece
   docs(obj) {
     if (obj) {
       let proto = Reflect.getPrototypeOf(obj);
@@ -8,11 +9,7 @@ class ChessBaseElement extends HTMLElement {
       let props = [];
       function log(name, arr) {
         arr = arr.filter((x) => x != "constructor");
-        console.warn(
-          `%c ${obj.nodeName} ${name}:`,
-          "background:gold",
-          arr.join(", ")
-        );
+        console.warn(`%c ${obj.nodeName} ${name}:`, "background:gold", arr.join(", "));
       }
       Reflect.ownKeys(proto).forEach((key) => {
         try {
@@ -32,7 +29,7 @@ const __PROTECT_PIECE__ = "p";
 const __ATTACK_PIECE__ = "x";
 const __EMPTY_SQUARE__ = "e";
 
-const chessboardHTML = `
+const chessboardHTML = /*html*/ `
 <style id="chessboard_definition">
 chess-board[player="wit"] chess-square[piece*="zwart"]:not([state="x"]){
   pointer-events:none;
@@ -43,7 +40,7 @@ chess-board[player="zwart"] chess-square[piece*="wit"]:not([state="x"]){
   background: lightgreen;
 }
 chess-board {
-  --width: 80vw;
+  --width: 100%;
   width: var(--width);
   height: var(--width);
   /* display <chess-board> as blocks next to eachother */
@@ -125,17 +122,11 @@ chess-square:after {
 <div id="chessboard_pieces" class="chessboard_layer"></div>
 `;
 
-// moves for all pieces
-const __HORSEMOVES__ = [
-  [[2, 1]],
-  [[2, -1]],
-  [[-2, 1]],
-  [[-2, -1]],
-  [[1, 2]],
-  [[1, -2]],
-  [[-1, 2]],
-  [[-1, -2]],
-];
+/*************************************************************************
+ moves for all pieces
+ */
+//
+const __HORSEMOVES__ = [[[2, 1]], [[2, -1]], [[-2, 1]], [[-2, -1]], [[1, 2]], [[1, -2]], [[-1, 2]], [[-1, -2]]];
 const __BISHOPMOVES__ = [
   [
     [1, 1],
@@ -213,16 +204,7 @@ const __ROOKMOVES__ = [
   ],
 ];
 const __QUEENMOVES__ = [...__BISHOPMOVES__, ...__ROOKMOVES__];
-const __KINGMOVES__ = [
-  [[0, 1]],
-  [[1, 1]],
-  [[1, 0]],
-  [[1, -1]],
-  [[0, -1]],
-  [[-1, -1]],
-  [[-1, 0]],
-  [[-1, 1]],
-];
+const __KINGMOVES__ = [[[0, 1]], [[1, 1]], [[1, 0]], [[1, -1]], [[0, -1]], [[-1, -1]], [[-1, 0]], [[-1, 1]]];
 
 /*************************************************************************
  <chess-piece is="wit-paard" at="D5"> Web Component
@@ -301,10 +283,7 @@ customElements.define(
         ];
       } else if (this.is === "wit-pion") {
         pieceMoves = [[[0, 1]]];
-      } else if (
-        this.is === "zwart-pion" &&
-        this.chessboard.ranks1to8.indexOf(this.at[1]) === 6
-      ) {
+      } else if (this.is === "zwart-pion" && this.chessboard.ranks1to8.indexOf(this.at[1]) === 6) {
         pieceMoves = [
           [
             [0, -1],
@@ -320,9 +299,15 @@ customElements.define(
     possibleMove = (x_move = 0, y_move = 0) => {
       const files = this.chessboard.files;
       const ranks = this.chessboard.ranks1to8;
+
       const fromSquare = this.at;
       const x = files.indexOf(fromSquare[0]);
       const y = ranks.indexOf(fromSquare[1]);
+      //!! Shorter code:
+      // const [file, rank] = this.at;
+      // const x = files.indexOf(file);
+      // const y = ranks.indexOf(rank);
+
       const toFile = files[x + x_move];
       const toRank = ranks[y + y_move];
       // both need to be defined
@@ -423,22 +408,14 @@ customElements.define(
         const shortBlackTower = this.chessboard.getPiece("h8");
 
         if (this.chessboard.getAttribute("player") == "wit") {
-          if (
-            this.chessboard.castlingArray.includes("Q") &&
-            longWhiteTower.moves &&
-            longWhiteTower.moves.includes("d1")
-          ) {
+          if (this.chessboard.castlingArray.includes("Q") && longWhiteTower.moves && longWhiteTower.moves.includes("d1")) {
             if (this.chessboard.castlingInterrupt("wit", -3)) {
               const squareName = "c1";
               this.square.squareElement(squareName).highlight(__EMPTY_SQUARE__);
               potentialMovesArray.push(squareName);
             }
           }
-          if (
-            this.chessboard.castlingArray.includes("K") &&
-            shortWhiteTower.moves &&
-            shortWhiteTower.moves.includes("f1")
-          ) {
+          if (this.chessboard.castlingArray.includes("K") && shortWhiteTower.moves && shortWhiteTower.moves.includes("f1")) {
             if (this.chessboard.castlingInterrupt("wit", 2)) {
               const squareName = "g1";
               this.square.squareElement(squareName).highlight(__EMPTY_SQUARE__);
@@ -446,22 +423,14 @@ customElements.define(
             }
           }
         } else if (this.chessboard.getAttribute("player") == "zwart") {
-          if (
-            this.chessboard.castlingArray.includes("q") &&
-            longBlackTower.moves &&
-            longBlackTower.moves.includes("d8")
-          ) {
+          if (this.chessboard.castlingArray.includes("q") && longBlackTower.moves && longBlackTower.moves.includes("d8")) {
             if (this.chessboard.castlingInterrupt("zwart", -3)) {
               const squareName = "c8";
               this.square.squareElement(squareName).highlight(__EMPTY_SQUARE__);
               potentialMovesArray.push(squareName);
             }
           }
-          if (
-            this.chessboard.castlingArray.includes("k") &&
-            shortBlackTower.moves &&
-            shortBlackTower.moves.includes("f8")
-          ) {
+          if (this.chessboard.castlingArray.includes("k") && shortBlackTower.moves && shortBlackTower.moves.includes("f8")) {
             if (this.chessboard.castlingInterrupt("zwart", 2)) {
               const squareName = "g8";
               this.square.squareElement(squareName).highlight(__EMPTY_SQUARE__);
@@ -560,16 +529,12 @@ customElements.define(
     }
     // ======================================================== <chess-square>.attackedBy
     attackedBy(chessPiece) {
-      this.attackedArray.push(
-        this.chessboard.FENconversion(chessPiece.is) + chessPiece.at
-      );
+      this.attackedArray.push(this.chessboard.FENconversion(chessPiece.is) + chessPiece.at);
       this.setAttribute("attackedby", this.attackedArray.join(","));
     }
     // ======================================================== <chess-square>.attackedBy
     defendedBy(chessPiece) {
-      this.defendedArray.push(
-        this.chessboard.FENconversion(chessPiece.is) + chessPiece.at
-      );
+      this.defendedArray.push(this.chessboard.FENconversion(chessPiece.is) + chessPiece.at);
       this.setAttribute("defendedby", this.defendedArray.join(","));
     }
     // ======================================================== <chess-square>.translate
@@ -690,7 +655,7 @@ customElements.define(
       if (templ) {
         this.append(templ.content.cloneNode(true));
       } else {
-        this.innerHTML = chessboardHTML;
+        this.innerHTML = chessboardSTYLES;
       }
 
       // instead of 'const' store the variables on the <chess-board> so ALL code can use it (in 2022)
@@ -727,8 +692,7 @@ customElements.define(
     getSquare(square) {
       // square can be "c5" OR a reference to <chess-square at="c5">
       // return reference to <chess-square at=" [position] ">
-      if (typeof square === "string")
-        return this.queryBoard(`[at="${square}"]`);
+      if (typeof square === "string") return this.queryBoard(`[at="${square}"]`);
       else return square;
     }
     // ======================================================== <chess-board>.hasSquare
@@ -766,10 +730,8 @@ customElements.define(
     // ======================================================== <chess-board>.changePlayer
     changePlayer(piece = this.pieceClicked) {
       this.calculateBoard();
-      this.setAttribute(
-        "player",
-        this.pieceClicked.color == "wit" ? "zwart" : "wit"
-      ); // Naar FEN
+      this.isInCheck();
+      this.setAttribute("player", this.pieceClicked.color == "wit" ? "zwart" : "wit"); // Naar FEN
       delete this.pieceClicked;
       this.clearMoves();
     }
@@ -797,10 +759,7 @@ customElements.define(
       }
       toSquare.setAttribute("piece", pieceName);
       if (this.lastMove) {
-        if (
-          toSquare.at == this.lastMove.enPassantPosition &&
-          pieceName.includes("pion")
-        ) {
+        if (toSquare.at == this.lastMove.enPassantPosition && pieceName.includes("pion")) {
           console.log("We had En Passant. Clear piece.");
           this.clearSquare(this.lastMove.toSquare);
         }
@@ -814,15 +773,30 @@ customElements.define(
       // console.warn(this.moves);
       return toSquare.appendChild(chessPiece);
     }
+    // ======================================================== <chess-board>.clearMoves
+    clearMoves() {
+      for (let element of this.squares) {
+        let chessSquare = this.getSquare(element);
+        chessSquare.highlight(false);
+      }
+    }
+    // ======================================================== <chess-board>.calculateBoard
+    // calculateBoard wordt aangeroepen in einde Click-event.
+    calculateBoard() {
+      for (const square of this.squares) this.getSquare(square).clearAttributes();
+      for (const square of this.squares) {
+        let piece = this.getPiece(square);
+        if (piece) {
+          piece.potentialMoves();
+        }
+      }
+    }
     // ======================================================== <chess-board>.lastPawnMove
     enPassantPosition(lastMove) {
       const piece = lastMove.chessPiece.is;
       const fromSquare = lastMove.fromSquare;
       const toSquare = lastMove.toSquare;
-      if (
-        piece.includes("pion") &&
-        Math.abs(toSquare.rank - fromSquare.rank) == 2
-      ) {
+      if (piece.includes("pion") && Math.abs(toSquare.rank - fromSquare.rank) == 2) {
         let position = "";
         if (piece.includes("wit")) position = fromSquare.file + "3";
         else position = fromSquare.file + "6";
@@ -879,30 +853,20 @@ customElements.define(
       } else if (lastReduceMove == "h8") {
         this.castlingArray = this.castlingArray.filter((item) => item !== "k");
       } else if (lastReduceMove == "e1") {
-        this.castlingArray = this.castlingArray.filter(
-          (item) => item !== "Q" && item !== "K"
-        );
+        this.castlingArray = this.castlingArray.filter((item) => item !== "Q" && item !== "K");
       } else if (lastReduceMove == "e8") {
-        this.castlingArray = this.castlingArray.filter(
-          (item) => item !== "q" && item !== "k"
-        );
+        this.castlingArray = this.castlingArray.filter((item) => item !== "q" && item !== "k");
       }
     }
     // ======================================================== <chess-board>.castlingMove
     castlingMove() {
-      if (
-        this.lastMove.chessPiece.is.endsWith("koning") &&
-        this.lastMove.fromSquare.at == "e1"
-      ) {
+      if (this.lastMove.chessPiece.is.endsWith("koning") && this.lastMove.fromSquare.at == "e1") {
         if (this.lastMove.toSquare.at == "c1") {
           this.movePiece(this.getPiece(this.getSquare("a1")), "d1");
         } else if (this.lastMove.toSquare.at == "g1") {
           this.movePiece(this.getPiece(this.getSquare("h1")), "f1");
         }
-      } else if (
-        this.lastMove.chessPiece.is.endsWith("koning") &&
-        this.lastMove.fromSquare.at == "e8"
-      ) {
+      } else if (this.lastMove.chessPiece.is.endsWith("koning") && this.lastMove.fromSquare.at == "e8") {
         if (this.lastMove.toSquare.at == "c8") {
           this.movePiece(this.getPiece(this.getSquare("a8")), "d8");
         } else if (this.lastMove.toSquare.at == "g8") {
@@ -913,8 +877,7 @@ customElements.define(
 
     // ======================================================== <chess-board>.takePiece
     takePiece() {
-      document.getElementById("message").innerText =
-        "Kies een stuk (toets letter in): Q, N, R, B.";
+      document.getElementById("message").innerText = "Kies een stuk (toets letter in): Q, N, R, B.";
       const thisPawn = this.lastMove.chessPiece;
       const color = thisPawn.color;
       const eventName = "keydown";
@@ -943,39 +906,26 @@ customElements.define(
         window.addEventListener(eventName, choosePiece);
       });
     }
-    // ======================================================== <chess-board>.clearMoves
-    clearMoves() {
-      for (let element of this.squares) {
-        let chessSquare = this.getSquare(element);
-        chessSquare.highlight(false);
-      }
-    }
-    // ======================================================== <chess-board>.calculateBoard
-    // calculateBoard wordt aangeroepen in einde Click-event.
-    calculateBoard() {
-      for (const square of this.squares)
-        this.getSquare(square).clearAttributes();
+    // ======================================================== <chess-board>.findPiece
+    findPiece(piece) {
       for (const square of this.squares) {
-        let piece = this.getPiece(square);
-        if (piece) {
-          piece.potentialMoves();
+        const specificPiece = this.getSquare(square).piece;
+        if (specificPiece && specificPiece.is == piece) {
+          return this.getSquare(square);
         }
       }
     }
     // ======================================================== <chess-board>.check
-    // HIER ZIJN WE MEE BEZIG!!!
     isInCheck() {
-      for (let square of this.squares) {
-        if (this.getPiece(square)) {
-          if (
-            this.getPiece(square) // <chess-piece>
-              .is("wit-koning")
-              .endsWith("koning") // Boolean
-            //.hasAttribute("underattack")
-          ) {
-            console.log("koning under attack gevonden");
-          }
-        }
+      const whiteKingSquare = this.findPiece("wit-koning");
+      const blackKingSquare = this.findPiece("zwart-koning");
+      if (whiteKingSquare.getAttribute("attackedBy")) {
+        console.log("Witte koning staat schaak door ", whiteKingSquare.getAttribute("attackedBy"));
+        const whiteInCheck = true;
+      }
+      if (blackKingSquare.getAttribute("attackedBy")) {
+        console.log("Zwarte koning staat schaak door ", blackKingSquare.getAttribute("attackedBy"));
+        const blackInCheck = true;
       }
     }
     // ======================================================== <chess-board>.check-mate
@@ -993,14 +943,12 @@ customElements.define(
         this._FENConversionMap = new Map(); // see MDN documentation
         let FENletters = "RNBQKPrnbqkp".split(""); // create an array of letters
         ["wit", "zwart"].map((color) =>
-          ["toren", "paard", "loper", "koningin", "koning", "pion"].map(
-            (name) => {
-              let piece = color + "-" + name;
-              let letter = FENletters.shift(); // remove first letter from array
-              this._FENConversionMap.set(piece, letter);
-              this._FENConversionMap.set(letter, piece);
-            }
-          )
+          ["toren", "paard", "loper", "koningin", "koning", "pion"].map((name) => {
+            let piece = color + "-" + name;
+            let letter = FENletters.shift(); // remove first letter from array
+            this._FENConversionMap.set(piece, letter);
+            this._FENConversionMap.set(letter, piece);
+          })
         );
       }
       // return R or wit-toren
