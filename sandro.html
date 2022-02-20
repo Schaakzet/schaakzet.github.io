@@ -1,19 +1,12 @@
 <html>
-
-<head id="SchaakZet">
-  <title>RT SchaakZet</title>
-  <script>
-    // clear console so no-one gets confused by previous results
-    console.clear();
-  </script>
-  <script src="./console.js"></script>
+<head>
+  <script src="./webcomponents/chess-rt-head.js"></script>
   <script src="./webcomponents/v18.js"></script>
-  <link href="chessgame.css" rel="stylesheet">
 </head>
 
 <body>
   <main>
-    <h1>SchaakZet Development : Sandro</h1>
+    <h1-chess></h1-chess>
     <label for="enterFEN">enter FEN:</label><br />
     <input id="fen" type="text" size="100" />
     <button onclick="setFEN(fen.value)">Set FEN</button><br />
@@ -40,7 +33,7 @@
     // make sure our dev code executes after all chess boards are 100% created
     window.addEventListener("load", () => {
       let chessboard = document.querySelector("chess-board");
-      //chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
+      chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
     });
   </script>
 </body>

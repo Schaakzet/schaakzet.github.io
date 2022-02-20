@@ -1,26 +1,12 @@
 <html>
-
-<head id="SchaakZet">
-  <title>RT SchaakZet</title>
-  <script>
-    // clear console so no-one gets confused by previous results
-    console.clear();
-  </script>
-  <script src="./console.js"></script>
+<head>
+  <script src="./webcomponents/chess-rt-head.js"></script>
   <script src="./webcomponents/schaakzet.js"></script>
-
-  <style>
-    schaakzet-teams>div {
-      font-size: 2em;
-      display: grid;
-      grid-template-columns: 300px 600px 1fr 1fr 1fr;
-    }
-  </style>
 </head>
 
 <body>
   <main>
-    <h1>Roads Technology SchaakZet Development</h1>
+    <h1-chess></h1-chess>
     <schaakzet-teams></schaakzet-teams>
   </main>
   <script>

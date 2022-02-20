@@ -503,7 +503,7 @@
           if (_squareElement) {
             // Test of we binnen het bord zijn.
             if (_squareElement.piece) {
-              if (_squareElement.piece.sameColor(piececolor)) {
+              if (_squareElement.piece.sameColorAsPiece(piececolor)) {
                 _squareElement.highlight(__ATTACK_PIECE__); // todo: move to .attackedBy() method
                 _squareElement.attackedBy(this);
                 _potentialMovesArray.push(_squareName);
@@ -760,7 +760,7 @@
             chessboard.capturedWhitePieces.push(pieceName);
             console.log("Captured White Pieces:", chessboard.capturedWhitePieces);
           } else {
-            chessboard.capturedBlackPieces.push(piecename);
+            chessboard.capturedBlackPieces.push(pieceName);
             console.log("Captured Black Pieces:", chessboard.capturedBlackPieces);
           }
           this.clear();
@@ -885,7 +885,6 @@
         this.queryBoard("#chessboard_pieces").innerHTML = userHTMLpieces;
 
         this.labels = this.hasAttribute("labels");
-        console.log(`created <chess-board>`, this.id);
       }
       // ======================================================== <chess-board>.getSquare
       getSquare(square) {
@@ -1249,7 +1248,7 @@
               }
             });
           }
-          document.querySelector("#fen").value = fenString;
+          if (document.querySelector("#fen")) document.querySelector("#fen").value = fenString;
         }
         // this.calculateBoard(); breaks code
       } // set fen

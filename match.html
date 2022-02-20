@@ -1,36 +1,31 @@
 <html>
 
 <head>
-  <title>RT SchaakZet Match</title>
-  <script>
-    // clear console so no-one gets confused by previous results
-    console.clear();
-  </script>
+  <script src="./webcomponents/chess-rt-head.js"></script>
   <script src="./webcomponents/v18.js"></script>
   <script src="./webcomponents/chess-match.js"></script>
-  <link href="chessgame.css" rel="stylesheet">
 </head>
 
 <body>
   <chess-match></chess-match>
   <header>
+    <h1-chess></h1-chess>
+    <b>Games in database:</b>
     <chess-match-games></chess-match-games>
-    <h1>Schaakzet Match</h1>
+    <hr>
     <chess-player-white></chess-player-white>
     versus
     <chess-player-black></chess-player-black>
-    <span style="background:yellow">TODO: Delete Match from DB, undo last move</span>
+    <br>
+    <span style="background:yellow">TODO: Use player names for database ID, Delete Matches from DB, undo last chessboard move</span>
   </header>
   <main>
-    <label for="enterFEN">enter FEN:</label>
-    <input id="fen" type="text" size="100" onkeyup="setFEN(this.value)" />
-    <button onclick="setFEN(fen.value)">Set FEN</button>
     <button onclick="setStart()">Start</button><br />
-    <chess-board-action event="deleteMatchData">Delete Match</chess-board-action>
+    <!-- <chess-board-action event="deleteMatchData">Delete Match</chess-board-action> -->
 
     <chess-game>
-      <chess-board id="schaak3"  fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white" labels></chess-board>
-      <chess-game-progress>CHESS PROGRESS</chess-game-progress>
+      <chess-board id="matchboard"  fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white" labels></chess-board>
+      <chess-game-progress></chess-game-progress>
     </chess-game>
     <div id="message"></div>
   </main>

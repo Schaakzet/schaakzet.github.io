@@ -70,7 +70,7 @@
         super().attachShadow({ mode: "open" }).innerHTML =
           `<style>#boards{
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 180px));
+        grid-template-columns: repeat(auto-fit, minmax(100px, 120px));
         gap:1em;
       }</style>` + `<div id="boards"></div>`;
       }
