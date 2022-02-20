@@ -1,5 +1,5 @@
 // Generic console.log overload, displaying <title> name in colors, linenumbers and everything passed to it
-console.log =
+console.logColor =
   ((console.LOG = console.log), // on first definition save console.log
   // and return overloaded console.log function:
   (...args) => {

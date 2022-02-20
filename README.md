@@ -37,3 +37,15 @@ Repo: https://github.com/schaakzet/schaakzet.github.io
 * Code maandag 22 november. potentialMoves in switch statement voor alle stukken. v07.js!!!
 
 * Code woensdag 24 november + maandag 29 november. potentialMoves beperken tot je tegen een stuk aanloopt of vijandig stuk slaan. Pion moves verwerken. v08.js!!!
+
+# Web Components
+
+## ``<chess-board>``
+
+```mermaid
+classDiagram
+      chessboard <|-- ChessBoard
+      chessboard: +String id
+      chessboard: +Boolean record = record moves in chess_match database
+      chessboard: +String fen
+```

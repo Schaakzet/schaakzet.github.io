@@ -1,51 +1,51 @@
 <html>
-  <head id="SchaakZet">
-    <title>RT SchaakZet</title>
-    <script>
-      // clear console so no-one gets confused by previous results
-      console.clear();
-    </script>
-    <script src="./console.js"></script>
-    <script src="./webcomponents/schaakzet.js"></script>
 
-    <style>
-      body {
-        font: 16px Arial;
-      }
-    </style>
-  </head>
+<head id="SchaakZet">
+  <title>RT SchaakZet</title>
+  <script>
+    // clear console so no-one gets confused by previous results
+    console.clear();
+  </script>
+  <script src="./console.js"></script>
+  <script src="./webcomponents/schaakzet.js"></script>
 
-  <body>
-    <main>
-      <label for="enterFEN">enter FEN:</label><br />
-      <input id="fen" type="text" size="100" />
-      <button onclick="setFEN(fen.value)">Set FEN</button><br />
-      <button onclick="setStart()">Startpositie</button><br />
-      <chess-board
-        id="schaak1"
-        fen="rn2kbnr/ppp2ppp/3pbq2/4p3/4P3/2NPBQ2/PPP2PPP/R3KBNR"
-        player="white"
-      ></chess-board>
-      <div id="message"></div>
-    </main>
-    <script>
-      //reset to startposition
-      function setStart() {
-        let chessboard = document.querySelector("chess-board");
-        chessboard.clear();
-        setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+  <style>
+    schaakzet-teams>div {
+      font-size: 2em;
+      display: grid;
+      grid-template-columns: 300px 600px 1fr 1fr 1fr;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <h1>Roads Technology SchaakZet Development</h1>
+    <schaakzet-teams></schaakzet-teams>
+  </main>
+  <script>
+    customElements.define("schaakzet-teams", class extends HTMLElement {
+      connectedCallback() {
+        this.innerHTML = [
+          ["sandro.html", "programmeren", "Sandro, Bart"],
+          ["rob.html", "vormgeving, introductie oefeningen", "Rob,Geert"],
+          ["match.html", "1 Match schaakbord/players", ""],
+          ["dashboard.html", "Alle match schaakborden", ""],
+          ["", "Functioneel testen", "Ashraf"],
+          ["", "Simultaan Toernooi", "Iedereen tegen Laurent"],
+        ].map(([url, title, team]) => `<div><a href="${url}">${url}</a><span>${title}</span><span>${team}</span></div>`).join("");
       }
-    </script>
-    <script>
-      // make sure our dev code executes after all chess boards are 100% created
-      window.addEventListener("load", () => {
-        // define a GLOBAL setFEN function so all inputs can call this function
-        window.setFEN = function (fenString) {
-          document.querySelector("chess-board").fen = fenString;
-        };
-        // let chessboard = document.querySelector("chess-board");
-        // chessboard.showmoves("a1");
-      });
-    </script>
-  </body>
+    })
+    // make sure our dev code executes after all chess boards are 100% created
+    window.addEventListener("load", () => {
+      // define a GLOBAL setFEN function so all inputs can call this function
+      window.setFEN = function (fenString) {
+        document.querySelector("chess-board").fen = fenString;
+      };
+      // let chessboard = document.querySelector("chess-board");
+      // chessboard.showmoves("a1");
+    });
+  </script>
+</body>
+
 </html>

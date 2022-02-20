@@ -6,25 +6,15 @@
     // clear console so no-one gets confused by previous results
     console.clear();
   </script>
-  <script src="./console.js"></script>
   <script src="./webcomponents/v18.js"></script>
   <script src="./webcomponents/chess-match.js"></script>
-
-  <style>
-    body {
-      font: 16px Arial;
-    }
-
-    .chessMatchBoard {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-  </style>
+  <link href="chessgame.css" rel="stylesheet">
 </head>
 
 <body>
   <chess-match></chess-match>
   <header>
+    <chess-match-games></chess-match-games>
     <h1>Schaakzet Match</h1>
     <chess-player-white></chess-player-white>
     versus
@@ -33,14 +23,15 @@
   </header>
   <main>
     <label for="enterFEN">enter FEN:</label>
-    <input id="fen" type="text" size="100" onkeyup="setFEN(this.value)"/>
+    <input id="fen" type="text" size="100" onkeyup="setFEN(this.value)" />
     <button onclick="setFEN(fen.value)">Set FEN</button>
     <button onclick="setStart()">Start</button><br />
+    <chess-board-action event="deleteMatchData">Delete Match</chess-board-action>
 
-    <div class="chessMatchBoard">
-      <chess-board id="schaak1" fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white"></chess-board>
+    <chess-game>
+      <chess-board id="schaak3"  fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white" labels></chess-board>
       <chess-game-progress>CHESS PROGRESS</chess-game-progress>
-    </div>
+    </chess-game>
     <div id="message"></div>
   </main>
   <footer>
@@ -52,7 +43,9 @@
       let chessboard = document.querySelector("chess-board");
       window.setFEN = (fenString) => chessboard.fen = fenString;
       let piece = chessboard.getPiece("e2");
-      chessboard.movePiece(piece, "g7");
+      //chessboard.documentation();
+      //chessboard.movePiece(piece, "g7");
+      chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
     });
   </script>
 </body>
