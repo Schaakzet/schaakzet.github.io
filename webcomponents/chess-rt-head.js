@@ -4,7 +4,7 @@
     "h1-chess",
     class extends HTMLElement {
       connectedCallback() {
-        console.log([...document.scripts].map((x) => x.src));
+        //console.log([...document.scripts].map((x) => x.src));
         this.innerHTML =
           `<h1>Roads Technology SchaakZet - <a target=_blank href="https://github.com/Schaakzet/schaakzet.github.io">development</a> ${document.location.pathname}</h1>` +
           `<div>`+
