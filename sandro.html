@@ -14,7 +14,7 @@
       <chess-game>
         <!-- rnbqkbnr/ppppppp1/7p/8/3P4/8/PPP1PPPP/RNBQKBNR -->
         <!-- r1bqk1nr/pppp1ppp/2n5/2b1p3/4P3/4KN2/PPPP1PPP/RNBQ1B1R -->
-        <chess-board id="schaak3" fen="rnbqk2r/ppppbpp1/5n1p/4p3/3PPP2/8/PPP3PP/RNBQKBNR" player="wit" labels></chess-board>
+        <chess-board id="schaak3" fen="rnbqkbnr/ppp2ppp/3p4/4p3/4P2Q/3P4/PPP2PPP/RNB1KBNR" player="zwart" labels></chess-board>
         <chess-game-progress>CHESS PROGRESS</chess-game-progress>
       </chess-game>
       <div id="message">[MESSAGE]</div>
@@ -36,7 +36,7 @@
       // make sure our dev code executes after all chess boards are 100% created
       window.addEventListener("load", () => {
         let chessboard = document.querySelector("chess-board");
-        chessboard.play([["d4", "f8"]]);
+        // chessboard.play([["d4", "f8"]]);
         // chessboard.play([
         //   ["e2", "e4"],
         //   ["e7", "e5"],
