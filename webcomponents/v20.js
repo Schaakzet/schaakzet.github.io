@@ -7,7 +7,7 @@
   // prepared for using <chess-match> (in another JS file) and match.html
   // added call to database API in match.html
 
-  // todo remove blinking cursor from gameboard
+  // TODO: remove blinking cursor from gameboard
 
   const https_location = "https://schaakzet.github.io";
   const https_location_img = https_location + "/img/";
@@ -21,7 +21,7 @@
   }
 
   // ********************************************************** HTML CSS
-  // todo create as attribute and property on <chess-board> so user can select theme colors
+  // TODO: create as attribute and property on <chess-board> so user can select theme colors
   const __CLASSNAME_WHITESQUARE__ = "white_square";
   const __CLASSNAME_BLACKSQUARE__ = "black_square";
 
@@ -81,8 +81,8 @@
 
   // ********************************************************** Square functions
   const translateSquare = (square, file_offset, file_rank) => {
-    // todo ("b2", 1, 1) -> "c3"
-    // todo ("b2", -1, -1) -> "a1"
+    // TODO: ("b2", 1, 1) -> "c3"
+    // TODO: ("b2", -1, -1) -> "a1"
   };
 
   // ********************************************************** FEN
@@ -444,7 +444,7 @@
         const y = ranks.indexOf(fromSquare[1]);
         const toFile = files[x + x_move];
         const toRank = ranks[y + y_move];
-        // todo Shorter code, and move to translate in BaseClass at top of code
+        // TODO: Shorter code, and move to translate in BaseClass at top of code
         // const [file, rank] = this.at;
         // const toFile = [files.indexOf(file) + x_move];
         // const toRank = [ranks.indexOf(rank) + y_move];
@@ -469,7 +469,7 @@
         for (let line = 0; line < _pieceMoves.length; line++) {
           for (let move = 0; move < _pieceMoves[line].length; move++) {
             let [xAxis, yAxis] = _pieceMoves[line][move]; // get x,y movement 0,1
-            let _squareName = this.possibleMove(xAxis, yAxis); // todo: this.possibleMove(pieceMoves[line][move]) // pass Array
+            let _squareName = this.possibleMove(xAxis, yAxis); // TODO:: this.possibleMove(pieceMoves[line][move]) // pass Array
             if (_squareName) {
               const _squareElement = this.chessboard.getSquare(_squareName); // get <chess-square> element
               //Eerst kijken of er een piece staat, en dan kijken of het dezelfde kleur heeft.
@@ -477,13 +477,13 @@
                 if (this.isPawn /* We doen niks */) {
                   // do nothing for Pawns
                 } else if (this.sameColorAsPiece(_squareElement.piece)) {
-                  _squareElement.highlight(__PROTECT_PIECE__); // todo: move to .defendedBy() method
+                  _squareElement.highlight(__PROTECT_PIECE__); // TODO:: move to .defendedBy() method
                   _squareElement.defendedBy(this);
                 } else {
                   // not a pawn
                   // Als het een andere kleur heeft, __ATTACK_PIECE__, potentialMove!
                   // attackedby="Nb6,Qf3"
-                  _squareElement.highlight(__ATTACK_PIECE__); // todo: move to .attackedBy() method
+                  _squareElement.highlight(__ATTACK_PIECE__); // TODO:: move to .attackedBy() method
                   _squareElement.attackedBy(this);
                   _potentialMovesArray.push(_squareName);
                 }
@@ -512,18 +512,18 @@
             // Test of we binnen het bord zijn.
             if (_squareElement.piece) {
               if (_squareElement.piece.sameColorAsPiece(piececolor)) {
-                _squareElement.highlight(__ATTACK_PIECE__); // todo: move to .attackedBy() method
+                _squareElement.highlight(__ATTACK_PIECE__); // TODO:: move to .attackedBy() method
                 _squareElement.attackedBy(this);
                 _potentialMovesArray.push(_squareName);
               } else {
-                _squareElement.highlight(__PROTECT_PIECE__); // todo: move to .defendedBy() method
+                _squareElement.highlight(__PROTECT_PIECE__); // TODO:: move to .defendedBy() method
                 _squareElement.defendedBy(this);
               }
             } else {
               // En passant
               if (this.chessboard.lastMove) {
                 if (_squareName == this.chessboard.lastMove.enPassantPosition) {
-                  _squareElement.highlight(__ATTACK_PIECE__); // todo: move to .attackedBy() method
+                  _squareElement.highlight(__ATTACK_PIECE__); // TODO:: move to .attackedBy() method
                   _squareElement.attackedBy(this);
                   _potentialMovesArray.push(_squareName);
                 }
@@ -543,14 +543,14 @@
 
         // Roqueren
         if (this.isKing) {
-          // todo ?? gaat dit wel goed als er andere stukken staan?
+          // TODO: ?? gaat dit wel goed als er andere stukken staan?
           const longWhiteTower = this.chessboard.getPiece(__SQUARE_BOTTOM_LEFT__);
           const shortWhiteTower = this.chessboard.getPiece(__SQUARE_BOTTOM_RIGHT__);
           const longBlackTower = this.chessboard.getPiece(__SQUARE_TOP_LEFT__);
           const shortBlackTower = this.chessboard.getPiece(__SQUARE_TOP_RIGHT__);
 
           const playerColor = this.chessboard.player;
-          // todo onderstaande kan vervangen voor door 4x aanroepen van 1 function(fenLetter,destinationSquare,offset,squareName)
+          // TODO: onderstaande kan vervangen voor door 4x aanroepen van 1 function(fenLetter,destinationSquare,offset,squareName)
           if (playerColor == __PLAYER_WHITE__) {
             if (this.chessboard.castlingArray.includes(__FEN_WHITE_QUEEN__) && longWhiteTower.moves && longWhiteTower.moves.includes("d1")) {
               if (this.chessboard.castlingInterrupt(__PLAYER_WHITE__, -3)) {
@@ -654,7 +654,7 @@
         return this.querySelector(__WC_CHESS_PIECE__) || false;
       }
       set piece(v) {
-        // todo proces as string or element
+        // TODO: proces as string or element
         // on string createElement
       }
       // ======================================================== <chess-square>.squareElement
@@ -716,7 +716,7 @@
       }
       // ======================================================== <chess-square>.translate
       translate(x_move, y_move) {
-        // todo This is the same code as possibleMove in <chess-piece
+        // TODO: This is the same code as possibleMove in <chess-piece
         //
         const files = this.chessboard.files;
         const ranks = this.chessboard.ranks1to8;
@@ -793,6 +793,23 @@
         }).length; // true/false
         console.warn("isDef", color, isDefended);
         return isDefended;
+        // TODO: write documentation, maybe write better code
+        let defendedColor = "";
+        function hasLowerCase(str) {
+          return str.charAt(0) !== str.charAt(0).toUpperCase();
+        }
+        function hasUpperCase(str) {
+          return str.charAt(0) === str.charAt(0).toUpperCase();
+        }
+        if (typeof this.defendedArray == "undefined") {
+          return false;
+        }
+        if (this.defendedArray.every(hasLowerCase)) {
+          defendedColor = __PLAYER_BLACK__;
+        } else if (this.defendedArray.every(hasUpperCase)) {
+          defendedColor = __PLAYER_WHITE__;
+        }
+        return color !== defendedColor;
       } // <chess-square>.isAttackedBy
     } // <chess-square>
   ); //defineElement(__WC_CHESS_SQUARE__)
@@ -810,7 +827,7 @@
       // ======================================================== <chess-board>.constructor
       constructor() {
         super();
-        // todo Looks like a bug, every piece moved ends up in this array
+        // TODO: Looks like a bug, every piece moved ends up in this array
         this.capturedBlackPieces = [];
         this.capturedWhitePieces = [];
         this.moves = [];
@@ -827,7 +844,7 @@
       attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue && name == __WC_ATTRIBUTE_FEN__) {
           this.fen = newValue;
-          // todo generic call:
+          // TODO: generic call:
           // this[name] = newValue;
           // should work as well, because a getter "fen" exists on this
         }
@@ -954,7 +971,7 @@
       }
       // ======================================================== <chess-board>.recordMove
       recordMove(chessPiece, fromSquare, toSquare) {
-        // todo FIX Logic Bug recordMove is execute AFTER piece was add to toSquare
+        // TODO: FIX Logic Bug recordMove is execute AFTER piece was add to toSquare
         let moveType = toSquare.capturePieceBy(chessPiece) ? __MOVETYPE_CAPTURE__ : __MOVETYPE_MOVE__;
         console.warn("recordMove:", chessPiece.is, fromSquare.at, moveType, toSquare.at);
         this.moves.push({
@@ -991,7 +1008,7 @@
           let { is: pieceName, square: fromSquare } = chessPiece;
           let toSquare = this.getSquare(square);
 
-          // todo is the next line required?
+          // TODO: is the next line required?
           //if (fromSquare) fromSquare.clear(); // if the piece is already on a square, remove it from that square
 
           toSquare.pieceName = pieceName;
@@ -1029,6 +1046,7 @@
 
           if (!doneCastlingMove) this.changePlayer();
 
+          this.chessboard.save();
           this.chessboard.play();
           return chessPiece;
         };
@@ -1051,11 +1069,11 @@
         const { chessPiece, fromSquare, toSquare } = lastMove;
         if (chessPiece.isPawn && Math.abs(toSquare.rank - fromSquare.rank) == 2) {
           console.log(lastMove.chessPiece);
-          // todo waarom Math.abs nodig?
+          // TODO: waarom Math.abs nodig?
           // let position = "";
           // if (piece.isWhite) position = fromSquare.file + "3";
           // else position = fromSquare.file + "6";
-          // todo learn above 3 lines is same as:
+          // TODO: learn above 3 lines is same as:
           let position = fromSquare.file + (chessPiece.isWhite ? "3" : "6"); // file+3 OF file+6
 
           console.log("En passant positie", position);
@@ -1078,12 +1096,12 @@
         // } else {
         //   kingPosition = this.getSquare("e8");
         // }
-        // todo learn above lines is same as:
+        // TODO: learn above lines is same as:
         let kingPosition = this.getSquare(color == __PLAYER_WHITE__ ? __SQUARE_WHITE_KING_START__ : __SQUARE_BLACK_KING_START__);
 
         if (offset < 0) {
           for (let i = -1; i >= offset; i--) {
-            // todo volgende 5 regels zijn hetzelfde als in de 2e for loop, maak er een functie van
+            // TODO: volgende 5 regels zijn hetzelfde als in de 2e for loop, maak er een functie van
             let squareName = kingPosition.translate(i, 0);
             let squareElement = this.getSquare(squareName);
             if (squareElement.isDefendedBy(color)) {
@@ -1103,7 +1121,7 @@
       }
       // ======================================================== <chess-board>.reduceCastlingArray
       reduceCastlingArray(lastReduceMove) {
-        // todo refactor to one single .filter method using at location as first and a function as second parameter
+        // TODO: refactor to one single .filter method using at location as first and a function as second parameter
         if (lastReduceMove == __SQUARE_BOTTOM_LEFT__) {
           this.castlingArray = this.castlingArray.filter((item) => item !== __FEN_WHITE_QUEEN__);
         } else if (lastReduceMove == __SQUARE_BOTTOM_RIGHT__) {
@@ -1182,7 +1200,7 @@
           return piece.square; // <chess-piece>.square getter
         }
 
-        // todo learn from Old code:
+        // TODO: learn from Old code:
         // for (const square of this.squares) {
         //   const specificPiece = this.getSquare(square).piece;
         //   if (specificPiece && specificPiece.is == piece) {
@@ -1192,7 +1210,7 @@
       }
       // ======================================================== <chess-board>.isInCheck
       isInCheck() {
-        // todo refactor to <chess-piece>.isAttacked GETTER
+        // TODO: refactor to <chess-piece>.isAttacked GETTER
         // get attackedBy(){
         //   return this.square.getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__).split(",") || []; // new: use Arrays not Strings
         // then :
@@ -1350,7 +1368,7 @@
       }
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR") {
-        // todo Waarom hier??
+        // TODO: Waarom hier??
         this.castlingArray = [__FEN_WHITE_KING__, __FEN_WHITE_QUEEN__, __FEN_BLACK_KING__, __FEN_BLACK_QUEEN__]; // Halen we uit FEN
 
         // make sure we don't run before the board exists, because attributeChangedCallback runs early
@@ -1410,11 +1428,11 @@
       // ======================================================== <chess-board>.play
       play(moves = this._moves) {
         // chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
-        // todo rewrite to ["e2-e4", "e7-e5", "g1-f3", "b8-c6"] so "x" take piece can be used
+        // TODO: rewrite to ["e2-e4", "e7-e5", "g1-f3", "b8-c6"] so "x" take piece can be used
         if (!this._moves) this._moves = moves || console.warn("No play moves");
         if (this._moves && this._moves.length) {
           let [from, to] = this._moves.shift();
-          let simulateClicks = false; // todo make simulateClicks work
+          let simulateClicks = false; // TODO: make simulateClicks work
           if (simulateClicks) {
             this.getSquare(from).handleFirstClick();
             setTimeout(() => {
@@ -1435,6 +1453,11 @@
       }
       set player(v) {
         return this.setAttribute(__WC_ATTRIBUTE_PLAYER__, v);
+      }
+      // ======================================================== <chess-board>.save
+      save() {
+        localStorage.setItem("fen", this.fen);
+        document.getElementById("fen").value = this.fen;
       }
     } // class ChessBoard
   ); // end of class definition

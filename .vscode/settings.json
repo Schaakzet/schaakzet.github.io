@@ -41,5 +41,6 @@
   "liveServer.settings.ignoreFiles": [],
   "editor.wordWrap": "wordWrapColumn",
   "editor.wordWrapColumn": 180,
-  "prettier.printWidth": 180
+  "prettier.printWidth": 180,
+  "todo-tree.tree.scanMode": "current file"
 }
