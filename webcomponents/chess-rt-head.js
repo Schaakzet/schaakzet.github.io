@@ -12,7 +12,7 @@
           " Database: <a href='https://treeql.org/'>treeQL</a> " +
           " , <a href='https://github.com/mevdschee/php-crud-api#treeql-a-pragmatic-graphql'>PHP-CRUD-API</a> " +
           " Developer files: " +
-          ["index", "sandro + Bart", "rob", "match", "textDB"].map((name) => `<a href="${name.split(" ")[0]}.html">${name}</a>`).join(" - ") +
+          ["index", "sandro + Bart", "rob", "match", "testDB"].map((name) => `<a href="${name.split(" ")[0]}.html">${name}</a>`).join(" - ") +
           "<hr></div>";
         document.head.append(
           Object.assign(document.createElement("link"), {
