@@ -98,9 +98,8 @@
             let boardsHTML = [...boards.entries()]
               .map(([name, records]) => {
                 let record = records.slice(-1)[0];
-                let { matchmoves_id: id, move, fromsquare, tosquare, fen, time } = record;
-                console.error(name, fen);
-                return `<chess-board fen="${record.fen}"></chess-board>`;
+                let { matchmoves_id, move, fromsquare, tosquare, fen, time } = record;
+                return `<chess-board matchmoves_name="${name}" fen="${record.fen}"></chess-board>`;
               })
               .join("");
             this.shadowRoot.querySelector("#boards").innerHTML = boardsHTML;
