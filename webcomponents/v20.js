@@ -1457,7 +1457,8 @@
       // ======================================================== <chess-board>.save
       save() {
         localStorage.setItem("fen", this.fen);
-        document.getElementById("fen").value = this.fen;
+        let fenElement = document.getElementById("fen");
+        if (fenElement) fenElement.value = this.fen;
       }
     } // class ChessBoard
   ); // end of class definition

@@ -36,6 +36,8 @@
   const __WC_ATTRIBUTE_FEN__ = "fen"; // FEN notation
   const __WC_ATTRIBUTE_RECORD__ = "record"; // <chess-board record> triggers saving moves to database
   const __WC_ATTRIBUTE_PLAYER__ = "player"; // <chess-board player=" __PLAYER_WHITE__ / __PLAYER_BLACK__ ">
+  const __WC_ATTRIBUTE_ATTACKEDBY__ = "attackedby"; // <chess-square attackedby="Ne3,Qe8">
+  const __WC_ATTRIBUTE_DEFENDEDBY__ = "defendedby"; // <chess-square defendedby="Ne3,Qe8">
 
   // ********************************************************** Eventname constants in all chess files
   const __STORECHESSMOVE__ = "STORECHESSMOVE"; // send to <chess-match>
@@ -615,8 +617,6 @@
       // ======================================================== <chess-square>.constructor
       constructor() {
         super();
-        this.attackedArray = [];
-        this.defendedArray = [];
       }
       // ======================================================== <chess-square>.handleFirstClick
       handleFirstClick() {
@@ -678,13 +678,41 @@
       }
       // ======================================================== <chess-square>.attackedBy
       attackedBy(chessPiece) {
-        this.attackedArray.push(convertFEN(chessPiece.is) + chessPiece.at);
-        this.setAttribute("attackedby", this.attackedArray.join(","));
+        const position = convertFEN(chessPiece.is) + chessPiece.at;
+        let attackers = this.getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__);
+        if (attackers) {
+          attackers = attackers + ",";
+        } else {
+          attackers = "";
+        }
+        this.setAttribute(__WC_ATTRIBUTE_ATTACKEDBY__, attackers + position);
+      }
+      get attackers() {
+        let attackers = this.getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__);
+        if (attackers) {
+          return attackers.split(",");
+        } else {
+          return [];
+        }
       }
       // ======================================================== <chess-square>.attackedBy
       defendedBy(chessPiece) {
-        this.defendedArray.push(convertFEN(chessPiece.is) + chessPiece.at);
-        this.setAttribute("defendedby", this.defendedArray.join(","));
+        const position = convertFEN(chessPiece.is) + chessPiece.at;
+        let defenders = this.getAttribute(__WC_ATTRIBUTE_DEFENDEDBY__);
+        if (defenders) {
+          defenders = defenders + ",";
+        } else {
+          defenders = "";
+        }
+        this.setAttribute(__WC_ATTRIBUTE_DEFENDEDBY__, defenders + position);
+      }
+      get defenders() {
+        let defenders = this.getAttribute(__WC_ATTRIBUTE_DEFENDEDBY__);
+        if (defenders) {
+          return defenders.split(",");
+        } else {
+          return [];
+        }
       }
       // ======================================================== <chess-square>.translate
       translate(x_move, y_move) {
@@ -728,10 +756,8 @@
       }
       // ======================================================== <chess-square>.clearAttributes
       clearAttributes() {
-        this.removeAttribute("attackedby");
-        this.removeAttribute("defendedby");
-        this.attackedArray = [];
-        this.defendedArray = [];
+        this.removeAttribute(__WC_ATTRIBUTE_ATTACKEDBY__);
+        this.removeAttribute(__WC_ATTRIBUTE_DEFENDEDBY__);
       }
       // ======================================================== <chess-square>.pieceName
       get pieceName() {
@@ -760,6 +786,13 @@
       }
       // ======================================================== <chess-square>.isDefendedBy
       isDefendedBy(color) {
+        // __PLAYER_WHITE__
+        //this.defenders = ["Qe3","na4","Rf5"]
+        let isDefended = this.defenders.filter(([fen, file, rank]) => {
+          return this.chessboard.getPiece(file + rank).color == color;
+        }).length; // true/false
+        console.warn("isDef", color, isDefended);
+        return isDefended;
         // TODO: write documentation, maybe write better code
         let defendedColor = "";
         function hasLowerCase(str) {
@@ -876,6 +909,15 @@
 
         this.labels = this.hasAttribute("labels");
       }
+      // ======================================================== <chess-board>.labels
+      set labels(on = false) {
+        // turn A1 - H8 labels on and off
+        setTimeout(() => {
+          //on document.createElement there is no element yet
+          //if (this.isConnected)
+          this.querySelector("#squarelabels").disabled = !on;
+        });
+      }
       // ======================================================== <chess-board>.getSquare
       getSquare(square) {
         // square can be "c5" OR a reference to <chess-square at="c5">
@@ -894,8 +936,10 @@
       // ======================================================== <chess-board>.addPiece
       addPiece(name, at) {
         //if piecename is one FEN letter
-        if (name.length == 1) name = convertFEN(name);
-        return this.getSquare(at).addPiece(name);
+        if (name) {
+          name = convertFEN(name);
+          return this.getSquare(at).addPiece(name);
+        }
       }
       // ======================================================== <chess-board>.clear
       clear() {
@@ -912,19 +956,17 @@
       // ======================================================== <chess-board>.initPlayerTurn
       initPlayerTurn() {
         delete this.pieceClicked;
-
         this.calculateBoard();
-        // clearMoves
         for (let element of this.squares) {
           let chessSquare = this.getSquare(element);
           chessSquare.highlight(false);
         }
+        this.checkMate(otherPlayer(this.player));
       }
       // ======================================================== <chess-board>.changePlayer
       changePlayer(piece = this.pieceClicked) {
-        this.calculateBoard();
-        this.checkMate();
-        this.player = otherPlayer(this.player); // TODO: Naar FEN
+        // this.calculateBoard();
+        this.player = otherPlayer(this.player); // todo Naar FEN
         this.initPlayerTurn();
       }
       // ======================================================== <chess-board>.recordMove
@@ -993,17 +1035,15 @@
           if (chessPiece.isKing) {
             doneCastlingMove = this.castlingMove(chessPiece, fromSquare, toSquare);
           }
-          console.error("moved ", chessPiece.at, chessPiece.is, "player:", this.player, chessPiece.isPawnAtEnd);
 
-          // TODO: Recrreate promotion
+          // todo Recreate promotion
           if (chessPiece.isPawnAtEnd) {
-            // TODO: move to <chess-piece>.promotion() method
-            this.collectPiece().then((chosenPiece) => {
-              console.log("chosenPiece:", chosenPiece, this);
-              this.addPiece(chosenPiece, toSquare.at);
-              document.getElementById("message").innerText = "";
-            });
+            // todo move to <chess-piece>.promotion() method
+            const chosenPiece = this.collectPiece();
+            this.addPiece(chosenPiece, toSquare.at);
+            // todo change capturedWhitePieces or capturedBlackPieces.
           }
+
           if (!doneCastlingMove) this.changePlayer();
 
           this.chessboard.save();
@@ -1064,7 +1104,7 @@
             // TODO: volgende 5 regels zijn hetzelfde als in de 2e for loop, maak er een functie van
             let squareName = kingPosition.translate(i, 0);
             let squareElement = this.getSquare(squareName);
-            if (squareElement.isDefendedBy(color) == true) {
+            if (squareElement.isDefendedBy(color)) {
               return false;
             }
           }
@@ -1072,7 +1112,7 @@
           for (let i = 1; i <= offset; i++) {
             let squareName = kingPosition.translate(i, 0);
             let squareElement = this.getSquare(squareName);
-            if (squareElement.isDefendedBy(color) == true) {
+            if (squareElement.isDefendedBy(color)) {
               return false;
             }
           }
@@ -1120,48 +1160,39 @@
 
       // ======================================================== <chess-board>.collectPiece
       collectPiece() {
-        // TODO: move to <chess-piece>.promotion method
-        document.getElementById("message").innerText = "Kies een stuk (toets letter in): Q, N, R, B.";
+        // todo move to <chess-piece>.promotion method
+        const chosenPiece = String(prompt("Kies een stuk (toets letter in): Q, N, R, B."));
         const thisPawn = this.lastMove.chessPiece;
+        console.log("This Pawn:" + thisPawn);
         const color = thisPawn.color;
-        const eventName = "keydown";
-        return new Promise((resolve) => {
-          // TODO: verify with Sandro, Bart, Danny why a Promise is used
-          const choosePiece = (evt) => {
-            let chosenPiece = "";
-            window.removeEventListener(eventName, choosePiece);
-            // TODO: learn getting one value from an {} Object
-            // let chosenPiece =
-            //   color +
-            //   __PIECE_SEPARATOR__ +
-            //   {
-            //     q: __PIECE_QUEEN__,
-            //     n: __PIECE_KNIGHT__,
-            //     r: __PIECE_ROOK__,
-            //     b: __PIECE_BISHOP__,
-            //   }[evt.key];
-            switch (evt.key) {
-              case "q":
-                chosenPiece = color + __PIECE_SEPARATOR__ + __PIECE_QUEEN__;
-                break;
-              case "n":
-                chosenPiece = color + __PIECE_SEPARATOR__ + __PIECE_KNIGHT__;
-                break;
-              case "r":
-                chosenPiece = color + __PIECE_SEPARATOR__ + __PIECE_ROOK__;
-                break;
-              case "b":
-                chosenPiece = color + __PIECE_SEPARATOR__ + __PIECE_BISHOP__;
-                break;
-              default:
-                return;
-            }
-            resolve(chosenPiece);
-          };
-          window.addEventListener(eventName, choosePiece);
-        });
+        // todo learn getting one value from an {} Object
+        // let chosenPiece =
+        //   color +
+        //   __PIECE_SEPARATOR__ +
+        //   {
+        //     q: __PIECE_QUEEN__,
+        //     n: __PIECE_KNIGHT__,
+        //     r: __PIECE_ROOK__,
+        //     b: __PIECE_BISHOP__,
+        //   }[evt.key];
+        switch (chosenPiece) {
+          case "q":
+            return color + __PIECE_SEPARATOR__ + __PIECE_QUEEN__;
+          case "n":
+            return color + __PIECE_SEPARATOR__ + __PIECE_KNIGHT__;
+          case "r":
+            return color + __PIECE_SEPARATOR__ + __PIECE_ROOK__;
+          case "b":
+            return color + __PIECE_SEPARATOR__ + __PIECE_BISHOP__;
+          default:
+            return this.collectPiece();
+        }
       }
-      // ======================================================== <chess-board>.findPiece
+      // ======================================================== <chess-board>.allowedMoves
+      allowedMoves() {
+        // If king will become check because of move, move not allowed.
+      }
+      // ======================================================== <chess-board>.findPieceSquare
       findPieceSquare(piece) {
         if (isString(piece)) {
           return this.querySelector(`${__WC_CHESS_SQUARE__}[${__WC_ATTRIBUTE_PIECENAME__}="${piece}"]`);
@@ -1181,7 +1212,7 @@
       isInCheck() {
         // TODO: refactor to <chess-piece>.isAttacked GETTER
         // get attackedBy(){
-        //   return this.square.getAttribute("attackedBy").split(",") || []; // new: use Arrays not Strings
+        //   return this.square.getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__).split(",") || []; // new: use Arrays not Strings
         // then :
         // <chess-board>.isInCheck
         // get isIncheck(){
@@ -1190,25 +1221,18 @@
         // }
         const king = (color) => color + __PIECE_SEPARATOR__ + __PIECE_KING__;
         const kingSquare = (color) => this.findPieceSquare(king(color));
-        const kingAttackers = (color) => kingSquare(color).getAttribute("attackedBy") || "";
+        const kingAttackers = (color) => kingSquare(color).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__) || "";
         const isKingAttacked = (color) => kingAttackers(color).length;
+
         if (isKingAttacked(__PLAYER_WHITE__)) {
           console.log("Witte koning staat schaak door", kingAttackers(__PLAYER_WHITE__));
-          const whiteInCheck = true;
+          return true;
         }
         if (isKingAttacked(__PLAYER_BLACK__)) {
           console.log("Zwarte koning staat schaak door", kingAttackers(__PLAYER_BLACK__));
-          const blackInCheck = true;
+          return true;
         }
-      }
-      // ======================================================== <chess-board>.labels
-      set labels(on = false) {
-        // turn A1 - H8 labels on and off
-        setTimeout(() => {
-          //on document.createElement there is no element yet
-          //if (this.isConnected)
-          this.querySelector("#squarelabels").disabled = !on;
-        });
+        return false;
       }
       // ======================================================== <chess-board>.findSquaresBetween
       findSquaresBetween(attackingPieceSquare, kingSquare) {
@@ -1275,55 +1299,57 @@
         this.squaresBetween = squaresBetweenArray;
       }
       // ======================================================== <chess-board>.negatingCheck
-      negatingCheck() {
-        console.log("negatingCheck");
-        // Capture Attacking Piece --- Works only for one attacking piece. Which is not enough. Change later!
-        const checkPieceSquare = this.findSinglePiece("wit-koning").getAttribute("attackedby"); // qe2 (of meerdere stukken)
-        if (checkPieceSquare) {
-          const attackingPiece = this.getPiece(checkPieceSquare.substring(1, 3));
-          if (this.getSquare(checkPieceSquare.substring(1, 3)).getAttribute("attackedby")) {
-            console.log("You can take the checking (black) piece");
+      negatingCheck(color) {
+        console.log("negating check");
+        const king = (color) => color + __PIECE_SEPARATOR__ + __PIECE_KING__;
+        const kingSquare = (color) => this.findPieceSquare(king(color));
+        const kingAttackers = (color) => kingSquare(color).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__) || ""; // get attackedby array qe5 ne2
+
+        // Capture Attacking Piece --- Works only for one attacking piece. couse if we get more we cant use capture.
+        if (kingAttackers(color)) {
+          const attackingPiece = this.getPiece(kingAttackers(color).substring(1, 3));
+          console.log("Main IF" + attackingPiece);
+          if (this.getSquare(attackingPiece).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__)) {
+            console.log("You can take the checking piece");
             return true;
           } else if (attackingPiece) {
-            // Intervening Chess ---
+            // Intervening Chess --- The order is not entirely correct.
             // 1. What is the attacking piece? Q.
             // 2. Is there 1 or more squares in between attacking piece and king?
             const attackingPieceSquare = this.getSquare(checkPieceSquare.substring(1, 3));
             // 3. Is it a horse? No.
-            const kingSquare = this.findSinglePiece("wit-koning");
+            const kingSquare = this.findPieceSquare("wit-koning");
             if (attackingPiece !== "zwart-paard") {
               if (attackingPieceSquare.file - kingSquare.file >= 2 || attackingPieceSquare.rank - kingSquare.rank >= 2) {
-                const squaresBetween = true;
+                console.log("queen, rook or bishop with squares between");
               }
-            }
-            // 4. Q => if (same file/ rank) Rook behaviour.
-            if (attackingPiece == "zwart-koningin" && (attackingPieceSquare.file == kingSquare.file || attackingPieceSquare.rank == kingSquare.rank)) {
-              // pieceMoves = __ROOKMOVES__;
-            } else {
-              // pieceMoves = __BISHOPMOVES__;
             }
             // 5. findSquaresBetween horizontally, vertically or diagonally.
             this.findSquaresBetween(attackingPieceSquare, kingSquare);
             // 6. defendedby lower or upper.
             this.squaresBetween.forEach((element) => {
-              if (this.getAttribute("player") == "wit" && this.getSquare(element).isDefendedBy("wit") == true) {
-                console.log("Je kan er tussen");
+              if (this.getAttribute("player") == "wit" && this.getSquare(element).isDefendedBy("wit")) {
+                console.log(this.getSquare(element).isDefendedBy + " kan er tussen");
                 return true;
               } else if (this.getAttribute("player") == "zwart" && this.getSquare(element).isDefendedBy("zwart") == true) {
-                console.log("Je kan er tussen");
+                console.log(this.getSquare(element).isDefendedBy + " kan er tussen");
                 return true;
               }
             });
           } else if (attackingPiece) {
             // Kingmoves --- Can king move out of chess.
+            return true;
           }
         }
         return false;
       }
       // ======================================================== <chess-board>.checkMate
-      checkMate() {
-        if (this.isInCheck() && !this.negatingCheck()) {
+      checkMate(color) {
+        console.log("checkMate");
+        if (this.isInCheck() && !this.negatingCheck(color)) {
           console.log("Checkmate", this.player);
+        } else if (this.isInCheck() && this.negatingCheck(color)) {
+          console.log("You can get out of check.");
         }
       }
       // ======================================================== <chess-board>.staleMate
@@ -1429,9 +1455,10 @@
         return this.setAttribute(__WC_ATTRIBUTE_PLAYER__, v);
       }
       // ======================================================== <chess-board>.save
-      save(){
+      save() {
         localStorage.setItem("fen", this.fen);
-        document.getElementById("fen").value = this.fen;
+        let fenElement = document.getElementById("fen");
+        if (fenElement) fenElement.value = this.fen;
       }
     } // class ChessBoard
   ); // end of class definition
