@@ -1,7 +1,8 @@
 // IIFE - Immediatly Invoked Function Expression, save from creating Global variables
 !(function () {
   const __STORECHESSMOVE__ = "STORECHESSMOVE";
-  const __API_RECORDS__ = "https://schaakzet.nl/api_schaakzet_php-crud-api.php/records";
+  const __API_RECORDS__ = "https://schaakzet.nl/api/crud/index.php/records/";
+  const __API_SCHAAKZET__ = "https://schaakzet.nl/api/rt/index.php/?action=";
   const __API_TABLE_MATCHMOVES__ = "matchmoves";
   const __API_HEADERS__ = {
     Accept: "application/json",
@@ -39,9 +40,7 @@
       }
       storeMove({ chessboard, moves, move, fromsquare, tosquare, fen }) {
         if (chessboard.record) {
-          let uri = `${__API_RECORDS__}/` + __API_TABLE_MATCHMOVES__;
-          console.warn("API", move, fen, uri);
-          fetch(uri, {
+          fetch(__API_RECORDS__ + __API_TABLE_MATCHMOVES__, {
             method: "POST",
             headers: __API_HEADERS__,
             body: JSON.stringify({
@@ -51,8 +50,6 @@
               tosquare,
               fen,
             }),
-          }).then((res) => {
-            //console.log(res);
           });
         } // if record
       }
@@ -64,50 +61,6 @@
   // assigns name
 
   customElements.define(
-    "chess-match-games",
-    class extends HTMLElement {
-      constructor() {
-        super().attachShadow({ mode: "open" }).innerHTML =
-          `<style>#boards{
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 120px));
-        gap:1em;
-      }</style>` + `<div id="boards"></div>`;
-      }
-      connectedCallback() {
-        this.render();
-      }
-      render() {
-        let uri = `${__API_RECORDS__}/` + __API_TABLE_MATCHMOVES__;
-        console.warn("API", uri);
-        fetch(uri, {
-          method: "GET",
-          headers: __API_HEADERS__,
-        })
-          .then((res) => res.json())
-          .then((json) => {
-            let boards = json.records.reduce((boardsMap, record) => {
-              let { matchmoves_id: id, name, move, fromsquare, tosquare, fen, time } = record;
-              if (boardsMap.has(name)) {
-                boardsMap.get(name).push(record);
-              } else {
-                boardsMap.set(name, [record]);
-              }
-              return boardsMap;
-            }, new Map());
-            let boardsHTML = [...boards.entries()]
-              .map(([name, records]) => {
-                let record = records.slice(-1)[0];
-                let { matchmoves_id, move, fromsquare, tosquare, fen, time } = record;
-                return `<chess-board matchmoves_name="${name}" fen="${record.fen}"></chess-board>`;
-              })
-              .join("");
-            this.shadowRoot.querySelector("#boards").innerHTML = boardsHTML;
-          });
-      } // render()
-    }
-  );
-  customElements.define(
     "chess-game-progress",
     class extends HTMLElement {
       connectedCallback() {
@@ -118,10 +71,63 @@
       }
     }
   );
+  customElements.define(
+    "chess-matches",
+    class extends HTMLElement {
+      constructor() {
+        super().attachShadow({ mode: "open" }).innerHTML =
+          `<style>#boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,120px));gap:1em}</style>` + `<div id="boards"></div>`;
+      }
+      connectedCallback() {
+        this.render();
+      }
+      // ======================================================== <chess-matches>.render
+      render() {
+        fetch(__API_RECORDS__ + __API_TABLE_MATCHMOVES__, {
+          method: "GET",
+          headers: __API_HEADERS__,
+        })
+          .then((res) => res.json())
+          .then((json) => {
+            Object.assign(this.shadowRoot.querySelector("#boards"), {}).append(
+              ...[
+                ...json.records
+                  .reduce((boards, record) => {
+                    // reduce all JSON records to chessboards map
+                    //let { matchmoves_id: id, name, move, fromsquare, tosquare, fen, time } = record;
+                    if (boards.has(record.name)) boards.get(record.name).push(record);
+                    else boards.set(record.name, [record]);
+                    return boards;
+                  }, new Map())
+                  .entries(),
+              ].map(([name, records]) =>
+                Object.assign(document.createElement("chess-board"), {
+                  //name,
+                  fen: records.slice(-1)[0].fen,
+                  onmouseenter: (evt) => {
+                    let chessboard = evt.target.closest("[matchmoves_name]");
+                    console.log(666, chessboard, this);
+                  },
+                  onclick: (evt) => {
+                    let chessboard = evt.target.closest("[matchmoves_name]");
+                    fetch(__API_SCHAAKZET__ + `delete&matchid=` + chessboard.getAttribute("matchmoves_name"), {
+                      method: "GET",
+                      headers: __API_HEADERS__,
+                    });
+                  }, // onclick
+                })
+              ) // innerHTML
+            ); // Object.assign
+          });
+      } // render()
+    }
+  );
   class ChessPlayer extends HTMLElement {
     connectedCallback() {
       let placeholder = this.localName;
-      this.innerHTML = /*html*/ `<label>${this.getAttribute("label")||""}<input type="text" placeholder="${placeholder}" value="${this.getAttribute("name") || ""}"></label><span></span>`;
+      this.innerHTML = /*html*/ `<label>${this.getAttribute("label") || ""}<input type="text" placeholder="${placeholder}" value="${
+        this.getAttribute("name") || ""
+      }"></label><span></span>`;
       let input = this.querySelector("input");
       const showinput = (state) => {
         let name = "";

@@ -1224,13 +1224,19 @@
         const kingAttackers = (color) => kingSquare(color).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__) || "";
         const isKingAttacked = (color) => kingAttackers(color).length;
 
-        if (isKingAttacked(__PLAYER_WHITE__)) {
-          console.log("Witte koning staat schaak door", kingAttackers(__PLAYER_WHITE__));
-          return true;
-        }
-        if (isKingAttacked(__PLAYER_BLACK__)) {
-          console.log("Zwarte koning staat schaak door", kingAttackers(__PLAYER_BLACK__));
-          return true;
+        const whiteKing = kingSquare(__PLAYER_WHITE__);
+        const blackKing = kingSquare(__PLAYER_BLACK__);
+
+        if (whiteKing && blackKing) {
+          // make sure there are pieces on the board
+          if (isKingAttacked(__PLAYER_WHITE__)) {
+            console.log("Witte koning staat schaak door", kingAttackers(__PLAYER_WHITE__));
+            return true;
+          }
+          if (isKingAttacked(__PLAYER_BLACK__)) {
+            console.log("Zwarte koning staat schaak door", kingAttackers(__PLAYER_BLACK__));
+            return true;
+          }
         }
         return false;
       }
@@ -1371,8 +1377,7 @@
         // TODO: Waarom hier??
         this.castlingArray = [__FEN_WHITE_KING__, __FEN_WHITE_QUEEN__, __FEN_BLACK_KING__, __FEN_BLACK_QUEEN__]; // Halen we uit FEN
 
-        // make sure we don't run before the board exists, because attributeChangedCallback runs early
-        if (this.squares) {
+        const createFENboard = (fenString) => {
           this.clear();
           if (fenString !== "") {
             let squareIndex = 0;
@@ -1389,7 +1394,12 @@
             });
           }
           if (document.querySelector("#fen")) document.querySelector("#fen").value = fenString;
-        }
+        };
+        if (this.isConnected) createFENboard(fenString);
+        else // created board with document.createElement("chess-board")
+          setTimeout(() => {
+            createFENboard(fenString);
+          });
         // this.calculateBoard(); breaks code
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER

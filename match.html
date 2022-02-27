@@ -10,21 +10,24 @@
   <chess-match></chess-match>
   <header>
     <h1-chess></h1-chess>
-    <b>Games in database:</b>
-    <chess-match-games></chess-match-games>
-    <hr>
+    <h2>Match
+      
     <chess-player-white name="Player1"></chess-player-white>
     versus
     <chess-player-black></chess-player-black>
-    <br>
-    <span style="background:yellow">TODO: Use player names for database ID, Delete Matches from DB, undo last chessboard move</span>
+    </h2>
+    <todo-list>
+      Use player names for database ID
+      Delete Matches from DB
+    </todo-list>
   </header>
   <main>
     <button onclick="setStart()">Start</button><br />
     <!-- <chess-board-action event="deleteMatchData">Delete Match</chess-board-action> -->
 
     <chess-game>
-      <chess-board id="matchboard"  fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white" labels></chess-board>
+      <chess-board id="matchboard" fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white" labels>
+      </chess-board>
       <chess-game-progress></chess-game-progress>
     </chess-game>
     <div id="message"></div>

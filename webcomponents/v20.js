@@ -1224,13 +1224,18 @@
         const kingAttackers = (color) => kingSquare(color).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__) || "";
         const isKingAttacked = (color) => kingAttackers(color).length;
 
-        if (isKingAttacked(__PLAYER_WHITE__)) {
-          console.log("Witte koning staat schaak door", kingAttackers(__PLAYER_WHITE__));
-          return true;
-        }
-        if (isKingAttacked(__PLAYER_BLACK__)) {
-          console.log("Zwarte koning staat schaak door", kingAttackers(__PLAYER_BLACK__));
-          return true;
+        const whiteKing = kingSquare(__PLAYER_WHITE__);
+        const blackKing = kingSquare(__PLAYER_BLACK__);
+
+        if (whiteKing && blackKing) { // make sure there are pieces on the board
+          if (isKingAttacked(__PLAYER_WHITE__)) {
+            console.log("Witte koning staat schaak door", kingAttackers(__PLAYER_WHITE__));
+            return true;
+          }
+          if (isKingAttacked(__PLAYER_BLACK__)) {
+            console.log("Zwarte koning staat schaak door", kingAttackers(__PLAYER_BLACK__));
+            return true;
+          }
         }
         return false;
       }

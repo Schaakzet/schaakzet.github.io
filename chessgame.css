@@ -1,15 +1,26 @@
 body {
   background: beige;
-  font: 18px Arial;
+  font: 16px Arial;
 }
 
 chess-game {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 1em;
 }
 
 schaakzet-teams > div {
   font-size: 2em;
   display: grid;
   grid-template-columns: 300px 600px 1fr 1fr 1fr;
+  gap: 1em;
+  row-gap: 2em;
+}
+
+todo-list {
+  background: yellow;
+  display: block;
+}
+todo-list ul {
+  margin-block-start: 0;
 }
