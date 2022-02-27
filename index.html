@@ -16,11 +16,11 @@
           ["sandro.html", "programmeren", "Sandro, Bart"],
           ["rob.html", "vormgeving, introductie oefeningen", "Rob, Geert"],
           ["match.html", "1 Match schaakbord/players", ""],
-          ["testDB.html", "Zetten gaan naar database", "Agneta, Bart, Danny"],
+          ["testDB.html", "Zetten gaan naar database", "Agneta, Bart, Frans, Danny"],
           ["dashboard.html", "Alle match schaakborden", ""],
           ["", "Functioneel testen", "Ashraf"],
           ["", "Simultaan Toernooi", "Iedereen tegen Laurent"],
-        ].map(([url, title, team]) => `<div><a href="${url}">${url}</a><span>${title}</span><span>${team}</span></div>`).join("");
+        ].map(([uri, label, team]) => `<div><a href="${uri}">${uri}</a><span>${label}</span><span>${team}</span></div>`).join("");
       }
     })
     // make sure our dev code executes after all chess boards are 100% created
