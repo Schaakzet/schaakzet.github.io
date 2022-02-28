@@ -7,11 +7,8 @@
   <body>
     <main>
       <h1-chess></h1-chess>
-      <todo-list>
-        Make it a playable board, without opponent color
-        Add undo last move button
-      </todo-list>
-  
+      <todo-list> Make it a playable board, without opponent color Add undo last move button </todo-list>
+
       <label for="enterFEN">enter FEN:</label><br />
       <input id="fen" type="text" size="100" />
       <button onclick="setFEN(fen.value)">Set FEN</button><br />
@@ -19,7 +16,7 @@
       <chess-game>
         <!-- rnbqkbnr/ppppppp1/7p/8/3P4/8/PPP1PPPP/RNBQKBNR -->
         <!-- r1bqk1nr/pppp1ppp/2n5/2b1p3/4P3/4KN2/PPPP1PPP/RNBQ1B1R -->
-        <chess-board id="schaak3" fen="rnbqkbnr/ppp2ppp/3p4/4p3/4P2Q/3P4/PPP2PPP/RNB1KBNR" player="zwart" labels></chess-board>
+        <chess-board id="schaak3" fen="4k3/8/8/8/7q/2n5/8/4K2R" player="wit" labels></chess-board>
         <chess-game-progress>CHESS PROGRESS</chess-game-progress>
       </chess-game>
       <div id="message">[MESSAGE]</div>

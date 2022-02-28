@@ -38,6 +38,7 @@
   const __WC_ATTRIBUTE_PLAYER__ = "player"; // <chess-board player=" __PLAYER_WHITE__ / __PLAYER_BLACK__ ">
   const __WC_ATTRIBUTE_ATTACKEDBY__ = "attackedby"; // <chess-square attackedby="Ne3,Qe8">
   const __WC_ATTRIBUTE_DEFENDEDBY__ = "defendedby"; // <chess-square defendedby="Ne3,Qe8">
+  const __WC_ATTRIBUTE_MOVESFROM__ = "movesfrom"; // <chess-square movesfrom="Pg2, qh4">
 
   // ********************************************************** Eventname constants in all chess files
   const __STORECHESSMOVE__ = "STORECHESSMOVE"; // send to <chess-match>
@@ -80,7 +81,7 @@
   const otherPlayer = (color) => (color == __PLAYER_WHITE__ ? __PLAYER_BLACK__ : __PLAYER_WHITE__);
 
   // ********************************************************** Square functions
-  const translateSquare = (square, file_offset, file_rank) => {
+  const translateSquare = (square, file_offset, rank_offset) => {
     // TODO: ("b2", 1, 1) -> "c3"
     // TODO: ("b2", -1, -1) -> "a1"
   };
@@ -403,6 +404,8 @@
       get isQueen() {
         return this.isPiece(__PIECE_QUEEN__);
       }
+      // ======================================================== <chess-piecce>
+
       // ======================================================== <chess-piece>.atStartRow
       get atStartRow() {
         return (this.isBlackPawn && this.atRank(7)) || (this.isWhitePawn && this.atRank(2));
@@ -472,6 +475,7 @@
             let _squareName = this.possibleMove(xAxis, yAxis); // TODO:: this.possibleMove(pieceMoves[line][move]) // pass Array
             if (_squareName) {
               const _squareElement = this.chessboard.getSquare(_squareName); // get <chess-square> element
+              _squareElement.movesFrom(this);
               //Eerst kijken of er een piece staat, en dan kijken of het dezelfde kleur heeft.
               if (_squareElement.piece) {
                 if (this.isPawn /* We doen niks */) {
@@ -582,6 +586,13 @@
               }
             }
           }
+          const allowedMoves = _potentialMovesArray.filter((squareName) => {
+            const ultimateDefenders = this.chessboard.getSquare(squareName).defenders.filter((defender) => {
+              return defender !== convertFEN(this.is) + this.at;
+            });
+            return !ultimateDefenders.length;
+          });
+          this.allowedMoves = allowedMoves;
         }
         this.moves = _potentialMovesArray;
       } // potentialMoves
@@ -654,7 +665,7 @@
         return this.querySelector(__WC_CHESS_PIECE__) || false;
       }
       set piece(v) {
-        // TODO: proces as string or element
+        // TODO: process as string or element
         // on string createElement
       }
       // ======================================================== <chess-square>.squareElement
@@ -687,6 +698,7 @@
         }
         this.setAttribute(__WC_ATTRIBUTE_ATTACKEDBY__, attackers + position);
       }
+
       get attackers() {
         let attackers = this.getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__);
         if (attackers) {
@@ -695,7 +707,7 @@
           return [];
         }
       }
-      // ======================================================== <chess-square>.attackedBy
+      // ======================================================== <chess-square>.defendedBy
       defendedBy(chessPiece) {
         const position = convertFEN(chessPiece.is) + chessPiece.at;
         let defenders = this.getAttribute(__WC_ATTRIBUTE_DEFENDEDBY__);
@@ -706,10 +718,31 @@
         }
         this.setAttribute(__WC_ATTRIBUTE_DEFENDEDBY__, defenders + position);
       }
+
       get defenders() {
         let defenders = this.getAttribute(__WC_ATTRIBUTE_DEFENDEDBY__);
         if (defenders) {
           return defenders.split(",");
+        } else {
+          return [];
+        }
+      }
+      // ======================================================== <chess-square>.movesFrom
+      movesFrom(chessPiece) {
+        const position = convertFEN(chessPiece.is) + chessPiece.at;
+        let movers = this.getAttribute(__WC_ATTRIBUTE_MOVESFROM__);
+        if (movers) {
+          movers = movers + ",";
+        } else {
+          movers = "";
+        }
+        this.setAttribute(__WC_ATTRIBUTE_MOVESFROM__, movers + position);
+      }
+
+      get movers() {
+        let movers = this.getAttribute(__WC_ATTRIBUTE_MOVESFROM__);
+        if (movers) {
+          return movers.split(",");
         } else {
           return [];
         }
@@ -758,6 +791,7 @@
       clearAttributes() {
         this.removeAttribute(__WC_ATTRIBUTE_ATTACKEDBY__);
         this.removeAttribute(__WC_ATTRIBUTE_DEFENDEDBY__);
+        this.removeAttribute(__WC_ATTRIBUTE_MOVESFROM__);
       }
       // ======================================================== <chess-square>.pieceName
       get pieceName() {
@@ -788,29 +822,20 @@
       isDefendedBy(color) {
         // __PLAYER_WHITE__
         //this.defenders = ["Qe3","na4","Rf5"]
-        let isDefended = this.defenders.filter(([fen, file, rank]) => {
+        return this.defenders.filter(([fen, file, rank]) => {
           return this.chessboard.getPiece(file + rank).color == color;
         }).length; // true/false
-        console.warn("isDef", color, isDefended);
-        return isDefended;
-        // TODO: write documentation, maybe write better code
-        let defendedColor = "";
-        function hasLowerCase(str) {
-          return str.charAt(0) !== str.charAt(0).toUpperCase();
-        }
-        function hasUpperCase(str) {
-          return str.charAt(0) === str.charAt(0).toUpperCase();
-        }
-        if (typeof this.defendedArray == "undefined") {
-          return false;
-        }
-        if (this.defendedArray.every(hasLowerCase)) {
-          defendedColor = __PLAYER_BLACK__;
-        } else if (this.defendedArray.every(hasUpperCase)) {
-          defendedColor = __PLAYER_WHITE__;
-        }
-        return color !== defendedColor;
-      } // <chess-square>.isAttackedBy
+      } // <chess-square>.isDefendedBy
+      // ======================================================== <chess-square>.isMovesFrom
+      isMovesFrom(color) {
+        // __PLAYER_WHITE__
+        //this.movers = ["Pg2, qh4"]
+        return this.movers.filter(([fen, file, rank]) => {
+          if (!this.chessboard.getPiece(file + rank).isKing) {
+            return this.chessboard.getPiece(file + rank).color == color;
+          }
+        }).length; // true/false
+      } // <chess-square>.isDefendedBy
     } // <chess-square>
   ); //defineElement(__WC_CHESS_SQUARE__)
 
@@ -961,7 +986,7 @@
           let chessSquare = this.getSquare(element);
           chessSquare.highlight(false);
         }
-        this.checkMate(otherPlayer(this.player));
+        this.checkMate(this.player);
       }
       // ======================================================== <chess-board>.changePlayer
       changePlayer(piece = this.pieceClicked) {
@@ -1064,7 +1089,7 @@
           }
         }
       }
-      // ======================================================== <chess-board>.lastPawnMove
+      // ======================================================== <chess-board>.enPassantPosition
       enPassantPosition(lastMove) {
         const { chessPiece, fromSquare, toSquare } = lastMove;
         if (chessPiece.isPawn && Math.abs(toSquare.rank - fromSquare.rank) == 2) {
@@ -1188,10 +1213,6 @@
             return this.collectPiece();
         }
       }
-      // ======================================================== <chess-board>.allowedMoves
-      allowedMoves() {
-        // If king will become check because of move, move not allowed.
-      }
       // ======================================================== <chess-board>.findPieceSquare
       findPieceSquare(piece) {
         if (isString(piece)) {
@@ -1227,7 +1248,8 @@
         const whiteKing = kingSquare(__PLAYER_WHITE__);
         const blackKing = kingSquare(__PLAYER_BLACK__);
 
-        if (whiteKing && blackKing) { // make sure there are pieces on the board
+        if (whiteKing && blackKing) {
+          // make sure there are pieces on the board
           if (isKingAttacked(__PLAYER_WHITE__)) {
             console.log("Witte koning staat schaak door", kingAttackers(__PLAYER_WHITE__));
             return true;
@@ -1305,43 +1327,43 @@
       }
       // ======================================================== <chess-board>.negatingCheck
       negatingCheck(color) {
-        console.log("negating check");
         const king = (color) => color + __PIECE_SEPARATOR__ + __PIECE_KING__;
+        const horse = (color) => color + __PIECE_SEPARATOR__ + __PIECE_KNIGHT__;
         const kingSquare = (color) => this.findPieceSquare(king(color));
         const kingAttackers = (color) => kingSquare(color).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__) || ""; // get attackedby array qe5 ne2
-
-        // Capture Attacking Piece --- Works only for one attacking piece. couse if we get more we cant use capture.
         if (kingAttackers(color)) {
-          const attackingPiece = this.getPiece(kingAttackers(color).substring(1, 3));
-          console.log("Main IF" + attackingPiece);
-          if (this.getSquare(attackingPiece).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__)) {
-            console.log("You can take the checking piece");
-            return true;
-          } else if (attackingPiece) {
-            // Intervening Chess --- The order is not entirely correct.
-            // 1. What is the attacking piece? Q.
-            // 2. Is there 1 or more squares in between attacking piece and king?
-            const attackingPieceSquare = this.getSquare(checkPieceSquare.substring(1, 3));
-            // 3. Is it a horse? No.
-            const kingSquare = this.findPieceSquare("wit-koning");
-            if (attackingPiece !== "zwart-paard") {
-              if (attackingPieceSquare.file - kingSquare.file >= 2 || attackingPieceSquare.rank - kingSquare.rank >= 2) {
-                console.log("queen, rook or bishop with squares between");
-              }
+          if (kingAttackers(color).length == 3) {
+            const attackingPiece = (color) => this.getPiece(kingAttackers(color).substring(1, 3));
+            const attackingPieceSquare = (color) => attackingPiece(color).square;
+            // Capture Attacking Piece --- Works only for one attacking piece, because if we get more we can't use capture.
+            if (attackingPieceSquare(color).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__)) {
+              console.log("You can take the checking piece", attackingPiece(color).is);
+              return true;
             }
-            // 5. findSquaresBetween horizontally, vertically or diagonally.
-            this.findSquaresBetween(attackingPieceSquare, kingSquare);
-            // 6. defendedby lower or upper.
-            this.squaresBetween.forEach((element) => {
-              if (this.getAttribute("player") == "wit" && this.getSquare(element).isDefendedBy("wit")) {
-                console.log(this.getSquare(element).isDefendedBy + " kan er tussen");
-                return true;
-              } else if (this.getAttribute("player") == "zwart" && this.getSquare(element).isDefendedBy("zwart") == true) {
-                console.log(this.getSquare(element).isDefendedBy + " kan er tussen");
-                return true;
+            if (attackingPiece(color)) {
+              console.log("Intervening Check");
+              // Intervening Check --- The order is not entirely correct.
+              // 1. What is the attacking piece? Q.
+              // 2. Is it a horse? No.
+              // 3. Is there 1 or more squares in between attacking piece and king?
+              if (attackingPiece(color) !== horse(color)) {
+                if (Math.abs(attackingPieceSquare(color).file - kingSquare(color).file) >= 2 || Math.abs(attackingPieceSquare(color).rank - kingSquare(color).rank) >= 2) {
+                  console.log("queen, rook or bishop with squares between");
+                }
               }
-            });
-          } else if (attackingPiece) {
+              // 4. Left with Bishop and Rook moves.
+              // 5. findSquaresBetween horizontally, vertically or diagonally.
+              this.findSquaresBetween(attackingPieceSquare(color), kingSquare(color));
+              // 6. defendedby lower or upper. Alleen (color)-stukken en niet de koning en intervenedByPawn.
+              this.squaresBetween.forEach((element) => {
+                if (this.getSquare(element).isMovesFrom(color)) {
+                  console.log(this.getSquare(element), " kan er tussen");
+                  return true;
+                }
+              });
+            }
+          }
+          if (king.allowedMoves >= 1) {
             // Kingmoves --- Can king move out of chess.
             return true;
           }
@@ -1350,7 +1372,6 @@
       }
       // ======================================================== <chess-board>.checkMate
       checkMate(color) {
-        console.log("checkMate");
         if (this.isInCheck() && !this.negatingCheck(color)) {
           console.log("Checkmate", this.player);
         } else if (this.isInCheck() && this.negatingCheck(color)) {
@@ -1359,7 +1380,7 @@
       }
       // ======================================================== <chess-board>.staleMate
       staleMate() {
-        if (!whiteInCheck && king(color).potentialMoves == []) {
+        if (!whiteInCheck && king(color).kingMoves == []) {
           console.log("Stalemate!");
         }
       }
@@ -1449,6 +1470,7 @@
           }
         }
       }
+
       adddplaymove(from, to) {
         this._moves.unshift([from, to]);
       }

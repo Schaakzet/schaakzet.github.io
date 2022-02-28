@@ -12,19 +12,24 @@
             .filter(Boolean)
             .map(([tag, uri, label, title = label, target = "_blank"], idx) => {
               if (tag) {
-                console.log(idx, tag, uri, label, title, target);
-                let isURI = typeof uri=="string" && uri.startsWith("http") || uri.includes("html");
-                return {
-                  br: `<br>`,
-                  a: `<a title="${title}" target="${target}" href="${uri}">${label}</a>`,
-                  button: isURI
-                    ? `<button onclick="document.location='${uri}'">${label}</button>`
-                    : `<button onclick="this.closest('create-html').dispatch(this,'${uri}')">${label}</button>`,
-                  input:
-                    uri == "select"
-                      ? `<select name="${label}" >${title.split(",").map(o=>`<option value="${o}">${o}</option>`).join("")}</select>`
-                      : `<input type="${uri}" placeholder="${label}" value="${title}">`,
-                }[tag] || tag;
+                // console.log(idx, tag, uri, label, title, target);
+                let isURI = (typeof uri == "string" && uri.startsWith("http")) || uri.includes("html");
+                return (
+                  {
+                    br: `<br>`,
+                    a: `<a title="${title}" target="${target}" href="${uri}">${label}</a>`,
+                    button: isURI
+                      ? `<button onclick="document.location='${uri}'">${label}</button>`
+                      : `<button onclick="this.closest('create-html').dispatch(this,'${uri}')">${label}</button>`,
+                    input:
+                      uri == "select"
+                        ? `<select name="${label}" >${title
+                            .split(",")
+                            .map((o) => `<option value="${o}">${o}</option>`)
+                            .join("")}</select>`
+                        : `<input type="${uri}" placeholder="${label}" value="${title}">`,
+                  }[tag] || tag
+                );
               } else return `<b>${uri}</b>`;
             })
             .join(" - ");
@@ -51,8 +56,6 @@
         this.innerHTML =
           `<h1>Roads Technology SchaakZet - <a target=_blank href="https://github.com/Schaakzet/schaakzet.github.io">development</a> ${document.location.pathname}</h1>` +
           `<create-html>
-            input|text|Player1|
-            input|select|red,green,blue
             a|index.html|index
             |Play:
             a|match.html|match
