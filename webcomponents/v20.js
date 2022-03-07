@@ -221,6 +221,7 @@
     `.white_square {background-color: white}` +
     `chess-piece {display:inline-block}` +
     `chess-piece > * {width: 100%;position: relative}` +
+    `.game_over {pointer-events: none;}` +
     `</style>`;
 
   const chessboardSquareLabels = /*html*/ `<style id="squarelabels">
@@ -404,8 +405,6 @@
       get isQueen() {
         return this.isPiece(__PIECE_QUEEN__);
       }
-      // ======================================================== <chess-piecce>
-
       // ======================================================== <chess-piece>.atStartRow
       get atStartRow() {
         return (this.isBlackPawn && this.atRank(7)) || (this.isWhitePawn && this.atRank(2));
@@ -480,7 +479,7 @@
               _squareElement.movesFrom(this);
               //Eerst kijken of er een piece staat, en dan kijken of het dezelfde kleur heeft.
               if (_squareElement.piece) {
-                if (this.isPawn /* We doen niks */) {
+                if (this.isPawn) {
                   // do nothing for Pawns
                 } else if (this.sameColorAsPiece(_squareElement.piece)) {
                   _squareElement.highlight(__PROTECT_PIECE__); // TODO:: move to .defendedBy() method
@@ -495,7 +494,9 @@
                 }
                 // Deze break is er voor om niet stukken OVER een ander stuk nog te checken.
                 // Als er geen piece op de squareElement staat. EMPTY.
-                break;
+                if (_squareElement.piece == !this.isKing) {
+                  break;
+                }
               } else {
                 _squareElement.highlight(__EMPTY_SQUARE__);
                 _potentialMovesArray.push(_squareName);
@@ -549,10 +550,12 @@
 
         this.moves = _potentialMovesArray;
       } // potentialMoves
-      // ======================================================== <chess-piece>.potentialMoves2nd
-      potentialMoves2nd() {
+      // ======================================================== <chess-piece>.potentialKingMoves
+      potentialKingMoves() {
         if (this.isKing) {
           // ROQUEREN
+          console.log("Roqueren");
+          const _potentialMovesArray = this.moves;
           // TODO: ?? gaat dit wel goed als er andere stukken staan?
           const longWhiteTower = this.chessboard.getPiece(__SQUARE_BOTTOM_LEFT__);
           const shortWhiteTower = this.chessboard.getPiece(__SQUARE_BOTTOM_RIGHT__);
@@ -561,15 +564,17 @@
 
           const playerColor = this.chessboard.player;
           // TODO: onderstaande kan vervangen voor door 4x aanroepen van 1 function(fenLetter,destinationSquare,offset,squareName)
+          const castlingArray = this.chessboard.castlingArray;
           if (playerColor == __PLAYER_WHITE__) {
-            if (this.chessboard.castlingArray.includes(__FEN_WHITE_QUEEN__) && longWhiteTower.moves && longWhiteTower.moves.includes("d1")) {
+            const longWhiteCastling = castlingArray.includes(__FEN_WHITE_QUEEN__) && longWhiteTower.moves && longWhiteTower.moves.includes("d1");
+            if (longWhiteCastling) {
               if (this.chessboard.castlingInterrupt(__PLAYER_WHITE__, -3)) {
                 const squareName = "c1";
                 this.square.squareElement(squareName).highlight(__EMPTY_SQUARE__);
                 _potentialMovesArray.push(squareName);
               }
             }
-            if (this.chessboard.castlingArray.includes(__FEN_WHITE_KING__) && shortWhiteTower.moves && shortWhiteTower.moves.includes("f1")) {
+            if (castlingArray.includes(__FEN_WHITE_KING__) && shortWhiteTower.moves && shortWhiteTower.moves.includes("f1")) {
               if (this.chessboard.castlingInterrupt(__PLAYER_WHITE__, 2)) {
                 const squareName = "g1";
                 this.square.squareElement(squareName).highlight(__EMPTY_SQUARE__);
@@ -577,14 +582,14 @@
               }
             }
           } else if (playerColor == __PLAYER_BLACK__) {
-            if (this.chessboard.castlingArray.includes(__FEN_BLACK_QUEEN__) && longBlackTower.moves && longBlackTower.moves.includes("d8")) {
+            if (castlingArray.includes(__FEN_BLACK_QUEEN__) && longBlackTower.moves && longBlackTower.moves.includes("d8")) {
               if (this.chessboard.castlingInterrupt(__PLAYER_BLACK__, -3)) {
                 const squareName = "c8";
                 this.square.squareElement(squareName).highlight(__EMPTY_SQUARE__);
                 _potentialMovesArray.push(squareName);
               }
             }
-            if (this.chessboard.castlingArray.includes(__FEN_BLACK_KING__) && shortBlackTower.moves && shortBlackTower.moves.includes("f8")) {
+            if (castlingArray.includes(__FEN_BLACK_KING__) && shortBlackTower.moves && shortBlackTower.moves.includes("f8")) {
               if (this.chessboard.castlingInterrupt(__PLAYER_BLACK__, 2)) {
                 const squareName = "g8";
                 this.square.squareElement(squareName).highlight(__EMPTY_SQUARE__);
@@ -592,8 +597,8 @@
               }
             }
           }
+          this.moves = _potentialMovesArray;
 
-          const _potentialMovesArray = this.moves;
           // ALLOWED MOVES
           console.log(this.is, _potentialMovesArray);
           const allowedMoves = _potentialMovesArray.filter((squareName) => {
@@ -613,19 +618,20 @@
             return !allowedMoves.includes(potentialMove);
           });
           console.log("falsemoves =", falseMoves);
-          // NEW DEFENDED
+          this.falseMoves = falseMoves; // Piece Koning krijgt een array falseMoves. Voor staleMate.
+          // NEW DEFENDED ARRAY
           const kingPosition = convertFEN(this.is) + this.at;
 
           for (const squarename of falseMoves) {
             const square = this.chessboard.getSquare(squarename);
             const defendedby = square.defenders;
-            // console.log(defendedby);
             const newDefendedArray = defendedby.filter((defender) => {
               return defender != kingPosition;
             });
             console.log(squarename, newDefendedArray);
             square.setAttribute(__WC_ATTRIBUTE_DEFENDEDBY__, newDefendedArray);
-            // NEW ATTACKED
+            square.style.border = "";
+            // NEW ATTACKED ARRAY
             if (square.getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__)) {
               const attackedby = square.attackers;
               const newAttackedArray = attackedby.filter((attacker) => {
@@ -633,10 +639,10 @@
               });
               // console.log(squarename, newAttackedArray);
               square.setAttribute(__WC_ATTRIBUTE_ATTACKEDBY__, newAttackedArray);
+              square.style.border = "";
             }
           }
           // console.log(this.is, this.moves, allowedMoves, falseMoves);
-          // this.chessboard.getSquare(defender_FENat.substring(1, 3)).clear();
           // _squareElement.highlight(__EMPTY_SQUARE__);
           this.moves = allowedMoves;
         }
@@ -678,7 +684,7 @@
       handleFirstClick() {
         if (this.hasAttribute(__WC_ATTRIBUTE_PIECENAME__)) {
           this.piece.potentialMoves(this.at);
-          this.piece.potentialMoves2nd(this.at);
+          this.piece.potentialKingMoves(this.at);
           this.chessboard.pieceClicked = this.piece; // Hier wordt pieceClicked pas gedefinieerd.
           console.log("Mogelijke zetten: ", this.piece.pieceName, this.chessboard.pieceClicked.moves);
         }
@@ -867,20 +873,24 @@
       isDefendedBy(color) {
         // __PLAYER_WHITE__
         //this.defenders = ["Qe3","na4","Rf5"]
-        return this.defenders.filter(([fen, file, rank]) => {
-          return this.chessboard.getPiece(file + rank).color == color;
-        }).length; // true/false
+        return (
+          this.defenders.filter(([fen, file, rank]) => {
+            return this.chessboard.getPiece(file + rank).color == color;
+          }).length > 0
+        ); // true/false
       } // <chess-square>.isDefendedBy
       // ======================================================== <chess-square>.isMovesFrom
       isMovesFrom(color) {
         // __PLAYER_WHITE__
         //this.movers = ["Pg2, qh4"]
-        return this.movers.filter(([fen, file, rank]) => {
-          if (!this.chessboard.getPiece(file + rank).isKing) {
-            return this.chessboard.getPiece(file + rank).color == color;
-          }
-        }).length; // true/false
-      } // <chess-square>.isDefendedBy
+        return (
+          this.movers.filter(([fen, file, rank]) => {
+            if (!this.chessboard.getPiece(file + rank).isKing) {
+              return this.chessboard.getPiece(file + rank).color == color;
+            }
+          }).length > 0
+        ); // true/false
+      } // <chess-square>.isMovesFrom
     } // <chess-square>
   ); //defineElement(__WC_CHESS_SQUARE__)
 
@@ -1031,6 +1041,7 @@
           chessSquare.highlight(false);
         }
         this.checkMate(this.player);
+        this.staleMate(this.player);
       }
       // ======================================================== <chess-board>.changePlayer
       changePlayer(piece = this.pieceClicked) {
@@ -1135,7 +1146,7 @@
         for (const square of this.squares) {
           let piece = this.getPiece(square);
           if (piece) {
-            piece.potentialMoves2nd();
+            piece.potentialKingMoves();
             // wit-koning
           }
         }
@@ -1175,13 +1186,13 @@
         // }
         // TODO: learn above lines is same as:
         let kingPosition = this.getSquare(color == __PLAYER_WHITE__ ? __SQUARE_WHITE_KING_START__ : __SQUARE_BLACK_KING_START__);
-
         if (offset < 0) {
           for (let i = -1; i >= offset; i--) {
             // TODO: volgende 5 regels zijn hetzelfde als in de 2e for loop, maak er een functie van
             let squareName = kingPosition.translate(i, 0);
             let squareElement = this.getSquare(squareName);
-            if (squareElement.isDefendedBy(color)) {
+            console.log(color, squareName, squareElement.isDefendedBy(color));
+            if (squareElement.isDefendedBy(otherPlayer(color))) {
               return false;
             }
           }
@@ -1189,7 +1200,7 @@
           for (let i = 1; i <= offset; i++) {
             let squareName = kingPosition.translate(i, 0);
             let squareElement = this.getSquare(squareName);
-            if (squareElement.isDefendedBy(color)) {
+            if (squareElement.isDefendedBy(otherPlayer(color))) {
               return false;
             }
           }
@@ -1295,6 +1306,7 @@
         const king = (color) => color + __PIECE_SEPARATOR__ + __PIECE_KING__;
         const kingSquare = (color) => this.findPieceSquare(king(color));
         const kingAttackers = (color) => kingSquare(color).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__) || "";
+        // console.log("King Attackers", kingAttackers(color));
         const isKingAttacked = (color) => kingAttackers(color).length;
 
         const whiteKing = kingSquare(__PLAYER_WHITE__);
@@ -1302,12 +1314,8 @@
 
         if (whiteKing && blackKing) {
           // make sure there are pieces on the board
-          if (isKingAttacked(__PLAYER_WHITE__)) {
-            console.log("Witte koning staat schaak door", kingAttackers(__PLAYER_WHITE__));
-            return true;
-          }
-          if (isKingAttacked(__PLAYER_BLACK__)) {
-            console.log("Zwarte koning staat schaak door", kingAttackers(__PLAYER_BLACK__));
+          if (isKingAttacked(color)) {
+            console.log(color, "koning staat schaak door", kingAttackers(color));
             return true;
           }
         }
@@ -1375,7 +1383,7 @@
           }
         }
         console.log("Squares between:", squaresBetweenArray);
-        this.squaresBetween = squaresBetweenArray;
+        return squaresBetweenArray;
       }
       // ======================================================== <chess-board>.negatingCheck
       negatingCheck(color) {
@@ -1388,7 +1396,7 @@
           if (kingAttackers(color).length == 3) {
             const attackingPiece = (color) => this.getPiece(kingAttackers(color).substring(1, 3));
             const attackingPieceSquare = (color) => attackingPiece(color).square;
-            // Capture Attacking Piece --- Works only for one attacking piece, because if we get more we can't use capture.
+            // Capture Attacking Piece --- Works only for one attacking piece, because if we get more, you can capture only one.
             if (attackingPieceSquare(color).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__)) {
               console.log("You can take the checking piece", attackingPiece(color).is, "with", attackingPieceSquare(color).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__));
               return true;
@@ -1400,26 +1408,31 @@
               // 2. Is it a horse? No.
               // 3. Is there 1 or more squares in between attacking piece and king?
               if (attackingPiece(color) !== horse(color)) {
-                if (Math.abs(attackingPieceSquare(color).file - kingSquare(color).file) >= 2 || Math.abs(attackingPieceSquare(color).rank - kingSquare(color).rank) >= 2) {
+                // We know attacking piece is not a horse, and calculate squares between.
+                const fileDifference = Math.abs(attackingPieceSquare(color).file - kingSquare(color).file);
+                const rankDifference = Math.abs(attackingPieceSquare(color).rank - kingSquare(color).rank);
+                if (fileDifference >= 2 || rankDifference >= 2) {
                   console.log("queen, rook or bishop with squares between");
+                  // 4. Left with Bishop and Rook moves.
+                  // 5. findSquaresBetween horizontally, vertically or diagonally.
+                  const squaresBetween = this.findSquaresBetween(attackingPieceSquare(color), kingSquare(color));
+                  // 6. defendedby lower or upper. Alleen (color)-stukken en niet de koning en intervenedByPawn.
+                  squaresBetween.forEach((element) => {
+                    if (this.getSquare(element).isMovesFrom(color)) {
+                      console.log(this.getSquare(element), " kan er tussen");
+                      return true;
+                    }
+                  });
                 }
+              } else {
+                console.log("Horse, so no squares between calculation.");
               }
-              // 4. Left with Bishop and Rook moves.
-              // 5. findSquaresBetween horizontally, vertically or diagonally.
-              this.findSquaresBetween(attackingPieceSquare(color), kingSquare(color));
-              // 6. defendedby lower or upper. Alleen (color)-stukken en niet de koning en intervenedByPawn.
-              this.squaresBetween.forEach((element) => {
-                if (this.getSquare(element).isMovesFrom(color)) {
-                  console.log(this.getSquare(element), " kan er tussen");
-                  return true;
-                }
-              });
             }
           }
 
-          if (this.getPiece(kingSquare(color)).moves >= 1) {
+          if (this.getPiece(kingSquare(color)).moves.length >= 1) {
             // Kingmoves --- Can king move out of check.
-            console.log("King Moves", king.moves);
+            console.log("King Moves", this.getPiece(kingSquare(color)).moves);
             return true;
           }
         }
@@ -1427,19 +1440,37 @@
       }
       // ======================================================== <chess-board>.checkMate
       checkMate(color) {
-        if (this.isInCheck() && !this.negatingCheck(color)) {
+        if (this.isInCheck(color) && !this.negatingCheck(color)) {
           console.log("Checkmate", this.player);
-        } else if (this.isInCheck() && this.negatingCheck(color)) {
+          this.gameOver("Checkmate");
+        } else if (this.isInCheck(color) && this.negatingCheck(color)) {
           console.log("You can get out of check.");
         }
       }
       // ======================================================== <chess-board>.staleMate
-      staleMate() {
-        if (!whiteInCheck && king(color).kingMoves == []) {
+      staleMate(color) {
+        const king = (color) => color + __PIECE_SEPARATOR__ + __PIECE_KING__;
+        const kingSquare = (color) => this.findPieceSquare(king(color));
+        if (!this.isInCheck(color) && this.getPiece(kingSquare(color)).moves.length == 0 && this.getPiece(kingSquare(color)).falseMoves > 0) {
           console.log("Stalemate!");
+          this.gameOver("Stalemate");
+        }
+        console.log(this.capturedWhitePieces.length);
+        if (this.capturedWhitePieces.length == 15 && this.capturedBlackPieces.length == 15) {
+          console.log("Stalemate!");
+          this.gameOver("Stalemate");
         }
       }
-
+      // ======================================================== <chess-board>.gameOver
+      gameOver(mate) {
+        if (mate == "Checkmate") {
+          document.getElementById("message").innerText = `Game over. ${otherPlayer()} heeft gewonnen.`;
+          // schaak3.classList.add("game_over");
+        } else if (mate == "Stalemate") {
+          document.getElementById("message").innerText = `Game over. Gelijkspel.`;
+          // schaak3.classList.add("game_over");
+        }
+      }
       // ======================================================== <chess-board>.documentation
       documentation() {
         // documentatie van class Methods en Properties in console.log
