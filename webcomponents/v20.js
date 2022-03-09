@@ -494,9 +494,7 @@
                 }
                 // Deze break is er voor om niet stukken OVER een ander stuk nog te checken.
                 // Als er geen piece op de squareElement staat. EMPTY.
-                if (_squareElement.piece == !this.isKing) {
-                  break;
-                }
+                if (!_squareElement.piece.isKing) break;
               } else {
                 _squareElement.highlight(__EMPTY_SQUARE__);
                 _potentialMovesArray.push(_squareName);
@@ -554,7 +552,6 @@
       potentialKingMoves() {
         if (this.isKing) {
           // ROQUEREN
-          console.log("Roqueren");
           const _potentialMovesArray = this.moves;
           // TODO: ?? gaat dit wel goed als er andere stukken staan?
           const longWhiteTower = this.chessboard.getPiece(__SQUARE_BOTTOM_LEFT__);
@@ -600,10 +597,8 @@
           this.moves = _potentialMovesArray;
 
           // ALLOWED MOVES
-          console.log(this.is, _potentialMovesArray);
           const allowedMoves = _potentialMovesArray.filter((squareName) => {
             const defender_square = this.chessboard.getSquare(squareName);
-            console.log("defenders", squareName, defender_square.defenders);
             const ultimateDefenders = defender_square.defenders.filter((defender_FENat) => {
               let myFENpos = convertFEN(this.is) + this.at;
               let defender = this.chessboard.getPiece(defender_FENat.substring(1, 3));
@@ -613,11 +608,9 @@
             return !ultimateDefenders.length;
           });
           // FALSE MOVES
-          console.log("kingmoves", this.moves, allowedMoves);
           const falseMoves = this.moves.filter((potentialMove) => {
             return !allowedMoves.includes(potentialMove);
           });
-          console.log("falsemoves =", falseMoves);
           this.falseMoves = falseMoves; // Piece Koning krijgt een array falseMoves. Voor staleMate.
           // NEW DEFENDED ARRAY
           const kingPosition = convertFEN(this.is) + this.at;
@@ -628,7 +621,6 @@
             const newDefendedArray = defendedby.filter((defender) => {
               return defender != kingPosition;
             });
-            console.log(squarename, newDefendedArray);
             square.setAttribute(__WC_ATTRIBUTE_DEFENDEDBY__, newDefendedArray);
             square.style.border = "";
             // NEW ATTACKED ARRAY
@@ -637,13 +629,10 @@
               const newAttackedArray = attackedby.filter((attacker) => {
                 return attacker != kingPosition;
               });
-              // console.log(squarename, newAttackedArray);
               square.setAttribute(__WC_ATTRIBUTE_ATTACKEDBY__, newAttackedArray);
               square.style.border = "";
             }
           }
-          // console.log(this.is, this.moves, allowedMoves, falseMoves);
-          // _squareElement.highlight(__EMPTY_SQUARE__);
           this.moves = allowedMoves;
         }
       }
@@ -910,7 +899,7 @@
         // TODO: Looks like a bug, every piece moved ends up in this array
         this.capturedBlackPieces = [];
         this.capturedWhitePieces = [];
-        this.moves = [];
+        this.chessMoves = [];
       }
       // ======================================================== <chess-board>.connectedCallback
       connectedCallback() {
@@ -1050,13 +1039,14 @@
       }
       // ======================================================== <chess-board>.recordMove
       recordMove(chessPiece, fromSquare, toSquare) {
-        // TODO: FIX Logic Bug recordMove is execute AFTER piece was add to toSquare
+        // TODO: FIX Logic Bug recordMove is executed AFTER piece was added to toSquare
         let moveType = toSquare.capturePieceBy(chessPiece) ? __MOVETYPE_CAPTURE__ : __MOVETYPE_MOVE__;
         console.warn("recordMove:", chessPiece.is, fromSquare.at, moveType, toSquare.at);
-        this.moves.push({
+        this.chessMoves.push({
           chessPiece,
           fromSquare,
           toSquare,
+          fen: this.fen,
         });
         // emit Event to <chess-match> which records all moves in database
         document.dispatchEvent(
@@ -1066,7 +1056,7 @@
             cancelable: false,
             detail: {
               chessboard: this,
-              moves: this.moves,
+              moves: this.chessMoves,
               chessPiece,
               fromSquare,
               toSquare,
@@ -1097,13 +1087,13 @@
               this.lastMove.toSquare.clear();
             }
           }
-          this.recordMove(chessPiece, fromSquare, toSquare);
 
           //!let testsquare = this.chessboard.getSquare("e3");
           //! (tech!) chessPiece DOM verplaatsen, daarna fromSquare leeg maken
           //! het werkt wel andersom; maar eens verder testen
           toSquare.addPiece(chessPiece);
           fromSquare.clear();
+          this.recordMove(chessPiece, fromSquare, toSquare);
           //!console.error("state", testsquare.piece, chessPiece);
 
           this.lastMove.enPassantPosition = this.enPassantPosition(this.lastMove); // Was er een en passant square van een pion?
@@ -1171,9 +1161,16 @@
       }
       // ======================================================== <chess-board>.lastMove
       get lastMove() {
-        if (this.moves && this.moves.length) {
-          return this.moves.slice(-1)[0];
+        if (this.chessMoves && this.chessMoves.length) {
+          return this.chessMoves.slice(-1)[0];
         }
+      }
+      // ======================================================== <chess-board>.undoLastMove
+      undoLastMove() {
+        console.log(this.chessMoves);
+        let fenString = this.chessMoves.pop().fen;
+        // if (rocade) setFEN (obj, 2nd last fenString)
+        // setFEN (obj, last fenString)
       }
       // ======================================================== <chess-board>.castlingInterrupt
       // False: Castling impossible
@@ -1191,7 +1188,6 @@
             // TODO: volgende 5 regels zijn hetzelfde als in de 2e for loop, maak er een functie van
             let squareName = kingPosition.translate(i, 0);
             let squareElement = this.getSquare(squareName);
-            console.log(color, squareName, squareElement.isDefendedBy(color));
             if (squareElement.isDefendedBy(otherPlayer(color))) {
               return false;
             }
@@ -1295,18 +1291,9 @@
       // ======================================================== <chess-board>.isInCheck
       isInCheck(color) {
         // TODO: refactor to <chess-piece>.isAttacked GETTER
-        // get attackedBy(){
-        //   return this.square.getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__).split(",") || []; // new: use Arrays not Strings
-        // then :
-        // <chess-board>.isInCheck
-        // get isIncheck(){
-        //   const kingSquare = (color) => this.findPieceSquare(king(color));
-        //   return kingSquare(__PLAYER_WHITE__).attackedBy || kingSquare(__PLAYER_BLACK__).attackedBy;
-        // }
         const king = (color) => color + __PIECE_SEPARATOR__ + __PIECE_KING__;
         const kingSquare = (color) => this.findPieceSquare(king(color));
         const kingAttackers = (color) => kingSquare(color).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__) || "";
-        // console.log("King Attackers", kingAttackers(color));
         const isKingAttacked = (color) => kingAttackers(color).length;
 
         const whiteKing = kingSquare(__PLAYER_WHITE__);
@@ -1382,7 +1369,6 @@
             }
           }
         }
-        console.log("Squares between:", squaresBetweenArray);
         return squaresBetweenArray;
       }
       // ======================================================== <chess-board>.negatingCheck
@@ -1392,7 +1378,6 @@
         const kingSquare = (color) => this.findPieceSquare(king(color));
         const kingAttackers = (color) => kingSquare(color).getAttribute(__WC_ATTRIBUTE_ATTACKEDBY__) || ""; // get attackedby array qe5 ne2
         if (kingAttackers(color)) {
-          console.warn("Negating check");
           if (kingAttackers(color).length == 3) {
             const attackingPiece = (color) => this.getPiece(kingAttackers(color).substring(1, 3));
             const attackingPieceSquare = (color) => attackingPiece(color).square;
@@ -1402,7 +1387,6 @@
               return true;
             }
             if (attackingPiece(color)) {
-              console.log("Intervening Check");
               // Intervening Check --- The order is not entirely correct.
               // 1. What is the attacking piece? Q.
               // 2. Is it a horse? No.
@@ -1412,7 +1396,6 @@
                 const fileDifference = Math.abs(attackingPieceSquare(color).file - kingSquare(color).file);
                 const rankDifference = Math.abs(attackingPieceSquare(color).rank - kingSquare(color).rank);
                 if (fileDifference >= 2 || rankDifference >= 2) {
-                  console.log("queen, rook or bishop with squares between");
                   // 4. Left with Bishop and Rook moves.
                   // 5. findSquaresBetween horizontally, vertically or diagonally.
                   const squaresBetween = this.findSquaresBetween(attackingPieceSquare(color), kingSquare(color));
@@ -1432,7 +1415,6 @@
 
           if (this.getPiece(kingSquare(color)).moves.length >= 1) {
             // Kingmoves --- Can king move out of check.
-            console.log("King Moves", this.getPiece(kingSquare(color)).moves);
             return true;
           }
         }
@@ -1451,11 +1433,10 @@
       staleMate(color) {
         const king = (color) => color + __PIECE_SEPARATOR__ + __PIECE_KING__;
         const kingSquare = (color) => this.findPieceSquare(king(color));
-        if (!this.isInCheck(color) && this.getPiece(kingSquare(color)).moves.length == 0 && this.getPiece(kingSquare(color)).falseMoves > 0) {
+        if (!this.isInCheck(color) && this.getPiece(kingSquare(color)).moves.length == 0 && this.getPiece(kingSquare(color)).falseMoves.length > 0) {
           console.log("Stalemate!");
           this.gameOver("Stalemate");
         }
-        console.log(this.capturedWhitePieces.length);
         if (this.capturedWhitePieces.length == 15 && this.capturedBlackPieces.length == 15) {
           console.log("Stalemate!");
           this.gameOver("Stalemate");
