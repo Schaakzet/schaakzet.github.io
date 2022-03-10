@@ -36,7 +36,7 @@
       }
       addListeners() {
         document.addEventListener(__STORECHESSMOVE__, (evt) => this.storeMove(evt.detail));
-        this.addListeners = () => {}; // attach listeners only once
+        this.addListeners = () => { }; // attach listeners only once
       }
       storeMove({ chessboard, moves, move, fromsquare, tosquare, fen }) {
         if (chessboard.record) {
@@ -100,22 +100,25 @@
                     return boards;
                   }, new Map())
                   .entries(),
-              ].map(([name, records]) =>
-                Object.assign(document.createElement("chess-board"), {
-                  //name,
-                  fen: records.slice(-1)[0].fen,
+              ].map(([name, records]) => {
+                const chessboard = document.createElement("chess-board");
+                const fen = records.slice(-1)[0].fen;
+                return Object.assign(chessboard, {
+                  fen,
                   onmouseenter: (evt) => {
-                    let chessboard = evt.target.closest("[matchmoves_name]");
                     console.log(666, chessboard, this);
+                    let main_ChessBoard = document.querySelector("chess-board");
+                    main_ChessBoard.fen = fen;
                   },
                   onclick: (evt) => {
-                    let chessboard = evt.target.closest("[matchmoves_name]");
-                    fetch(__API_SCHAAKZET__ + `delete&matchid=` + chessboard.getAttribute("matchmoves_name"), {
+                    fetch(__API_SCHAAKZET__ + `delete&matchid=` + name, {
                       method: "GET",
                       headers: __API_HEADERS__,
                     });
+                    chessboard.remove();
                   }, // onclick
                 })
+              }
               ) // innerHTML
             ); // Object.assign
           });
@@ -125,9 +128,8 @@
   class ChessPlayer extends HTMLElement {
     connectedCallback() {
       let placeholder = this.localName;
-      this.innerHTML = /*html*/ `<label>${this.getAttribute("label") || ""}<input type="text" placeholder="${placeholder}" value="${
-        this.getAttribute("name") || ""
-      }"></label><span></span>`;
+      this.innerHTML = /*html*/ `<label>${this.getAttribute("label") || ""}<input type="text" placeholder="${placeholder}" value="${this.getAttribute("name") || ""
+        }"></label><span></span>`;
       let input = this.querySelector("input");
       const showinput = (state) => {
         let name = "";
@@ -149,7 +151,7 @@
       input.onblur = (evt) => showinput(false);
     }
   }
-  customElements.define("chess-player-white", class extends ChessPlayer {});
-  customElements.define("chess-player-black", class extends ChessPlayer {});
+  customElements.define("chess-player-white", class extends ChessPlayer { });
+  customElements.define("chess-player-black", class extends ChessPlayer { });
   // end IIFE
 })();

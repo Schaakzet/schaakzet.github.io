@@ -61,13 +61,12 @@
             a|match.html|match
             a|dashboard.html|dashboard
             |Develop:
-            button|sandro.html|Sandro + Bart
-            a|rob.html|Rob
+            a|sandro.html|Sandro + Bart
+            button|rob.html|Rob
             a|https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation|FEN wiki
             |Database:
             a|testDB.html|testDB
             a|https://schaakzet.nl/api/rt/index.php|RTAPI
-            button|deletematch|Delete Match
             a|https://schaakzet.nl/api/crud/index.php/records/matchmoves|matchmoves
             a|https://treeql.org/|TreeQL
             a|https://github.com/mevdschee/php-crud-api#treeql-a-pragmatic-graphql|PHP-CRUD-API
