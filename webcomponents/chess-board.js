@@ -16,6 +16,7 @@
         this.capturedBlackPieces = [];
         this.capturedWhitePieces = [];
         this.chessMoves = [];
+        this.doingCastling = false;
       }
       // ======================================================== <chess-board>.connectedCallback
       connectedCallback() {
@@ -177,16 +178,10 @@
         chessPiece, // <chess-piece> moved
         fromSquare, // <chess-square> from which piece was moved
         toSquare, // <chess-square> to which piece was moved
+        move,
         capturedPiece = false, // <chess-piece> captured
       }) {
-        let moveType = capturedPiece ? CHESS.__MOVETYPE_CAPTURE__ : CHESS.__MOVETYPE_MOVE__;
-        console.warn("recordMove:", chessPiece.is, fromSquare.at, moveType, toSquare.at);
-        this.chessMoves.push({
-          chessPiece,
-          fromSquare,
-          toSquare,
-          fen: this.fen,
-        });
+        console.warn("recordMove:", chessPiece.is, fromSquare.at, toSquare.at, move);
         // emit Event to <chess-match> which records all moves in database
         document.dispatchEvent(
           new CustomEvent(CHESS.__STORECHESSMOVE__, {
@@ -199,9 +194,9 @@
               chessPiece,
               fromSquare,
               toSquare,
-              moveType,
+              //moveType,
               // data send to API
-              move: fromSquare.at + moveType + toSquare.at,
+              move,
               fromsquare: fromSquare.at,
               tosquare: toSquare.at,
               fen: this.fen,
@@ -233,12 +228,48 @@
           let capturedPiece = toSquare.piece;
           toSquare.addPiece(chessPiece);
           fromSquare.clear();
-          this.recordMove({ chessPiece, fromSquare, toSquare, capturedPiece });
           //!console.error("state", testsquare.piece, chessPiece);
+
+          const recordChessMove = () => {
+            this.chessMoves.push({
+              chessPiece,
+              fromSquare,
+              toSquare,
+              fen: this.fen,
+            });
+          };
+          recordChessMove();
 
           chessPiece.animateFinished();
 
-          this.calculateBoardAfterMove(chessPiece);
+          if (CHESS.analysis && !this.doingCastling) {
+            //false
+            CHESS.analysis(this, CHESS.__ANALYSIS_ENPASSANT__);
+            CHESS.analysis(this, CHESS.__ANALYSIS_CASTLING__);
+            CHESS.analysis(this, CHESS.__ANALYSIS_PROMOTION__);
+            console.error("analysis", chessPiece.is, this.doingCastling);
+          }
+          if (this.doingCastling) {
+            console.error("doingCastling", chessPiece.is);
+            if (chessPiece.isKing) {
+              let move = ["", "O-O", "O-O-O"][this.doingCastling];
+              this.recordMove({ chessPiece, fromSquare, toSquare, move });
+            } else {
+              // Rook in castling mode
+              this.chessMoves.pop();
+              this.chessMoves.pop();
+              recordChessMove();
+              this.doingCastling = false;
+              this.changePlayer();
+            }
+          } else {
+            console.error("regular move", chessPiece.is);
+            let moveType = capturedPiece ? CHESS.__MOVETYPE_CAPTURE__ : CHESS.__MOVETYPE_MOVE__;
+            let move = fromSquare.at + moveType + toSquare.at; // O-O-O
+            this.recordMove({ chessPiece, fromSquare, toSquare, move });
+            this.changePlayer();
+          }
+          console.log(this.chessMoves);
 
           this.chessboard.save();
           this.chessboard.play();
@@ -250,14 +281,12 @@
       // ======================================================== <chess-board>.calculateBoard
       // calculateBoard wordt aangeroepen in einde Click-event.
       calculateBoard() {
-        if (CHESS.analysis) CHESS.analysis(this);
-      }
-      calculateBoardAfterMove() {
+        console.error("calculateBoard");
         if (CHESS.analysis) {
+          CHESS.analysis(this);
           CHESS.analysis(this, CHESS.__ANALYSIS_ENPASSANT__);
           CHESS.analysis(this, CHESS.__ANALYSIS_CASTLING__);
           CHESS.analysis(this, CHESS.__ANALYSIS_PROMOTION__);
-          //if (!doneCastlingMove) this.changePlayer();
         }
       }
       // ======================================================== <chess-board>.lastMove
@@ -268,10 +297,9 @@
       }
       // ======================================================== <chess-board>.undoLastMove
       undoLastMove() {
-        console.log(this.chessMoves);
-        let fenString = this.chessMoves.pop().fen;
-        // if (rocade) setFEN (obj, 2nd last fenString)
-        // setFEN (obj, last fenString)
+        this.chessMoves.pop();
+        this.fen = this.lastMove.fen;
+        this.changePlayer();
       }
 
       // ======================================================== <chess-board>.findPieceSquare

@@ -49,39 +49,32 @@ window.CHESS.analysis = ($chessboard, type = "") => {
     }
   }
 
-  // ======================================================== analyzeWholeBoard
+  // ======================================================== castling
   function castling() {
     reduceCastlingArray(lastMovedPiece.at);
-    // ======================================================== castlingMove
-    function castlingMove(chessPiece, fromSquare, toSquare) {
-      const moveSecondPiece = (from, to) => {
+
+    $chessboard.doingCastling = false;
+    console.log(666, lastMovedPiece, $chessboard.lastMove);
+    if (lastMovedPiece.isKing) {
+      let { fromSquare, toSquare } = $chessboard.lastMove;
+      const moveRook = (from, to, castlingLongShort) => {
+        $chessboard.doingCastling = castlingLongShort;
         movePiece(getPiece(getSquare(from)), to);
-        return true;
       };
       if (fromSquare.at == CHESS.__SQUARE_WHITE_KING_START__) {
-        if (toSquare.at == "c1") {
-          return moveSecondPiece("a1", "d1");
-        } else if (toSquare.at == "g1") {
-          return moveSecondPiece("h1", "f1");
-        }
+        if (toSquare.at == "c1") moveRook("a1", "d1", 2);
+        // long
+        else if (toSquare.at == "g1") moveRook("h1", "f1", 1); //short
       } else if (fromSquare.at == CHESS.__SQUARE_BLACK_KING_START__) {
-        if (toSquare.at == "c8") {
-          return moveSecondPiece("a8", "d8");
-        } else if (toSquare.at == "g8") {
-          return moveSecondPiece("h8", "f8");
-        }
+        if (toSquare.at == "c8") moveRook("a8", "d8", 2);
+        else if (toSquare.at == "g8") moveRook("h8", "f8", 1);
       }
-      return false; // no castling move
-    }
-
-    let doneCastlingMove = false;
-    if (lastMovedPiece.isKing) {
-      doneCastlingMove = castlingMove(lastMovedPiece, fromSquare, toSquare);
+      log("castling", $chessboard.doingCastling ? "TRUE" : "FALSE");
     }
   }
   // ======================================================== analyzeWholeBoard
   function analyzeWholeBoard() {
-    log("initAnalysis()", $chessboard.id, $chessboard.fen);
+    log("analyzeWholeBoard");
     initAnalysis();
     const player = $chessboard.player;
     checkMate(player);
@@ -111,44 +104,11 @@ window.CHESS.analysis = ($chessboard, type = "") => {
   // ======================================================== enPassantPosition
   function enPassantPosition() {
     const { chessPiece, fromSquare, toSquare } = $chessboard.lastMove;
-    return;
     if (chessPiece.isPawn && fromSquare.rankDistance(toSquare) == 2) {
       let position = fromSquare.file + (chessPiece.isWhite ? "3" : "6"); // file+3 OF file+6
-      console.error("fix enpassant position:", position, "\n", fromSquare, "\n", toSquare);
-      //console.log("En passant positie", position);
-      //$chessboard.lastMove.enPassantPosition = enPassantPosition($chessboard.lastMove); // Was er een en passant square van een pion?
+      $chessboard.lastMove.enPassantPosition = position; // Was er een en passant square van een pion?
+      return position;
     }
-  }
-  // ======================================================== castlingInterrupt
-  // False: Castling impossible
-  function castlingInterrupt(color, offset) {
-    // let kingPosition = "";
-    // if (color ==CHESS.__PLAYER_WHITE__) {
-    //   kingPosition = $chessboard.getSquare("e1");
-    // } else {
-    //   kingPosition = $chessboard.getSquare("e8");
-    // }
-    // TODO: learn above lines is same as:
-    let kingPosition = getSquare(color == CHESS.__PLAYER_WHITE__ ? CHESS.__SQUARE_WHITE_KING_START__ : CHESS.__SQUARE_BLACK_KING_START__);
-    if (offset < 0) {
-      for (let i = -1; i >= offset; i--) {
-        // TODO: volgende 5 regels zijn hetzelfde als in de 2e for loop, maak er een functie van
-        let squareName = kingPosition.translate(i, 0);
-        let squareElement = getSquare(squareName);
-        if (squareElement.isDefendedBy(CHESS.otherPlayer(color))) {
-          return false;
-        }
-      }
-    } else if (offset > 0) {
-      for (let i = 1; i <= offset; i++) {
-        let squareName = kingPosition.translate(i, 0);
-        let squareElement = getSquare(squareName);
-        if (squareElement.isDefendedBy(CHESS.otherPlayer(color))) {
-          return false;
-        }
-      }
-    }
-    return true; // Castling possible
   }
   // ======================================================== reduceCastlingArray
   function reduceCastlingArray(lastReduceMove) {
@@ -290,7 +250,7 @@ window.CHESS.analysis = ($chessboard, type = "") => {
           }
         }
 
-        if (getPiece(_kingSquare(color)).moves.length >= 1) {
+        if (getPiece(_kingSquare).moves.length >= 1) {
           // Kingmoves --- Can king move out of check.
           return true;
         }
@@ -337,10 +297,10 @@ window.CHESS.analysis = ($chessboard, type = "") => {
   function gameOver(mate) {
     if (mate == "Checkmate") {
       document.getElementById("message").innerText = `Game over. ${CHESS.otherPlayer()} heeft gewonnen.`;
-      // schaak3.classList.add("game_over");
+      $chessboard.classList.add("game_over");
     } else if (mate == "Stalemate") {
       document.getElementById("message").innerText = `Game over. Gelijkspel.`;
-      // schaak3.classList.add("game_over");
+      $chessboard.classList.add("game_over");
     }
   }
 };

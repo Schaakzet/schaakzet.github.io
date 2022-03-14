@@ -32,7 +32,7 @@
       }
       // ======================================================== <chess-piece>.fen_at
       get fen_at() {
-        return CHESS.convertFEN(this.is) + this.at
+        return CHESS.convertFEN(this.is) + this.at;
       }
       // ======================================================== <chess-piece>.color
       get color() {
@@ -228,49 +228,75 @@
       } // potentialMoves
       // ======================================================== <chess-piece>.potentialKingMoves
       potentialKingMoves() {
+        let $chessboard = this.chessboard;
+        let $square = this.square;
         if (this.isKing) {
           // ROQUEREN
           const _potentialMovesArray = this.moves;
           // TODO: ?? gaat dit wel goed als er andere stukken staan?
-          const longWhiteTower = this.chessboard.getPiece(CHESS.__SQUARE_BOTTOM_LEFT__);
-          const shortWhiteTower = this.chessboard.getPiece(CHESS.__SQUARE_BOTTOM_RIGHT__);
-          const longBlackTower = this.chessboard.getPiece(CHESS.__SQUARE_TOP_LEFT__);
-          const shortBlackTower = this.chessboard.getPiece(CHESS.__SQUARE_TOP_RIGHT__);
+          const longWhiteRook = this.chessboard.getPiece(CHESS.__SQUARE_BOTTOM_LEFT__);
+          const shortWhiteRook = this.chessboard.getPiece(CHESS.__SQUARE_BOTTOM_RIGHT__);
+          const longBlackRook = this.chessboard.getPiece(CHESS.__SQUARE_TOP_LEFT__);
+          const shortBlackRook = this.chessboard.getPiece(CHESS.__SQUARE_TOP_RIGHT__);
 
           const playerColor = this.chessboard.player;
-          // TODO: onderstaande kan vervangen voor door 4x aanroepen van 1 function(fenLetter,destinationSquare,offset,squareName)
           const castlingArray = this.chessboard.castlingArray;
+          // TODO: Inkorten
+          function isCastling(castlingLetter, typeOfRook, rookSquareName) {
+            return (
+              castlingArray.includes(castlingLetter) && //
+              typeOfRook.moves && //
+              typeOfRook.moves.includes(rookSquareName) //
+            );
+          }
+          const longWhiteCastling = isCastling(CHESS.__FEN_WHITE_QUEEN__, longWhiteRook, "d1");
+          const shortWhiteCastling = isCastling(CHESS.__FEN_WHITE_KING__, shortWhiteRook, "f1");
+          const longBlackCastling = isCastling(CHESS.__FEN_BLACK_QUEEN__, longBlackRook, "d8");
+          const shortBlackCastling = isCastling(CHESS.__FEN_BLACK_KING__, shortBlackRook, "f8");
+          // ======================================================== castlingInterrupt
+          // False: Castling impossible
+          function castlingInterrupt(color, offset) {
+            // let kingPosition = "";
+            // if (color ==CHESS.__PLAYER_WHITE__) {
+            //   kingPosition = $chessboard.getSquare("e1");
+            // } else {
+            //   kingPosition = $chessboard.getSquare("e8");
+            // }
+            // TODO: learn above lines is same as:
+            let kingPosition = $chessboard.getSquare(color == CHESS.__PLAYER_WHITE__ ? CHESS.__SQUARE_WHITE_KING_START__ : CHESS.__SQUARE_BLACK_KING_START__);
+            if (offset < 0) {
+              for (let i = -1; i >= offset; i--) {
+                // TODO: volgende 5 regels zijn hetzelfde als in de 2e for loop, maak er een functie van
+                let squareName = kingPosition.translate(i, 0);
+                let squareElement = $chessboard.getSquare(squareName);
+                if (squareElement.isDefendedBy(CHESS.otherPlayer(color))) {
+                  return false;
+                }
+              }
+            } else if (offset > 0) {
+              for (let i = 1; i <= offset; i++) {
+                let squareName = kingPosition.translate(i, 0);
+                let squareElement = $chessboard.getSquare(squareName);
+                if (squareElement.isDefendedBy(CHESS.otherPlayer(color))) {
+                  return false;
+                }
+              }
+            }
+            return true; // Castling possible
+          }
+
+          function checkCastlingInterrupt(offset, squareName) {
+            if (castlingInterrupt(playerColor, offset)) {
+              $square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
+              _potentialMovesArray.push(squareName);
+            }
+          }
           if (playerColor == CHESS.__PLAYER_WHITE__) {
-            const longWhiteCastling = castlingArray.includes(CHESS.__FEN_WHITE_QUEEN__) && longWhiteTower.moves && longWhiteTower.moves.includes("d1");
-            if (longWhiteCastling) {
-              if (this.chessboard.castlingInterrupt(CHESS.__PLAYER_WHITE__, -3)) {
-                const squareName = "c1";
-                this.square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
-                _potentialMovesArray.push(squareName);
-              }
-            }
-            if (castlingArray.includes(CHESS.__FEN_WHITE_KING__) && shortWhiteTower.moves && shortWhiteTower.moves.includes("f1")) {
-              if (this.chessboard.castlingInterrupt(CHESS.__PLAYER_WHITE__, 2)) {
-                const squareName = "g1";
-                this.square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
-                _potentialMovesArray.push(squareName);
-              }
-            }
-          } else if (playerColor == CHESS.__PLAYER_BLACK__) {
-            if (castlingArray.includes(CHESS.__FEN_BLACK_QUEEN__) && longBlackTower.moves && longBlackTower.moves.includes("d8")) {
-              if (this.chessboard.castlingInterrupt(CHESS.__PLAYER_BLACK__, -3)) {
-                const squareName = "c8";
-                this.square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
-                _potentialMovesArray.push(squareName);
-              }
-            }
-            if (castlingArray.includes(CHESS.__FEN_BLACK_KING__) && shortBlackTower.moves && shortBlackTower.moves.includes("f8")) {
-              if (this.chessboard.castlingInterrupt(CHESS.__PLAYER_BLACK__, 2)) {
-                const squareName = "g8";
-                this.square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
-                _potentialMovesArray.push(squareName);
-              }
-            }
+            if (longWhiteCastling) checkCastlingInterrupt(-3, "c1");
+            if (shortWhiteCastling) checkCastlingInterrupt(2, "g1");
+          } else {
+            if (longBlackCastling) checkCastlingInterrupt(-3, "c8");
+            if (shortBlackCastling) checkCastlingInterrupt(2, "g8");
           }
           this.moves = _potentialMovesArray;
 
