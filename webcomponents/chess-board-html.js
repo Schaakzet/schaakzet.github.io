@@ -21,7 +21,7 @@
     /*css*/ `chess-board {
       --width: 100%;
       width: var(--width);
-      max-width:80vh;
+      max-width:70vh;
       height: var(--width);
       display: inline-block;
       position: relative;
