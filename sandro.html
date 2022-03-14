@@ -7,19 +7,21 @@
 <body>
   <main>
     <h1-chess></h1-chess>
-    <todo-list> Make it a playable board, without opponent color Add undo last move button </todo-list>
+    <todo-list> 
+      use extends FEN notation with castling info etc.
+      Make it a playable board, without opponent color Add undo last move button 
+    </todo-list>
 
-    <label for="enterFEN">enter FEN:</label><br />
-    <input id="fen" type="text" size="100" />
-    <button onclick="setFEN(fen.value)">Set FEN</button><br />
-    <button onclick="setStart()">Startpositie</button><br />
-    <button onclick="let chessboard = document.querySelector('chess-board');
-chessboard.undoLastMove()">
-      Undo last move</button><br />
+    <label for="enterFEN">enter FEN:</label> <input id="fen" type="text" size="100" style="width:40em" />
+    <br/>
+    <button onclick="setFEN(fen.value)">Set FEN</button>
+    <button onclick="setStart()">Startpositie</button>
+    <button onclick="document.querySelector('chess-board').undoLastMove()">Undo last move</button>
     <chess-game>
       <chess-board id="schaak3" fen="K7/8/8/6Q1/8/8/5R2/7k" player="wit" labels></chess-board>
       <chess-boards>
-        rnbqkbnr/ppppppp1/7p/8/3P4/8/PPP1PPPP/RNBQKBNR
+        rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR
+        r3k2r/ppp1bpp1/2nqbn1p/3pp3/3PP2P/2NQBN2/PPP1BPP1/R3K2R
         r1bqk1nr/pppp1ppp/2n5/2b1p3/4P3/4KN2/PPPP1PPP/RNBQ1B1R
         K7/8/8/6Q1/8/8/5R2/7k
       </chess-boards>
@@ -44,15 +46,12 @@ chessboard.undoLastMove()">
     window.setFEN = function (fenString) {
       document.querySelector("chess-board").fen = fenString;
       let chessboard = document.querySelector("chess-board");
-      // chessboard.fen = "rnbqkbnr/pppp1ppp/8/4p3/4P3/3B4/PPPP1PPP/RNBQK1NR";
       // chessboard.player = "zwart";
       // console.clear();
       document.getElementById("message").innerText = "";
       chessboard.capturedWhitePieces = [];
       chessboard.capturedBlackPieces = [];
     };
-    // make sure our dev code executes after all chess boards are 100% created
-    window.addEventListener("load", () => { });
   </script>
 </body>
 
