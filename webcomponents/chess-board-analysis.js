@@ -1,11 +1,11 @@
 /**
  * adding analysis function to EXISTING global CHESS Object
  */
-window.CHESS.analysis = ($chessboard, type = "") => {
-  const getSquare = (v) => $chessboard.getSquare(v);
-  const getPiece = (v) => $chessboard.getPiece(v);
-  const kingSquare = (color) => $chessboard.kingSquare(color);
-  const movePiece = (piece, to) => $chessboard.movePiece(piece, to);
+window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
+  const getSquare = /* function */ (v) => $chessboard.getSquare(v);
+  const getPiece = /* function */ (v) => $chessboard.getPiece(v);
+  const kingSquare = /* function */ (color) => $chessboard.kingSquare(color);
+  const movePiece = /* function */ (piece, to) => $chessboard.movePiece(piece, to);
 
   let lastMovedPiece;
 
@@ -54,20 +54,21 @@ window.CHESS.analysis = ($chessboard, type = "") => {
     reduceCastlingArray(lastMovedPiece.at);
 
     $chessboard.doingCastling = false;
-    console.log(666, lastMovedPiece, $chessboard.lastMove);
     if (lastMovedPiece.isKing) {
       let { fromSquare, toSquare } = $chessboard.lastMove;
-      const moveRook = (from, to, castlingLongShort) => {
-        $chessboard.doingCastling = castlingLongShort;
-        movePiece(getPiece(getSquare(from)), to);
-      };
+      const __SHORTCASTLING__ = "O-O";
+      const __LONGCASTLING__ = "O-O-O";
+      const /* function */ moveRook = (from, to, castlingLongShort) => {
+          $chessboard.doingCastling = castlingLongShort;
+          movePiece(getPiece(getSquare(from)), to);
+        };
       if (fromSquare.at == CHESS.__SQUARE_WHITE_KING_START__) {
-        if (toSquare.at == "c1") moveRook("a1", "d1", 2);
+        if (toSquare.at == "c1") moveRook("a1", "d1", __LONGCASTLING__);
         // long
-        else if (toSquare.at == "g1") moveRook("h1", "f1", 1); //short
+        else if (toSquare.at == "g1") moveRook("h1", "f1", __SHORTCASTLING__); //short
       } else if (fromSquare.at == CHESS.__SQUARE_BLACK_KING_START__) {
-        if (toSquare.at == "c8") moveRook("a8", "d8", 2);
-        else if (toSquare.at == "g8") moveRook("h8", "f8", 1);
+        if (toSquare.at == "c8") moveRook("a8", "d8", __LONGCASTLING__);
+        else if (toSquare.at == "g8") moveRook("h8", "f8", __SHORTCASTLING__);
       }
       log("castling", $chessboard.doingCastling ? "TRUE" : "FALSE");
     }
@@ -129,7 +130,7 @@ window.CHESS.analysis = ($chessboard, type = "") => {
   }
   // ======================================================== isValidGameBoard
   function isValidGameBoard() {
-    const kingSquare = (color) => kingSquare(color); // get king, but without warning
+    const kingSquare = /* function */ (color) => kingSquare(color); // get king, but without warning
     const whiteKing = kingSquare(CHESS.__PLAYER_WHITE__);
     const blackKing = kingSquare(CHESS.__PLAYER_BLACK__);
     return whiteKing && blackKing;
@@ -150,7 +151,7 @@ window.CHESS.analysis = ($chessboard, type = "") => {
   // ======================================================== findSquaresBetween
   function findSquaresBetween(attackingPieceSquare, kingSquare) {
     const files = $chessboard.files;
-    const getNum = (value) => {
+    const getNum = /* function */ (value) => {
       for (let i = 0; i < files.length; i++) {
         if (files[i] == value) return i;
       }
@@ -216,8 +217,8 @@ window.CHESS.analysis = ($chessboard, type = "") => {
       const _kingSquare = kingSquare(color);
       if (_kingSquare && _kingSquare.isAttacked) {
         if (_kingSquare.attackers.length == 3) {
-          const attackingPiece = (color) => getPiece(kingAttackers(color).substring(1, 3));
-          const attackingPieceSquare = (color) => attackingPiece(color).square;
+          const attackingPiece = /* function */ (color) => getPiece(kingAttackers(color).substring(1, 3));
+          const attackingPieceSquare = /* function */ (color) => attackingPiece(color).square;
           // Capture Attacking Piece --- Works only for one attacking piece, because if we get more, you can capture only one.
           if (attackingPieceSquare(color).isAttacked) {
             log("You can take the checking piece", attackingPiece(color).is, "with", attackingPieceSquare(color).getAttribute(CHESS.__WC_ATTRIBUTE_ATTACKEDBY__));
@@ -237,12 +238,14 @@ window.CHESS.analysis = ($chessboard, type = "") => {
                 // 5. findSquaresBetween horizontally, vertically or diagonally.
                 const squaresBetween = findSquaresBetween(attackingPieceSquare(color), _kingSquare(color));
                 // 6. defendedby lower or upper. Alleen (color)-stukken en niet de koning en intervenedByPawn.
-                squaresBetween.forEach((element) => {
-                  if (getSquare(element).isMovesFrom(color)) {
-                    log(getSquare(element), " kan er tussen");
-                    return true;
+                squaresBetween.forEach(
+                  /* function */ (element) => {
+                    if (getSquare(element).isMovesFrom(color)) {
+                      log(getSquare(element), " kan er tussen");
+                      return true;
+                    }
                   }
-                });
+                );
               }
             } else {
               log("Horse, so no squares between calculation.");

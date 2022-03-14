@@ -19,13 +19,13 @@
     squareStateCSS(CHESS.__PLAYER_WHITE__) +
     squareStateCSS(CHESS.__PLAYER_BLACK__) +
     /*css*/ `chess-board {
-        --width: 100%;
-        width: var(--width);
-        max-width:80vh;
-        height: var(--width);
-        display: inline-block;
-        position: relative;
-        border: calc(var(--width) / 40) solid gray;
+      --width: 100%;
+      width: var(--width);
+      max-width:80vh;
+      height: var(--width);
+      display: inline-block;
+      position: relative;
+      border: calc(var(--width) / 40) solid gray;
     }` +
     /*css*/ `chess-board:after{content:"";display:block;padding-bottom:100%}` + // make sure chessboard displays as a square
     /* position multiple layers on top of eachother */
@@ -58,10 +58,11 @@
     /*css*/ `.game_over {pointer-events: none;}` +
     /*html*/ `</style>`;
 
-  window.CHESS.chessboard_innerHTML =
-    chessboardSTYLES +
-    /*html*/ `<style id="squarelabels">
-        chess-square:after {
+  const styleHTML = /* function */ (id, css) => /*html*/ `<style id="${id}">${css}</style>`;
+
+  const labelsSTYLE = styleHTML(
+    "squarelabels",
+    /*css*/ `chess-square:after {
           content: attr(at);
           height: 100%;
           width: 100%;
@@ -69,8 +70,19 @@
           align-items: center;
           justify-content: center;
           font-size: 15px;
-        }
-        </style>` +
+        }`
+  );
+  const disabledBoardSTYLE = styleHTML(
+    "disabledboard",
+    /*css*/ `chess-board[disabled] chess-square {
+      pointer-events:none;
+    }`
+  );
+
+  window.CHESS.chessboard_innerHTML =
+    chessboardSTYLES +
+    labelsSTYLE +
+    disabledBoardSTYLE +
     /*html*/ `<style id="chessboard_gridareas"></style>` + // inject 64 gridarea definitions here
     /*html*/ `<div id="chessboard_squares" class="chessboard_layer"></div>` + // squares layer
     /*html*/ `<div id="chessboard_pieces" class="chessboard_layer"></div>`;

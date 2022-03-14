@@ -17,6 +17,7 @@
     "chess-square",
     "chess-board-html",
     "chess-board",
+    "chess-boards",
   ]);
   loadScriptsAsynchronous([
     ["create-html", "todo-list"], // HTML components

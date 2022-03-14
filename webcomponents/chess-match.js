@@ -28,21 +28,19 @@
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.storeMove(evt.detail));
         this.addListeners = () => {}; // attach listeners only once
       }
-      storeMove({ chessboard, moves, move, fromsquare, tosquare, fen }) {
-        if (chessboard.record) {
-          fetch(CHESS.__API_RECORDS__ + CHESS.__API_TABLE_MATCHMOVES__, {
-            method: "POST",
-            headers: CHESS.__API_HEADERS__,
-            body: JSON.stringify({
-              name: chessboard.database_id,
-              move,
-              fromsquare,
-              tosquare,
-              fen,
-            }),
-          });
-        } // if record
-      }
+      storeMove({ chessboard, move, fromsquare, tosquare, fen }) {
+        fetch(CHESS.__API_RECORDS__ + CHESS.__API_TABLE_MATCHMOVES__, {
+          method: "POST",
+          headers: CHESS.__API_HEADERS__,
+          body: JSON.stringify({
+            name: chessboard.database_id,
+            move,
+            fromsquare,
+            tosquare,
+            fen,
+          }),
+        });
+      } // if record
     }
   );
   // ********************************************************** end IIFE

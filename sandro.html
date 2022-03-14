@@ -1,58 +1,59 @@
 <html>
-  <head>
-    <script src="./webcomponents/schaakzet.js"></script>
-  </head>
 
-  <body>
-    <main>
-      <h1-chess></h1-chess>
-      <todo-list> Make it a playable board, without opponent color Add undo last move button </todo-list>
+<head>
+  <script src="./webcomponents/schaakzet.js"></script>
+</head>
 
-      <label for="enterFEN">enter FEN:</label><br />
-      <input id="fen" type="text" size="100" />
-      <button onclick="setFEN(fen.value)">Set FEN</button><br />
-      <button onclick="setStart()">Startpositie</button><br />
-      <button
-        onclick="let chessboard = document.querySelector('chess-board');
-chessboard.undoLastMove()"
-      >
-        Undo last move</button
-      ><br />
-      <chess-game>
-        <!-- rnbqkbnr/ppppppp1/7p/8/3P4/8/PPP1PPPP/RNBQKBNR -->
-        <!-- r1bqk1nr/pppp1ppp/2n5/2b1p3/4P3/4KN2/PPPP1PPP/RNBQ1B1R -->
-        <chess-board id="schaak3" fen="K7/8/8/6Q1/8/8/5R2/7k" player="wit" labels></chess-board>
-        <chess-game-progress>CHESS PROGRESS</chess-game-progress>
-      </chess-game>
-      <div id="message">[MESSAGE]</div>
-    </main>
-    <script>
-      //reset to startposition
-      function setStart() {
-        let chessboard = document.querySelector("chess-board");
-        chessboard.clear();
-        chessboard.setAttribute("player", "wit");
-        setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
-        // schaak3.classList.remove("game_over");
-        document.getElementById("message").innerText = "";
-        chessboard.capturedWhitePieces = [];
-        chessboard.capturedBlackPieces = [];
-      }
-    </script>
-    <script>
-      // define a GLOBAL setFEN function so all inputs can call this function
-      window.setFEN = function (fenString) {
-        document.querySelector("chess-board").fen = fenString;
-        let chessboard = document.querySelector("chess-board");
-        // chessboard.fen = "rnbqkbnr/pppp1ppp/8/4p3/4P3/3B4/PPPP1PPP/RNBQK1NR";
-        // chessboard.player = "zwart";
-        // console.clear();
-        document.getElementById("message").innerText = "";
-        chessboard.capturedWhitePieces = [];
-        chessboard.capturedBlackPieces = [];
-      };
-      // make sure our dev code executes after all chess boards are 100% created
-      window.addEventListener("load", () => {});
-    </script>
-  </body>
+<body>
+  <main>
+    <h1-chess></h1-chess>
+    <todo-list> Make it a playable board, without opponent color Add undo last move button </todo-list>
+
+    <label for="enterFEN">enter FEN:</label><br />
+    <input id="fen" type="text" size="100" />
+    <button onclick="setFEN(fen.value)">Set FEN</button><br />
+    <button onclick="setStart()">Startpositie</button><br />
+    <button onclick="let chessboard = document.querySelector('chess-board');
+chessboard.undoLastMove()">
+      Undo last move</button><br />
+    <chess-game>
+      <chess-board id="schaak3" fen="K7/8/8/6Q1/8/8/5R2/7k" player="wit" labels></chess-board>
+      <chess-boards>
+        rnbqkbnr/ppppppp1/7p/8/3P4/8/PPP1PPPP/RNBQKBNR
+        r1bqk1nr/pppp1ppp/2n5/2b1p3/4P3/4KN2/PPPP1PPP/RNBQ1B1R
+        K7/8/8/6Q1/8/8/5R2/7k
+      </chess-boards>
+    </chess-game>
+    <div id="message">[MESSAGE]</div>
+  </main>
+  <script>
+    //reset to startposition
+    function setStart() {
+      let chessboard = document.querySelector("chess-board");
+      chessboard.clear();
+      chessboard.setAttribute("player", "wit");
+      setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+      // schaak3.classList.remove("game_over");
+      document.getElementById("message").innerText = "";
+      chessboard.capturedWhitePieces = [];
+      chessboard.capturedBlackPieces = [];
+    }
+  </script>
+  <script>
+    // define a GLOBAL setFEN function so all inputs can call this function
+    window.setFEN = function (fenString) {
+      document.querySelector("chess-board").fen = fenString;
+      let chessboard = document.querySelector("chess-board");
+      // chessboard.fen = "rnbqkbnr/pppp1ppp/8/4p3/4P3/3B4/PPPP1PPP/RNBQK1NR";
+      // chessboard.player = "zwart";
+      // console.clear();
+      document.getElementById("message").innerText = "";
+      chessboard.capturedWhitePieces = [];
+      chessboard.capturedBlackPieces = [];
+    };
+    // make sure our dev code executes after all chess boards are 100% created
+    window.addEventListener("load", () => { });
+  </script>
+</body>
+
 </html>
