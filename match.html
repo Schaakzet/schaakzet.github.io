@@ -1,4 +1,5 @@
 <html>
+
 <head>
   <script src="./webcomponents/schaakzet.js"></script>
 </head>
@@ -8,10 +9,12 @@
   <header>
     <h1-chess></h1-chess>
     <h2>Match
-      
-    <chess-player-white name="Player1"></chess-player-white>
-    versus
-    <chess-player-black></chess-player-black>
+
+      <chess-players>
+        <chess-player-white name="Player1"></chess-player-white>
+        versus
+        <chess-player-black></chess-player-black>
+      </chess-players>
     </h2>
     <todo-list>
       Use player names for database ID with &lt;chess-player-white and -black> component
