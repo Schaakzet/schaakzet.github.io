@@ -7,8 +7,9 @@ customElements.define(
           `<b>todo:</b>` +
           `<ul>` +
           this.innerHTML
-            .trim()
-            .split("\n")
+            .split(/[\n\*]/) // accepts newline | and # as 3 separators
+            .map((line) => line.trim())
+            .filter(Boolean)
             .map((line) => `<li>${line}</li>`)
             .join("") +
           `</ul>`;
