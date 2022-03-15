@@ -21,7 +21,7 @@
   ]);
   loadScriptsAsynchronous([
     ["create-html", "todo-list"], // HTML components
-    ["h1-chess", "chess-game-progress", "chess-match", "chess-matches"], // Chess Components
+    ["h1-chess", "chess-game-progress", "chess-match", "chess-matches","chess-players"], // Chess Components
   ]);
 
   function $createElement(tag, props = {}) {
