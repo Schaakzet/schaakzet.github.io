@@ -8,17 +8,16 @@
       <h1-chess></h1-chess>
       <todo-list> use extends FEN notation with castling info etc. Make it a playable board, without opponent color Add undo last move button </todo-list>
 
-<<<<<<< Updated upstream
       <label for="enterFEN">enter FEN:</label> <input id="fen" type="text" size="100" style="width: 40em" />
       <br />
       <button onclick="setFEN(fen.value)">Set FEN</button>
       <button onclick="setStart()">Startpositie</button>
       <button onclick="document.querySelector('chess-board').undoLastMove()">Undo last move</button>
       <chess-game>
-        <chess-board id="schaak3" fen="r3k2r/ppp1bpp1/2nqbn1p/3pp3/3PP2P/2NQBN2/PPP1BPP1/R3K2R" player="wit" labels></chess-board>
+        <chess-board id="schaak3" fen="r3k2r/ppp1bpp1/2nqbn1p/3pp3/3PP2P/2NQBN2/PPP1BPP1/R3K2R w Q -" labels></chess-board>
         <chess-boards>
-          rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR r3k2r/ppp1bpp1/2nqbn1p/3pp3/3PP2P/2NQBN2/PPP1BPP1/R3K2R r1bqk1nr/pppp1ppp/2n5/2b1p3/4P3/4KN2/PPPP1PPP/RNBQ1B1R
-          K7/8/8/6Q1/8/8/5R2/7k
+          rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - | r3k2r/ppp1bpp1/2nqbn1p/3pp3/3PP2P/2NQBN2/PPP1BPP1/R3K2R w KQkq - |
+          r1bqk1nr/pppp1ppp/2n5/2b1p3/4P3/4KN2/PPPP1PPP/RNBQ1B1R w KQkq - | K7/8/8/6Q1/8/8/5R2/7k w - -
         </chess-boards>
       </chess-game>
       <div id="message">[MESSAGE]</div>
@@ -28,8 +27,7 @@
       function setStart() {
         let chessboard = document.querySelector("chess-board");
         chessboard.clear();
-        chessboard.setAttribute("player", "wit");
-        setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+        setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w");
         // schaak3.classList.remove("game_over");
         document.getElementById("message").innerText = "";
         chessboard.capturedWhitePieces = [];
@@ -50,56 +48,3 @@
     </script>
   </body>
 </html>
-=======
-<body>
-  <main>
-    <h1-chess></h1-chess>
-    <todo-list> 
-      use extends FEN notation with castling info etc.
-      Make it a playable board, without opponent color Add undo last move button 
-    </todo-list>
-
-    <label for="enterFEN">enter FEN:</label> <input id="fen" type="text" size="100" style="width:40em" />
-    <br/>
-    <button onclick="setFEN(fen.value)">Set FEN</button>
-    <button onclick="setStart()">Startpositie</button>
-    <button onclick="document.querySelector('chess-board').undoLastMove()">Undo last move</button>
-    <chess-game>
-      <chess-board id="schaak3" fen="K7/8/8/6Q1/8/8/5R2/7k" player="wit" labels></chess-board>
-      <chess-boards>
-        rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR #        r3k2r/ppp1bpp1/2nqbn1p/3pp3/3PP2P/2NQBN2/PPP1BPP1/R3K2R
-        r1bqk1nr/pppp1ppp/2n5/2b1p3/4P3/4KN2/PPPP1PPP/RNBQ1B1R
-        K7/8/8/6Q1/8/8/5R2/7k
-      </chess-boards>
-    </chess-game>
-    <div id="message">[MESSAGE]</div>
-  </main>
-  <script>
-    //reset to startposition
-    function setStart() {
-      let chessboard = document.querySelector("chess-board");
-      chessboard.clear();
-      chessboard.setAttribute("player", "wit");
-      setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
-      // schaak3.classList.remove("game_over");
-      document.getElementById("message").innerText = "";
-      chessboard.capturedWhitePieces = [];
-      chessboard.capturedBlackPieces = [];
-    }
-  </script>
-  <script>
-    // define a GLOBAL setFEN function so all inputs can call this function
-    window.setFEN = function (fenString) {
-      document.querySelector("chess-board").fen = fenString;
-      let chessboard = document.querySelector("chess-board");
-      // chessboard.player = "zwart";
-      // console.clear();
-      document.getElementById("message").innerText = "";
-      chessboard.capturedWhitePieces = [];
-      chessboard.capturedBlackPieces = [];
-    };
-  </script>
-</body>
-
-</html>
->>>>>>> Stashed changes

@@ -204,8 +204,8 @@
               }
             } else {
               // En passant
-              if (this.chessboard.lastMove) {
-                if (_squareName == this.chessboard.lastMove.enPassantPosition) {
+              if (this.chessboard.enPassantPosition) {
+                if (_squareName == this.chessboard.enPassantPosition) {
                   _squareElement.highlight(CHESS.__ATTACK_PIECE__); // TODO:: move to .attackedBy() method
                   _squareElement.attackedBy(this);
                   _potentialMovesArray.push(_squareName);

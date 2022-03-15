@@ -52,7 +52,6 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== castling
   function castling() {
     reduceCastlingArray(lastMovedPiece.at);
-
     $chessboard.doingCastling = false;
     if (lastMovedPiece.isKing) {
       let { fromSquare, toSquare } = $chessboard.lastMove;
@@ -107,7 +106,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
     const { chessPiece, fromSquare, toSquare } = $chessboard.lastMove;
     if (chessPiece.isPawn && fromSquare.rankDistance(toSquare) == 2) {
       let position = fromSquare.file + (chessPiece.isWhite ? "3" : "6"); // file+3 OF file+6
-      $chessboard.lastMove.enPassantPosition = position; // Was er een en passant square van een pion?
+      $chessboard.enPassantPosition = position; // Was er een en passant square van een pion?
       return position;
     }
   }
@@ -143,6 +142,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       const _kingSquare = kingSquare(color);
       if (_kingSquare && _kingSquare.isAttacked) {
         log(color, "koning staat schaak door", _kingSquare.attackers);
+        $chessboard.setMessage("Je staat schaak.");
         return true;
       }
     }
@@ -264,9 +264,9 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== checkMate
   function checkMate(color) {
     const isCheck = isInCheck(color);
-    const pieceCanBeTaken = negatingCheck(color);
+    const checkCanBeNegated = negatingCheck(color);
     if (isCheck) {
-      if (pieceCanBeTaken) {
+      if (checkCanBeNegated) {
         log("You can get out of check.");
       } else {
         log("Checkmate", $chessboard.player);
@@ -296,13 +296,14 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       }
     }
   }
+
   // ======================================================== gameOver
   function gameOver(mate) {
     if (mate == "Checkmate") {
-      document.getElementById("message").innerText = `Game over. ${CHESS.otherPlayer()} heeft gewonnen.`;
+      $chessboard.setMessage(`Game over. ${CHESS.otherPlayer()} heeft gewonnen.`);
       $chessboard.classList.add("game_over");
     } else if (mate == "Stalemate") {
-      document.getElementById("message").innerText = `Game over. Gelijkspel.`;
+      $chessboard.setMessage("Game over. Gelijkspel.");
       $chessboard.classList.add("game_over");
     }
   }

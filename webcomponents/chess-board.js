@@ -115,7 +115,7 @@
       }
       // ======================================================== <chess-board>.disabled
       // TODO use disabled to not calculate board
-      get disabled(){
+      get disabled() {
         return this.hasAttribute("disabled");
       }
       set disabled(on = false) {
@@ -125,6 +125,11 @@
           //if (this.isConnected)
           this.toggleAttribute("disabled", on);
         });
+      }
+      // ======================================================== setMessage
+      setMessage(msg) {
+        document.getElementById("message").innerText = msg;
+        console.log("setMessage", msg);
       }
       // ======================================================== <chess-board>.getSquare
       getSquare(square) {
@@ -219,7 +224,7 @@
             let toSquare = this.getSquare(square);
 
             toSquare.pieceName = chessPiece.is; // REQUIRED?
-            if (this.lastMove && toSquare.at == this.lastMove.enPassantPosition && chessPiece.isPawn) {
+            if (this.lastMove && toSquare.at == this.enPassantPosition && chessPiece.isPawn) {
               console.log("We had En Passant. Clear piece.");
               this.lastMove.toSquare.clear();
             }
@@ -313,10 +318,10 @@
       kingSquare(
         color = this.getAttribute(__WC_ATTRIBUTE_PLAYER__), // get default color from <chess-board player="..."
         showwarning = false,
-        warning = /* function */() => console.warn("No king on the board!") // optional warning function
+        warning = /* function */ () => console.warn("No king on the board!") // optional warning function
       ) {
-        if (color == "white") color = CHESS.__PLAYER_WHITE__;
-        if (color == "black") color = CHESS.__PLAYER_BLACK__;
+        if (color == "wit") color = CHESS.__PLAYER_WHITE__;
+        if (color == "zwart") color = CHESS.__PLAYER_BLACK__;
         const king = color + CHESS.__PIECE_SEPARATOR__ + CHESS.__PIECE_KING__;
         const square = this.findPieceSquare(king);
         return square || (showwarning && warning());
@@ -333,8 +338,8 @@
         this.docs(this.querySelector(CHESS.__WC_CHESS_PIECE__));
       }
       // ======================================================== <chess-board>.fen SETTER/GETTER
-      set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR") {
-        // TODO: Waarom hier?? Reset?
+      set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq") {
+        // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
         this.castlingArray = [CHESS.__FEN_WHITE_KING__, CHESS.__FEN_WHITE_QUEEN__, CHESS.__FEN_BLACK_KING__, CHESS.__FEN_BLACK_QUEEN__]; // Halen we uit FEN
 
         //! THIS WILL TRIGGER set fen again: this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
@@ -342,18 +347,31 @@
         if (this.squares) {
           this.clear();
           if (fenString !== "") {
+            let [fen, player, castling, enpassant, halfmove, fullmove] = fenString.split(" ");
             let squareIndex = 0;
-            fenString.split("").forEach((piece) => {
-              if (piece !== "/") {
-                if (parseInt(piece) > 0 && parseInt(piece) < 9) {
+            fen.split("").forEach((fenLetter) => {
+              if (fenLetter !== "/") {
+                if (parseInt(fenLetter) > 0 && parseInt(fenLetter) < 9) {
                   // Als het 1 t/m 8 is...
-                  squareIndex = squareIndex + Number(piece);
+                  squareIndex = squareIndex + Number(fenLetter);
                 } else {
-                  this.addPiece(piece, this.squares[squareIndex]);
+                  this.addPiece(fenLetter, this.squares[squareIndex]);
                   squareIndex++;
                 }
               }
             });
+            // player
+            if (player) {
+              if (player == "b") {
+                this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__, "zwart");
+              } else {
+                this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__, "wit");
+              }
+            }
+            // castling "KQkq" becomes this.castlingArray = ["K", "Q", "k", "q"]
+            if (castling && castling !== "-") this.castlingArray = castling.split("");
+            // enpassant
+            if (enpassant && enpassant !== "-") this.enPassantPosition = enpassant;
           }
           if (document.querySelector("#fen")) document.querySelector("#fen").value = fenString;
 
@@ -362,7 +380,7 @@
           // when the constructor runs on document.createElement, the squares are not set yet
           this._savedfen = fenString;
         }
-        // this.calculateBoard(); breaks code
+        this.classList.remove("game_over");
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
       get fen() {
