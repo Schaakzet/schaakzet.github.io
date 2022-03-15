@@ -1,8 +1,9 @@
 !(function () {
-  const CSS_Boards = /* css */ `#boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,120px));gap:1em}`;
+  // TODO these constants should be moved to a config file, are also in chess-matches.js
+  const CSS_Boards = /* css */ `#boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,15vh));gap:1em}`;
   const DIV_Boards = /* html */ `<div id="boards"></div>`;
 
-  // ********************************************************** <chess-matches>
+  // ********************************************************** <chess-boards>
   customElements.define(
     "chess-boards",
     class extends HTMLElement {
@@ -10,9 +11,9 @@
         super().attachShadow({ mode: "open" }).innerHTML = `<style>${CSS_Boards}</style>${DIV_Boards}`;
       }
       connectedCallback() {
-        setTimeout(() => this.render());
+        setTimeout(() => this.render()); // wait till innerHTML is parsed by the browser
       }
-      // ======================================================== <chess-matches>.render
+      // ======================================================== <chess-boards>.render
       render() {
         let boardElements = this.innerHTML
           .split("\n")
@@ -22,17 +23,19 @@
             else
               return CHESS.createBoardElement({
                 fen,
-                disabled:true,
+                disabled: true,
                 onclick: (evt) => {
                   let chessboard = document.querySelector("chess-board");
                   chessboard.fen = fen;
                 }, // onclick
               });
           })
-          .filter(Boolean);
+          .filter(Boolean); // disregard empty lines
+
         this.shadowRoot.querySelector("#boards").append(...boardElements); // Object.assign #boards
+        
       } // matchmoves2boards()
-      // ======================================================== <chess-matches>
+      // ======================================================== <chess-boards>
     } // class
   ); // customElements.define
   // ********************************************************** end IIFE

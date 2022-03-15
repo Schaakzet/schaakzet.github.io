@@ -113,7 +113,11 @@
           this.querySelector("#squarelabels").disabled = !on;
         });
       }
-      // ======================================================== <chess-board>.labels
+      // ======================================================== <chess-board>.disabled
+      // TODO use disabled to not calculate board
+      get disabled(){
+        return this.hasAttribute("disabled");
+      }
       set disabled(on = false) {
         // turn A1 - H8 labels on and off
         setTimeout(() => {

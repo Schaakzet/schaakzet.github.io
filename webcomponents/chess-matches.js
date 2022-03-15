@@ -4,17 +4,22 @@
 
   // ********************************************************** createBoard
   const createBoard = (name, records) => {
+    let fen = records.slice(-1)[0].fen;
     return CHESS.createBoardElement({
-      fen: records.slice(-1)[0].fen,
+      fen,
+      disabled:true,
       onmouseenter: (evt) => {
         document.querySelector(CHESS.__WC_CHESS_BOARD__).fen = fen;
       },
       onclick: (evt) => {
-        fetch(__API_SCHAAKZET__ + `delete&matchid=` + name, {
-          method: "GET",
-          headers: __API_HEADERS__,
-        });
-        chessboard.remove();
+        if (evt.ctrlKey) {
+          let chessboard = evt.target.closest("chess-board");
+          fetch(CHESS.__API_SCHAAKZET__ + `delete&matchid=` + name, {
+            method: "GET",
+            headers: CHESS.__API_HEADERS__,
+          });
+          chessboard.remove();
+        }
       }, // onclick
     });
   };

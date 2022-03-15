@@ -6,23 +6,12 @@
 <body>
   <header>
     <h1-chess></h1-chess>
-    <h2>Match
-
-      <chess-player-white name="Player1"></chess-player-white>
-      versus
-      <chess-player-black></chess-player-black>
-    </h2>
-    <todo-list>
-      Use player names for database ID
-      Delete Matches from DB
-    </todo-list>
+    <h2>Games in the database table "matchmoves"</h2>
+    <p>Hover over the boards to show current FEN. <b>CTRL+click</b> a mini-board to PERMANENTLY delete it</p>
   </header>
   <main>
-    <button onclick="setStart()">Start</button><br />
-    <!-- <chess-board-action event="deleteMatchData">Delete Match</chess-board-action> -->
-
     <chess-game>
-      <chess-board id="matchboard" fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white" labels>
+      <chess-board fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white" labels>
       </chess-board>
       <chess-matches></chess-matches>
     </chess-game>
@@ -31,17 +20,5 @@
   <footer>
 
   </footer>
-  <script>
-    // make sure our dev code executes after all chess boards are 100% created
-    window.addEventListener("load", () => {
-      let chessboard = document.querySelector("chess-board");
-      window.setFEN = (fenString) => chessboard.fen = fenString;
-      let piece = chessboard.getPiece("e2");
-      //chessboard.documentation();
-      //chessboard.movePiece(piece, "g7");
-      //chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
-    });
-  </script>
 </body>
-
 </html>
