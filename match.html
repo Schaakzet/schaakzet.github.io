@@ -9,21 +9,16 @@
   <header>
     <h1-chess></h1-chess>
     <h2>Match
-
-      <chess-players>
-        <chess-player-white name="Player1"></chess-player-white>
-        versus
-        <chess-player-black></chess-player-black>
-      </chess-players>
+      <chess-players></chess-players>
     </h2>
     <todo-list>
-      * Use player names for database ID with &lt;chess-player-white and -black> component
+      * Use player names for database ID with &lt;chess-player-white and -black> component, allow only one entry AND save the values to localStorage so the user can press F5 savely
       * record chessmoves in &lt;chess-game-progress>
     </todo-list>
   </header>
   <main>
     <chess-game>
-      <chess-board id="matchboard" fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white" labels>
+      <chess-board id="matchboard" record fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white" labels>
       </chess-board>
       <chess-game-progress></chess-game-progress>
     </chess-game>
