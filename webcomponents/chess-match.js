@@ -15,7 +15,13 @@
       }
       connectedCallback() {
         this.addListeners();
-        console.warn("START MATCH");
+        setTimeout(() => {
+          console.warn("START MATCH", this.matchid);
+        });
+      }
+      get matchid() {
+        const player = (color) => document.querySelector("chess-player-" + color).value;
+        return player("white") + player("black");
       }
       getPlayerName(idx = 0) {
         if (idx == "white") idx = 0;
