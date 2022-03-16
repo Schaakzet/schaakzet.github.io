@@ -222,6 +222,7 @@
         const /* function */ movedPiece = () => {
             let fromSquare = chessPiece.square;
             let toSquare = this.getSquare(square);
+            const lastFEN = this.fen;
 
             toSquare.pieceName = chessPiece.is; // REQUIRED?
             if (this.lastMove && toSquare.at == this.enPassantPosition && chessPiece.isPawn) {
@@ -238,7 +239,7 @@
                   chessPiece,
                   fromSquare,
                   toSquare,
-                  fen: this.fen,
+                  fen: lastFEN,
                 });
               };
             save2chessMoves(); // save every move, including castling king AND rook
@@ -257,9 +258,14 @@
                 });
               } else {
                 // Rook in castling mode
-                this.chessMoves.pop(); // delete king move
                 this.chessMoves.pop(); // delete rook move
+                let savedFEN = this.lastMove.fen;
+                this.chessMoves.pop(); // delete king move
                 save2chessMoves(); // save castling move
+                this.lastMove.fen = savedFEN;
+
+                // fen corrigeren
+
                 this.doingCastling = false;
                 this.changePlayer();
               }
@@ -298,13 +304,12 @@
           return this.chessMoves.slice(-1)[0];
         }
       }
-      // ======================================================== <chess-board>.undoLastMove
-      undoLastMove() {
-        this.chessMoves.pop();
-        this.fen = this.lastMove.fen;
+      // ======================================================== <chess-board>.undoMove
+      undoMove() {
+        if (this.lastMove) this.fen = this.lastMove.fen;
         this.changePlayer();
+        this.chessMoves.pop();
       }
-
       // ======================================================== <chess-board>.findPieceSquare
       findPieceSquare(piece) {
         if (isString(piece)) {
@@ -349,6 +354,7 @@
           if (fenString !== "") {
             let [fen, player, castling, enpassant, halfmove, fullmove] = fenString.split(" ");
             let squareIndex = 0;
+            // fen
             fen.split("").forEach((fenLetter) => {
               if (fenLetter !== "/") {
                 if (parseInt(fenLetter) > 0 && parseInt(fenLetter) < 9) {
@@ -381,11 +387,16 @@
           this._savedfen = fenString;
         }
         this.classList.remove("game_over");
+        this.save2localStorage();
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
       get fen() {
+        // fenString (The whole fenString)
         let fenString = "";
+        let fenParts = [];
         let emptySquareCount = 0;
+        // fen
+        let fen = "";
         for (var rank = 7; rank >= 0; rank--) {
           for (var file = 0; file < this.files.length; file++) {
             const square = this.files[file] + this.ranks[rank]; // "a8"
@@ -393,22 +404,42 @@
             if (piece) {
               const fenPiece = CHESS.convertFEN(piece.is);
               if (emptySquareCount != 0) {
-                fenString = fenString + emptySquareCount;
+                fen = fen + emptySquareCount;
                 emptySquareCount = 0;
               }
-              fenString = fenString + fenPiece;
+              fen = fen + fenPiece;
             } else {
               emptySquareCount++;
             }
           }
           if (rank < 8) {
             if (emptySquareCount != 0) {
-              fenString = fenString + emptySquareCount;
+              fen = fen + emptySquareCount;
               emptySquareCount = 0;
             }
-            if (rank > 0) fenString = fenString + "/";
+            if (rank > 0) fen = fen + "/";
           }
         }
+        fenParts.push(fen);
+        // player
+        let player = "-";
+        if (this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__) == CHESS.__PLAYER_BLACK__) {
+          player = "b";
+        } else {
+          player = "w";
+        }
+        fenParts.push(player);
+        // castling
+        let castling = "-";
+        if (this.castlingArray.length) castling = this.castlingArray.join("");
+        fenParts.push(castling);
+        // enpassant
+        let enpassant = "-";
+        if (this.enPassantPosition) enpassant = this.enPassantPosition;
+        fenParts.push(enpassant);
+        // join
+        fenString = fenParts.join(" ");
+        console.log(fenString);
         return fenString;
       } // get fen()
       // ======================================================== <chess-board>.record GETTER

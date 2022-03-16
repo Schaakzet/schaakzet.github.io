@@ -77,8 +77,8 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
     log("analyzeWholeBoard");
     initAnalysis();
     const player = $chessboard.player;
-    checkMate(player);
     staleMate(player);
+    checkMate(player);
   }
 
   // ======================================================== initAnalysis
@@ -144,6 +144,8 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
         log(color, "koning staat schaak door", _kingSquare.attackers);
         $chessboard.setMessage("Je staat schaak.");
         return true;
+      } else {
+        $chessboard.setMessage("");
       }
     }
     return false;

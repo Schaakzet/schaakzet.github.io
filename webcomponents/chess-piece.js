@@ -172,7 +172,7 @@
                 }
                 // Deze break is er voor om niet stukken OVER een ander stuk nog te checken.
                 // Als er geen piece op de squareElement staat. EMPTY.
-                if (!_squareElement.piece.isKing) break;
+                if (!_squareElement.piece.isKing || _squareElement.piece.color == this.color) break;
               } else {
                 _squareElement.highlight(CHESS.__EMPTY_SQUARE__);
                 _potentialMovesArray.push(_squareName);
@@ -229,18 +229,19 @@
       // ======================================================== <chess-piece>.potentialKingMoves
       potentialKingMoves() {
         let $chessboard = this.chessboard;
-        let $square = this.square;
-        if (this.isKing) {
+        let square = this.square;
+        const isKing = this.isKing;
+        if (isKing) {
           // ROQUEREN
           const _potentialMovesArray = this.moves;
           // TODO: ?? gaat dit wel goed als er andere stukken staan?
-          const longWhiteRook = this.chessboard.getPiece(CHESS.__SQUARE_BOTTOM_LEFT__);
-          const shortWhiteRook = this.chessboard.getPiece(CHESS.__SQUARE_BOTTOM_RIGHT__);
-          const longBlackRook = this.chessboard.getPiece(CHESS.__SQUARE_TOP_LEFT__);
-          const shortBlackRook = this.chessboard.getPiece(CHESS.__SQUARE_TOP_RIGHT__);
+          const longWhiteRook = $chessboard.getPiece(CHESS.__SQUARE_BOTTOM_LEFT__);
+          const shortWhiteRook = $chessboard.getPiece(CHESS.__SQUARE_BOTTOM_RIGHT__);
+          const longBlackRook = $chessboard.getPiece(CHESS.__SQUARE_TOP_LEFT__);
+          const shortBlackRook = $chessboard.getPiece(CHESS.__SQUARE_TOP_RIGHT__);
 
-          const playerColor = this.chessboard.player;
-          const castlingArray = this.chessboard.castlingArray;
+          const playerColor = $chessboard.player;
+          const castlingArray = $chessboard.castlingArray;
           // TODO: Inkorten
           function isCastling(castlingLetter, typeOfRook, rookSquareName) {
             return (
@@ -287,7 +288,7 @@
 
           function checkCastlingInterrupt(offset, squareName) {
             if (castlingInterrupt(playerColor, offset)) {
-              $square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
+              square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
               _potentialMovesArray.push(squareName);
             }
           }
@@ -302,10 +303,10 @@
 
           // ALLOWED MOVES
           const allowedMoves = _potentialMovesArray.filter((squareName) => {
-            const defender_square = this.chessboard.getSquare(squareName);
+            const defender_square = $chessboard.getSquare(squareName);
             const ultimateDefenders = defender_square.defenders.filter((defender_FENat) => {
               let myFENpos = CHESS.convertFEN(this.is) + this.at;
-              let defender = this.chessboard.getPiece(defender_FENat.substring(1, 3));
+              let defender = $chessboard.getPiece(defender_FENat.substring(1, 3));
               // console.log(squareName, defender_FENat, defender_FENat == myFENpos, defender.color, playerColor);
               return defender_FENat !== myFENpos && defender.color !== playerColor;
             });
@@ -320,7 +321,7 @@
           const kingPosition = CHESS.convertFEN(this.is) + this.at;
 
           for (const squarename of falseMoves) {
-            const square = this.chessboard.getSquare(squarename);
+            const square = $chessboard.getSquare(squarename);
             const defendedby = square.defenders;
             const newDefendedArray = defendedby.filter((defender) => {
               return defender != kingPosition;
