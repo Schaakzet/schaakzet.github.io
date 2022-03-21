@@ -26,8 +26,10 @@
             // when this Component is added to the DOM, create the board with FEN and Arrays.
             this.createboard(this.getAttribute("template")); // id="Rob2"
             if (this.hasAttribute(CHESS.__WC_ATTRIBUTE_FEN__)) this.fen = this.getAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
+            else this.fen = undefined;
             if (this._savedfen) this.fen = this._savedfen;
             this.initPlayerTurn();
+            CHESS.analysis(this, "start");
           });
         });
       }
@@ -180,7 +182,7 @@
       // ======================================================== <chess-board>.initPlayerTurn
       initPlayerTurn() {
         delete this.pieceClicked;
-        this.calculateBoard();
+        this.initAnalysis();
         for (let element of this.squares) {
           let chessSquare = this.getSquare(element);
           chessSquare.highlight(false);
@@ -287,10 +289,10 @@
         if (animated) chessPiece.animateTo(square).then(movedPiece);
         else movedPiece();
       }
-      // ======================================================== <chess-board>.calculateBoard
-      // calculateBoard wordt aangeroepen in einde Click-event.
-      calculateBoard() {
-        console.error("calculateBoard");
+      // ======================================================== <chess-board>.initAnalysis
+      // initAnalysis wordt aangeroepen in einde Click-event.
+      initAnalysis() {
+        console.error("initAnalysis");
         if (CHESS.analysis) {
           CHESS.analysis(this);
           CHESS.analysis(this, CHESS.__ANALYSIS_ENPASSANT__);
@@ -307,7 +309,6 @@
       // ======================================================== <chess-board>.undoMove
       undoMove() {
         if (this.lastMove) this.fen = this.lastMove.fen;
-        this.changePlayer();
         this.chessMoves.pop();
       }
       // ======================================================== <chess-board>.findPieceSquare
@@ -343,7 +344,7 @@
         this.docs(this.querySelector(CHESS.__WC_CHESS_PIECE__));
       }
       // ======================================================== <chess-board>.fen SETTER/GETTER
-      set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq") {
+      set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
         this.castlingArray = [CHESS.__FEN_WHITE_KING__, CHESS.__FEN_WHITE_QUEEN__, CHESS.__FEN_BLACK_KING__, CHESS.__FEN_BLACK_QUEEN__]; // Halen we uit FEN
 
@@ -387,6 +388,10 @@
           this._savedfen = fenString;
         }
         this.classList.remove("game_over");
+
+        // only calculate the board when there are squares on the board.
+        if (this.getSquare("e3")) CHESS.analysis(this, "start");
+
         this.save2localStorage();
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
@@ -397,29 +402,31 @@
         let emptySquareCount = 0;
         // fen
         let fen = "";
-        for (var rank = 7; rank >= 0; rank--) {
-          for (var file = 0; file < this.files.length; file++) {
-            const square = this.files[file] + this.ranks[rank]; // "a8"
-            const piece = this.getPiece(square);
-            if (piece) {
-              const fenPiece = CHESS.convertFEN(piece.is);
+        if (this.files) {
+          for (var rank = 7; rank >= 0; rank--) {
+            for (var file = 0; file < this.files.length; file++) {
+              const square = this.files[file] + this.ranks[rank]; // "a8"
+              const piece = this.getPiece(square);
+              if (piece) {
+                const fenPiece = CHESS.convertFEN(piece.is);
+                if (emptySquareCount != 0) {
+                  fen = fen + emptySquareCount;
+                  emptySquareCount = 0;
+                }
+                fen = fen + fenPiece;
+              } else {
+                emptySquareCount++;
+              }
+            }
+            if (rank < 8) {
               if (emptySquareCount != 0) {
                 fen = fen + emptySquareCount;
                 emptySquareCount = 0;
               }
-              fen = fen + fenPiece;
-            } else {
-              emptySquareCount++;
+              if (rank > 0) fen = fen + "/";
             }
           }
-          if (rank < 8) {
-            if (emptySquareCount != 0) {
-              fen = fen + emptySquareCount;
-              emptySquareCount = 0;
-            }
-            if (rank > 0) fen = fen + "/";
-          }
-        }
+        } //end if
         fenParts.push(fen);
         // player
         let player = "-";
@@ -430,10 +437,12 @@
         }
         fenParts.push(player);
         // castling
-        let castling = "-";
+        let castling = "";
         if (this.castlingArray.length) castling = this.castlingArray.join("");
+        else castling = "-";
         fenParts.push(castling);
         // enpassant
+        //todo fix enpassant to remove after 1 turn.
         let enpassant = "-";
         if (this.enPassantPosition) enpassant = this.enPassantPosition;
         fenParts.push(enpassant);

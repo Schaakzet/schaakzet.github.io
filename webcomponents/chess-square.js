@@ -40,6 +40,7 @@
       // ======================================================== <chess-square>.connectedCallback
       connectedCallback() {
         this.addEventListener("click", () => {
+          console.log("klick");
           if (this.chessboard.pieceClicked) {
             this.handleSecondClick();
           } else {

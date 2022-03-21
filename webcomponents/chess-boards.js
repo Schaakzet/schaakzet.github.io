@@ -33,7 +33,6 @@
           .filter(Boolean); // disregard empty lines
 
         this.shadowRoot.querySelector("#boards").append(...boardElements); // Object.assign #boards
-        
       } // matchmoves2boards()
       // ======================================================== <chess-boards>
     } // class

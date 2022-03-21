@@ -21,6 +21,8 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
     } else analyzeWholeBoard();
   }
 
+  if (type == "start") analyzeWholeBoard();
+
   function log(...args) {
     console.log("%c A ", "background:orange;", ...args);
   }
@@ -51,7 +53,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
 
   // ======================================================== castling
   function castling() {
-    reduceCastlingArray(lastMovedPiece.at);
+    reduceCastlingArray($chessboard.lastMove.fromSquare.at);
     $chessboard.doingCastling = false;
     if (lastMovedPiece.isKing) {
       let { fromSquare, toSquare } = $chessboard.lastMove;
@@ -75,14 +77,14 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== analyzeWholeBoard
   function analyzeWholeBoard() {
     log("analyzeWholeBoard");
-    initAnalysis();
+    calculateBoard();
     const player = $chessboard.player;
     staleMate(player);
     checkMate(player);
   }
 
-  // ======================================================== initAnalysis
-  function initAnalysis() {
+  // ======================================================== calculateBoard
+  function calculateBoard() {
     $chessboard.clearAttributes();
 
     for (const square of $chessboard.squares) {
@@ -99,6 +101,10 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
         // wit-koning
       }
     }
+    for (let element of $chessboard.squares) {
+      let chessSquare = $chessboard.getSquare(element);
+      chessSquare.highlight(false);
+    }
   }
 
   // ======================================================== enPassantPosition
@@ -108,6 +114,8 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       let position = fromSquare.file + (chessPiece.isWhite ? "3" : "6"); // file+3 OF file+6
       $chessboard.enPassantPosition = position; // Was er een en passant square van een pion?
       return position;
+    } else {
+      $chessboard.enPassantPosition = "-";
     }
   }
   // ======================================================== reduceCastlingArray

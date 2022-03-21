@@ -1,38 +1,37 @@
 <html>
+  <head>
+    <script src="./webcomponents/schaakzet.js"></script>
+  </head>
 
-<head>
-  <script src="./webcomponents/schaakzet.js"></script>
-</head>
-
-<body>
-  <chess-match></chess-match>
-  <header>
-    <h1-chess></h1-chess>
-    <h2>Match
-      <chess-players></chess-players>
-    </h2>
-    <todo-list>
-      * Use player names for database ID with &lt;chess-player-white and -black> component, allow only one entry AND save the values to localStorage so the user can press F5 savely
-      * record chessmoves in &lt;chess-game-progress>
-    </todo-list>
-  </header>
-  <main>
-    <chess-game>
-      <chess-board id="matchboard" record fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white" labels>
-      </chess-board>
-      <chess-game-progress></chess-game-progress>
-    </chess-game>
-    <div id="message"></div>
-  </main>
-  <footer>
-
-  </footer>
-  <script>
-    // make sure our dev code executes after all chess boards are 100% created
-    window.addEventListener("load", () => {
-      let chessboard = document.querySelector("chess-board");
-    });
-  </script>
-</body>
-
+  <body>
+    <chess-match></chess-match>
+    <header>
+      <h1-chess></h1-chess>
+      <h2>
+        Match
+        <chess-players></chess-players>
+      </h2>
+      <todo-list>
+        * Use player names for database ID with &lt;chess-player-white and -black> component, allow only one entry AND save the values to localStorage so the user can press F5
+        savely * record chessmoves in &lt;chess-game-progress>
+      </todo-list>
+    </header>
+    <main>
+      <chess-game>
+        <chess-board id="matchboard" record labels></chess-board>
+        <chess-game-progress></chess-game-progress>
+      </chess-game>
+      <div id="message"></div>
+    </main>
+    <footer></footer>
+    <script>
+      // make sure our dev code executes after all chess boards are 100% created
+      window.addEventListener("load", () => {
+        let chessboard = document.querySelector("chess-board");
+        let piece = matchboard.getPiece("a1");
+        console.log(piece);
+        piece.onclick = (evt) => console.log(666);
+      });
+    </script>
+  </body>
 </html>

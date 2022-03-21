@@ -49,7 +49,8 @@
       "a1 b1 c1 d1 e1 f1 g1 h1";}` +
     /*html*/ `</style>` +
     /*html*/ `<style>` +
-    /*css*/ `.chessboard_layer:empty {display: none}` + //hide empty layers
+    /*css*/ `#chessboard_pieces{pointer-events:none}` +
+    // /*css*/ `.chessboard_layer:empty {display: none}` + //hide empty layers
     /*css*/ `chess-square {overflow:hidden;max-height:100%}` /* keep the square square no matter what is put inside it */ +
     /*css*/ `.black_square {background-color: darkgray}` +
     /*css*/ `.white_square {background-color: white}` +
@@ -82,7 +83,7 @@
   window.CHESS.chessboard_innerHTML =
     chessboardSTYLES +
     labelsSTYLE +
-    disabledBoardSTYLE +
+    // disabledBoardSTYLE +
     /*html*/ `<style id="chessboard_gridareas"></style>` + // inject 64 gridarea definitions here
     /*html*/ `<div id="chessboard_squares" class="chessboard_layer"></div>` + // squares layer
     /*html*/ `<div id="chessboard_pieces" class="chessboard_layer"></div>`;
