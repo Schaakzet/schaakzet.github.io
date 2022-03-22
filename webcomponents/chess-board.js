@@ -20,14 +20,16 @@
       }
       // ======================================================== <chess-board>.connectedCallback
       connectedCallback() {
-        // <ches-square> and <chess-piece> are loaded ASYNC, so we need to wait for them to be defined before creating the board
+        // <chess-square> and <chess-piece> are loaded ASYNC, so we need to wait for them to be defined before creating the board
         customElements.whenDefined(CHESS.__WC_CHESS_SQUARE__).then(() => {
           customElements.whenDefined(CHESS.__WC_CHESS_PIECE__).then(() => {
             // when this Component is added to the DOM, create the board with FEN and Arrays.
             this.createboard(this.getAttribute("template")); // id="Rob2"
+            console.log(this.id, "connectedCallback", this._savedfen);
             if (this.hasAttribute(CHESS.__WC_ATTRIBUTE_FEN__)) this.fen = this.getAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
-            else this.fen = undefined;
-            if (this._savedfen) this.fen = this._savedfen;
+            if (this._savedfen) {
+              this.fen = this._savedfen;
+            }
             this.initPlayerTurn();
             CHESS.analysis(this, "start");
           });
@@ -130,8 +132,8 @@
       }
       // ======================================================== setMessage
       setMessage(msg) {
+        console.log("set msg", msg);
         document.getElementById("message").innerText = msg;
-        console.log("setMessage", msg);
       }
       // ======================================================== <chess-board>.getSquare
       getSquare(square) {
@@ -288,11 +290,12 @@
 
         if (animated) chessPiece.animateTo(square).then(movedPiece);
         else movedPiece();
+        this.setMessage("");
       }
       // ======================================================== <chess-board>.initAnalysis
       // initAnalysis wordt aangeroepen in einde Click-event.
       initAnalysis() {
-        console.error("initAnalysis");
+        // console.error("initAnalysis");
         if (CHESS.analysis) {
           CHESS.analysis(this);
           CHESS.analysis(this, CHESS.__ANALYSIS_ENPASSANT__);
@@ -381,16 +384,18 @@
             if (enpassant && enpassant !== "-") this.enPassantPosition = enpassant;
           }
           if (document.querySelector("#fen")) document.querySelector("#fen").value = fenString;
-
           delete this._savedfen;
         } else {
-          // when the constructor runs on document.createElement, the squares are not set yet
+          // when the constructor runs on document.createElement, the squares are not set yet.
           this._savedfen = fenString;
         }
         this.classList.remove("game_over");
 
-        // only calculate the board when there are squares on the board.
-        if (this.getSquare("e3")) CHESS.analysis(this, "start");
+        // only analyze the board when there are squares on the board.
+        setTimeout(() => {
+          if (this._savedfen) this.fen = this._savedfen;
+          if (this.getSquare("e3")) CHESS.analysis(this, "start");
+        });
 
         this.save2localStorage();
       } // set fen
@@ -448,7 +453,6 @@
         fenParts.push(enpassant);
         // join
         fenString = fenParts.join(" ");
-        console.log(fenString);
         return fenString;
       } // get fen()
       // ======================================================== <chess-board>.record GETTER

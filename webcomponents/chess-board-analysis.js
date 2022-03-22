@@ -86,12 +86,10 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== calculateBoard
   function calculateBoard() {
     $chessboard.clearAttributes();
-
     for (const square of $chessboard.squares) {
       let piece = getPiece(square);
       if (piece) {
         piece.potentialMoves();
-        // wit-koning
       }
     }
     for (const square of $chessboard.squares) {
@@ -152,8 +150,6 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
         log(color, "koning staat schaak door", _kingSquare.attackers);
         $chessboard.setMessage("Je staat schaak.");
         return true;
-      } else {
-        $chessboard.setMessage("");
       }
     }
     return false;
@@ -284,6 +280,22 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       }
     }
   }
+  // ======================================================== noOtherMoves
+  function noOtherMoves() {
+    console.log("no other moves");
+    for (const square of $chessboard.squares) {
+      let piece = getPiece(square);
+      if (piece) {
+        console.log(piece.is, piece.potentialMoves());
+        if (piece.potentialMoves()) return false;
+      }
+    }
+    for (let element of $chessboard.squares) {
+      let chessSquare = $chessboard.getSquare(element);
+      chessSquare.highlight(false);
+    }
+    return true;
+  }
   // ======================================================== staleMate
   function staleMate(color) {
     if (isValidGameBoard) {
@@ -293,7 +305,8 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
         const isCheck = isInCheck(color);
         const kingHasNoMoves = kingPiece.moves.length == 0;
         const kinghasFalseMoves = kingPiece.falseMoves.length > 0;
-        if (!isCheck && kingHasNoMoves && kinghasFalseMoves) {
+        console.log("noOtherMoves", noOtherMoves());
+        if (!isCheck && noOtherMoves() && kingHasNoMoves && kinghasFalseMoves) {
           log("Stalemate!");
           gameOver("Stalemate");
         }

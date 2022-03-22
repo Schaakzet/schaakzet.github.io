@@ -6,7 +6,7 @@
   <body>
     <main>
       <h1-chess></h1-chess>
-      <todo-list> use extends FEN notation with castling info etc. Make it a playable board, without opponent color Add undo last move button </todo-list>
+      <todo-list> Make it a playable board, without opponent color. If check, no castling. Stalemate. </todo-list>
 
       <label for="enterFEN">enter FEN:</label> <input id="fen" type="text" size="100" style="width: 40em" />
       <br />
@@ -27,8 +27,7 @@
       function setStart() {
         let chessboard = document.querySelector("chess-board");
         chessboard.clear();
-        setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w");
-        // schaak3.classList.remove("game_over");
+        setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -");
         document.getElementById("message").innerText = "";
         chessboard.capturedWhitePieces = [];
         chessboard.capturedBlackPieces = [];
@@ -37,10 +36,9 @@
     <script>
       // define a GLOBAL setFEN function so all inputs can call this function
       window.setFEN = function (fenString) {
-        document.querySelector("chess-board").fen = fenString;
         let chessboard = document.querySelector("chess-board");
-        // chessboard.player = "zwart";
-        // console.clear();
+        chessboard.fen = fenString;
+        console.clear();
         document.getElementById("message").innerText = "";
         chessboard.capturedWhitePieces = [];
         chessboard.capturedBlackPieces = [];

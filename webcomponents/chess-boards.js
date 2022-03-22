@@ -17,11 +17,12 @@
       render() {
         let boardElements = this.innerHTML
           .split(/[\n\|#]/) // accepts newline | and # as 3 separators
-          .map((fen) => {
+          .map((fen, idx) => {
             fen = fen.trim();
             if (fen == "") return false;
             else
               return CHESS.createBoardElement({
+                id: "b" + idx,
                 fen,
                 disabled: true,
                 onclick: (evt) => {
