@@ -28,8 +28,7 @@
       // make sure our dev code executes after all chess boards are 100% created
       window.addEventListener("load", () => {
         let chessboard = document.querySelector("chess-board");
-        let piece = matchboard.getPiece("a1");
-        console.log(piece);
+        let piece = matchboard.getPiece("a8");
         piece.onclick = (evt) => console.log(666);
       });
     </script>

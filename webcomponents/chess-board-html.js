@@ -83,7 +83,7 @@
   window.CHESS.chessboard_innerHTML =
     chessboardSTYLES +
     labelsSTYLE +
-    // disabledBoardSTYLE +
+    disabledBoardSTYLE +
     /*html*/ `<style id="chessboard_gridareas"></style>` + // inject 64 gridarea definitions here
     /*html*/ `<div id="chessboard_squares" class="chessboard_layer"></div>` + // squares layer
     /*html*/ `<div id="chessboard_pieces" class="chessboard_layer"></div>`;

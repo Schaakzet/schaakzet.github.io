@@ -48,6 +48,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
           newPiece = false;
       }
       if (newPiece) $chessboard.addPiece(newPiece, lastMovedPiece.at);
+      console.log("promotion");
     }
   }
 
@@ -220,10 +221,12 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== negatingCheck
   function negatingCheck(color) {
     if (isValidGameBoard) {
+      const horse = (color) => color + CHESS.__PIECE_SEPARATOR__ + CHESS.__PIECE_KNIGHT__;
       const _kingSquare = kingSquare(color);
       if (_kingSquare && _kingSquare.isAttacked) {
-        if (_kingSquare.attackers.length == 3) {
-          const attackingPiece = /* function */ (color) => getPiece(kingAttackers(color).substring(1, 3));
+        if (_kingSquare.attackers.length == 1) {
+          const attackingPiece = /* function */ (color) => getPiece(_kingSquare.attackers[0].substring(1, 3));
+          console.log(attackingPiece(color));
           const attackingPieceSquare = /* function */ (color) => attackingPiece(color).square;
           // Capture Attacking Piece --- Works only for one attacking piece, because if we get more, you can capture only one.
           if (attackingPieceSquare(color).isAttacked) {
@@ -237,12 +240,12 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
             // 3. Is there 1 or more squares in between attacking piece and king?
             if (attackingPiece(color) !== horse(color)) {
               // We know attacking piece is not a horse, and calculate squares between.
-              const fileDifference = Math.abs(attackingPieceSquare(color).file - _kingSquare(color).file);
-              const rankDifference = Math.abs(attackingPieceSquare(color).rank - _kingSquare(color).rank);
+              const fileDifference = Math.abs(attackingPieceSquare(color).file - _kingSquare.file);
+              const rankDifference = Math.abs(attackingPieceSquare(color).rank - _kingSquare.rank);
               if (fileDifference >= 2 || rankDifference >= 2) {
                 // 4. Left with Bishop and Rook moves.
                 // 5. findSquaresBetween horizontally, vertically or diagonally.
-                const squaresBetween = findSquaresBetween(attackingPieceSquare(color), _kingSquare(color));
+                const squaresBetween = findSquaresBetween(attackingPieceSquare(color), _kingSquare);
                 // 6. defendedby lower or upper. Alleen (color)-stukken en niet de koning en intervenedByPawn.
                 squaresBetween.forEach(
                   /* function */ (element) => {
@@ -275,19 +278,19 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       if (checkCanBeNegated) {
         log("You can get out of check.");
       } else {
-        log("Checkmate", $chessboard.player);
-        gameOver("Checkmate");
+        log("Checkmate", `${CHESS.otherPlayer(color)}`);
+        gameOver("Checkmate", color);
       }
     }
   }
   // ======================================================== noOtherMoves
   function noOtherMoves() {
-    console.log("no other moves");
     for (const square of $chessboard.squares) {
       let piece = getPiece(square);
       if (piece) {
-        console.log(piece.is, piece.potentialMoves());
-        if (piece.potentialMoves()) return false;
+        if (piece.color == $chessboard.player) {
+          if (piece.moves.length) return false;
+        }
       }
     }
     for (let element of $chessboard.squares) {
@@ -305,25 +308,24 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
         const isCheck = isInCheck(color);
         const kingHasNoMoves = kingPiece.moves.length == 0;
         const kinghasFalseMoves = kingPiece.falseMoves.length > 0;
-        console.log("noOtherMoves", noOtherMoves());
         if (!isCheck && noOtherMoves() && kingHasNoMoves && kinghasFalseMoves) {
           log("Stalemate!");
-          gameOver("Stalemate");
+          gameOver("Stalemate", color);
         }
         const allWhitePiecesTaken = $chessboard.capturedWhitePieces.length == 15;
         const allBlackPiecesTaken = $chessboard.capturedBlackPieces.length == 15;
         if (allWhitePiecesTaken && allBlackPiecesTaken) {
           log("Stalemate!");
-          gameOver("Stalemate");
+          gameOver("Stalemate", color);
         }
       }
     }
   }
 
   // ======================================================== gameOver
-  function gameOver(mate) {
+  function gameOver(mate, color) {
     if (mate == "Checkmate") {
-      $chessboard.setMessage(`Game over. ${CHESS.otherPlayer()} heeft gewonnen.`);
+      $chessboard.setMessage(`Game over. ${CHESS.otherPlayer(color)} heeft gewonnen.`);
       $chessboard.classList.add("game_over");
     } else if (mate == "Stalemate") {
       $chessboard.setMessage("Game over. Gelijkspel.");
