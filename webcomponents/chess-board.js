@@ -26,10 +26,12 @@
             // when this Component is added to the DOM, create the board with FEN and Arrays.
             this.createboard(this.getAttribute("template")); // id="Rob2"
             console.log(this.id, "connectedCallback", this._savedfen);
-            if (this.hasAttribute(CHESS.__WC_ATTRIBUTE_FEN__)) this.fen = this.getAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
-            if (this._savedfen) {
-              this.fen = this._savedfen;
-            }
+            let localFEN = localStorage.getItem("fen");
+            console.log(localFEN);
+            if (localFEN) this.fen = localFEN;
+            else if (this.hasAttribute(CHESS.__WC_ATTRIBUTE_FEN__)) this.fen = this.getAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
+            else if (this._savedfen) this.fen = this._savedfen;
+            else this.fen = undefined;
             this.initPlayerTurn();
             CHESS.analysis(this, "start");
           });
@@ -349,6 +351,7 @@
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
+        console.log("fenString: ", fenString);
         this.castlingArray = [CHESS.__FEN_WHITE_KING__, CHESS.__FEN_WHITE_QUEEN__, CHESS.__FEN_BLACK_KING__, CHESS.__FEN_BLACK_QUEEN__]; // Halen we uit FEN
 
         //! THIS WILL TRIGGER set fen again: this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
@@ -491,6 +494,7 @@
       // ======================================================== <chess-board>.save2localStorage
       save2localStorage() {
         localStorage.setItem("fen", this.fen);
+        console.log("localStorage", this.fen);
         let fenElement = document.getElementById("fen");
         if (fenElement) fenElement.value = this.fen;
       }
