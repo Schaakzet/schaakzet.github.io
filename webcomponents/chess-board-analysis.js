@@ -77,7 +77,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   }
   // ======================================================== analyzeWholeBoard
   function analyzeWholeBoard() {
-    log("analyzeWholeBoard");
+    //log("analyzeWholeBoard");
     calculateBoard();
     const player = $chessboard.player;
     staleMate(player);

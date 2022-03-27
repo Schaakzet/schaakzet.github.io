@@ -35,6 +35,11 @@
         this.addListeners = () => {}; // attach listeners only once
       }
       storeMove({ chessboard, move, fromsquare, tosquare, fen }) {
+
+        chessboard.saveFENinLocalStorage();
+
+        chessboard.updateFENonScreen();
+
         fetch(CHESS.__API_RECORDS__ + CHESS.__API_TABLE_MATCHMOVES__, {
           method: "POST",
           headers: CHESS.__API_HEADERS__,
@@ -46,7 +51,7 @@
             fen,
           }),
         });
-      } // if record
+      } // storeMove
     }
   );
   // ********************************************************** end IIFE

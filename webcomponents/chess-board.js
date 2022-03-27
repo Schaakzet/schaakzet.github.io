@@ -18,21 +18,29 @@
         this.chessMoves = [];
         this.doingCastling = false;
       }
+      get localStorageGameID() {
+        return this.database_id;
+      }
       // ======================================================== <chess-board>.connectedCallback
       connectedCallback() {
+        // when this Component is added to the DOM, create the board with FEN and Arrays.
         // <chess-square> and <chess-piece> are loaded ASYNC, so we need to wait for them to be defined before creating the board
         customElements.whenDefined(CHESS.__WC_CHESS_SQUARE__).then(() => {
           customElements.whenDefined(CHESS.__WC_CHESS_PIECE__).then(() => {
-            // when this Component is added to the DOM, create the board with FEN and Arrays.
-            this.createboard(this.getAttribute("template")); // id="Rob2"
-            console.log(this.id, "connectedCallback", this._savedfen);
-            let localFEN = localStorage.getItem("fen");
-            console.log(localFEN);
-            if (localFEN) this.fen = localFEN;
-            else if (this.hasAttribute(CHESS.__WC_ATTRIBUTE_FEN__)) this.fen = this.getAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
+            const templateInHTML = this.getAttribute("template");
+            const isMatchBoard = this.record;
+            const hasFENAttribute = this.hasAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
+            const localFEN = localStorage.getItem(this.localStorageGameID);
+
+            this.createboard(templateInHTML);
+
+            if (isMatchBoard && localFEN) this.fen = localFEN;
+            else if (hasFENAttribute) this.fen = this.getAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
             else if (this._savedfen) this.fen = this._savedfen;
-            else this.fen = undefined;
+            else this.fen = undefined; // use default all pieces start board
+
             this.initPlayerTurn();
+
             CHESS.analysis(this, "start");
           });
         });
@@ -134,7 +142,7 @@
       }
       // ======================================================== setMessage
       setMessage(msg) {
-        console.log("set msg", msg);
+        console.warn("setMessage", msg);
         document.getElementById("message").innerText = msg;
       }
       // ======================================================== <chess-board>.getSquare
@@ -285,7 +293,6 @@
               this.changePlayer();
             }
 
-            this.save2localStorage();
             this.play(); // play all moves left in the queue
             return chessPiece;
           }; // end movedPiece function
@@ -351,7 +358,7 @@
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
-        console.log("fenString: ", fenString);
+        console.log("%c set fen: ","background:orange", fenString);
         this.castlingArray = [CHESS.__FEN_WHITE_KING__, CHESS.__FEN_WHITE_QUEEN__, CHESS.__FEN_BLACK_KING__, CHESS.__FEN_BLACK_QUEEN__]; // Halen we uit FEN
 
         //! THIS WILL TRIGGER set fen again: this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
@@ -399,8 +406,6 @@
           if (this._savedfen) this.fen = this._savedfen;
           if (this.getSquare("e3")) CHESS.analysis(this, "start");
         });
-
-        this.save2localStorage();
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
       get fen() {
@@ -491,12 +496,13 @@
       set player(v) {
         return this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__, v);
       }
-      // ======================================================== <chess-board>.save2localStorage
-      save2localStorage() {
-        localStorage.setItem("fen", this.fen);
-        console.log("localStorage", this.fen);
+      updateFENonScreen() {
         let fenElement = document.getElementById("fen");
         if (fenElement) fenElement.value = this.fen;
+      }
+      saveFENinLocalStorage() {
+        console.log("localStorage", this.fen);
+        localStorage.setItem(this.localStorageGameID, this.fen);
       }
     } // class ChessBoard
   ); // end of class definition

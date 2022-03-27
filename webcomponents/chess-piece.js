@@ -262,7 +262,6 @@
                 // TODO: volgende 5 regels zijn hetzelfde als in de 2e for loop, maak er een functie van
                 let squareName = kingPosition.translate(i, 0);
                 let squareElement = $chessboard.getSquare(squareName);
-                console.warn(squareElement.isDefendedBy(CHESS.otherPlayer(color)), kingPosition.attackers);
                 if (squareElement.isDefendedBy(CHESS.otherPlayer(color)) || kingPosition.attackers.length) {
                   return true;
                 }
@@ -280,7 +279,6 @@
           }
 
           function checkCastlingInterrupt(offset, squareName) {
-            console.log(castlingInterrupt(playerColor, offset));
             if (!castlingInterrupt(playerColor, offset)) {
               console.log("No castling interrupt", squareName);
               square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);

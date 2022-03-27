@@ -4,7 +4,7 @@
     //console.log("%c L ", "background:green;color:beige;", ...args);
     loaded.push([...args]);
   }
-  const CSS_files = ["chessgame","styles/chess-square","styles/chess-board","styles/chess-piece"].map((file) =>
+  const CSS_files = ["chessgame", "styles/chess-square", "styles/chess-board", "styles/chess-piece"].map((file) =>
     $createElement("link", {
       href: `./${file}.css`,
       rel: "stylesheet",
@@ -21,7 +21,7 @@
   ]);
   loadScriptsAsynchronous([
     ["create-html", "todo-list"], // HTML components
-    ["h1-chess", "chess-game-progress", "chess-match", "chess-matches","chess-players"], // Chess Components
+    ["h1-chess", "chess-game-progress", "chess-match", "chess-matches", "chess-players"], // Chess Components
   ]);
 
   function $createElement(tag, props = {}) {
@@ -38,7 +38,7 @@
     idx = 0,
   }) {
     let scriptElement = $createElement("script", {
-      src: `./webcomponents/${file}.js`,
+      src: `./webcomponents/${file}.js?` + String(new Date() / 1).split("").slice(-5).join(""),
       type,
       onerror: () => {
         console.warn("script load error", file);
