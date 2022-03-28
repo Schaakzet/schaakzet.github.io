@@ -230,7 +230,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       if (_kingSquare && _kingSquare.isAttacked) {
         if (_kingSquare.attackers.length == 1) {
           const attackingPiece = /* function */ (color) => getPiece(_kingSquare.attackers[0].substring(1, 3));
-          console.log(attackingPiece(color));
+          //console.log(attackingPiece(color));
           const attackingPieceSquare = /* function */ (color) => attackingPiece(color).square;
           // Capture Attacking Piece --- Works only for one attacking piece, because if we get more, you can capture only one.
           if (attackingPieceSquare(color).isAttacked) {
@@ -310,7 +310,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       if (_kingSquare) {
         const kingPiece = getPiece(_kingSquare);
         const isCheck = isInCheck(color);
-        console.error(66, kingPiece, _kingSquare);
+        console.assert(kingPiece.moves,"Kingpiece moves not defined");
         const kingHasNoMoves = kingPiece.moves.length == 0;
         const kinghasFalseMoves = kingPiece.falseMoves.length > 0;
         if (!isCheck && noOtherMoves() && kingHasNoMoves && kinghasFalseMoves) {

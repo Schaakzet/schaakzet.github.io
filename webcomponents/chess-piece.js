@@ -17,7 +17,6 @@
       }
       // ======================================================== <chess-piece>.movePiece
       movePieceTo(at, animated = true) {
-        console.log(this.at);
         this.chessboard.movePiece(this, at, animated);
       }
       // ======================================================== <chess-piece>.is
@@ -358,6 +357,32 @@
       // ======================================================== <chess-piece>.animateTo
       animateFinished() {
         this.style.position = this._savedposition;
+      }
+      // ======================================================== <chess-piece>.disableCheckMakingMoves
+      disableCheckMakingMoves({
+        showboardsIn = console.error("%c Cant test move on same board yet, it removes any captured pieces", "background:red;color:yellow"), // a DOM element where all possible moves for this piece are shown
+        matchboard = this.chessboard, // the board where the disabled squares/moves are shown
+      }) {
+        this.moves.forEach((to, idx) => { // loop all possible moves
+          let testboard = this.chessboard;
+          if (showboardsIn) {
+            // create a new board for every possible move
+            testboard = showboardsIn.appendChild(
+              CHESS.createBoardElement({
+                fen: matchboard.fen,
+              })
+            );
+            // force a hidden board if user did not supply a DOM container to place all possible move/boards into
+            if (showboardsIn == document.body) testboard.style.display = "none";
+          }
+          setTimeout(() => // not sure we need the setTimeout, but it seems to be needed to make sure the board is created before we try to move the piece
+            testboard.trymove({
+              from: this.at, //
+              to, // all moves from this.moves
+              matchboard,
+            })
+          );
+        });
       }
     }
   );

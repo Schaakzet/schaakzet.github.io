@@ -41,7 +41,6 @@
 
             this.initPlayerTurn();
 
-            console.log("connected", this.id);
             CHESS.analysis(this, "start");
           });
         });
@@ -143,7 +142,7 @@
       }
       // ======================================================== setMessage
       setMessage(msg) {
-        console.warn("setMessage", msg);
+        if (msg) console.warn("setMessage", msg);
         document.getElementById("message").innerText = msg;
       }
       // ======================================================== <chess-board>.getSquare
@@ -359,7 +358,7 @@
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
-        console.log("%c set fen: ", "background:orange", fenString);
+        // console.log("%c set fen: ", "background:orange", fenString);
         this.castlingArray = [CHESS.__FEN_WHITE_KING__, CHESS.__FEN_WHITE_QUEEN__, CHESS.__FEN_BLACK_KING__, CHESS.__FEN_BLACK_QUEEN__]; // Halen we uit FEN
 
         //! THIS WILL TRIGGER set fen again: this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
@@ -404,7 +403,6 @@
 
         // only analyze the board when there are squares on the board.
         setTimeout(() => {
-          console.log("setTimeout fen, analysis");
           if (this._savedfen) this.fen = this._savedfen;
           if (this.getSquare("e3")) CHESS.analysis(this, "start");
         });
@@ -473,7 +471,7 @@
       play(moves = this._moves) {
         // chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
         // TODO: rewrite to ["e2-e4", "e7-e5", "g1-f3", "b8-c6"] so "x" take piece can be used
-        if (!this._moves) this._moves = moves || console.warn("No play moves");
+        // if (!this._moves) this._moves = moves || console.warn("No play moves");
         if (this._moves && this._moves.length) {
           let [from, to] = this._moves.shift();
           let simulateClicks = false; // TODO: make simulateClicks work
@@ -490,6 +488,21 @@
       }
       adddplaymove(from, to) {
         this._moves.unshift([from, to]);
+      }
+      // ======================================================== <chess-board>.trymove
+      trymove({
+        from, // "e2"
+        to, // "e3"
+        matchboard = this, // the <chess-board> the user is playing
+      }) {
+        let savedfen = this.fen;
+        this.getPiece(from).movePieceTo(to, false); // move piece without animation
+        if (CHESS.analysis(this, "checkcheck")) matchboard.markIllegalMove(to);
+        //this.fen = savedfen;
+      }
+      // ======================================================== <chess-board>.markIllegalMove
+      markIllegalMove(at) {
+        this.getSquare(at).highlight(CHESS.__MOVETYPE_ILLEGAL__);
       }
       // ======================================================== <chess-board>.player
       get player() {

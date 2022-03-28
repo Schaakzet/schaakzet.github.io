@@ -22,7 +22,10 @@
           this.piece.potentialKingMoves(this.at);
           this.chessboard.pieceClicked = this.piece; // Hier wordt pieceClicked pas gedefinieerd.
           //   this.piece.moves = this.piece.moves.filter((move) => !chessboard.pieceClicked.illegalMoves.includes(move));
-          console.log("Mogelijke zetten: ", this.piece.pieceName, this.chessboard.pieceClicked.moves);
+          this.piece.disableCheckMakingMoves({
+            showboardsIn: document.getElementById("TEST4CHECKBOARDS") || document.body, //! REQUIRED FOR NOW
+          });
+          console.log("Zetten: ", this.piece.pieceName, this.chessboard.pieceClicked.moves);
         }
       }
       // ======================================================== <chess-square>.handleSecondClick
@@ -146,15 +149,15 @@
       }
       // ======================================================== <chess-square>.highlight
       highlight(state = false) {
-        let color =
-          {
-            [CHESS.__ATTACK_PIECE__]: "red",
-            [CHESS.__EMPTY_SQUARE__]: "green",
-            [CHESS.__PROTECT_PIECE__]: "orange",
-          }[state] || "hotpink";
         if (state) {
           this.setAttribute("state", state);
-          this.style.border = "5px solid " + color;
+          this.style.border =
+            {
+              [CHESS.__ATTACK_PIECE__]: "5px solid red",
+              [CHESS.__EMPTY_SQUARE__]: "5px solid green",
+              [CHESS.__PROTECT_PIECE__]: "5px solid orange",
+              [CHESS.__MOVETYPE_ILLEGAL__]: "2px dashed red",
+            }[state] || "2px dashed hotpink";
         } else {
           this.style.border = "";
           this.removeAttribute("state");

@@ -1,17 +1,19 @@
 !(function () {
   // ********************************************************** CSS and HTML for <chess-board>
   function squareStateCSS(playerColor) {
-    const backgroundWhite = "lightblue";
-    const backgroundBlack = "lightgreen";
-    const squareColor = playerColor == CHESS.__PLAYER_WHITE__ ? backgroundWhite : backgroundBlack;
+    const playerColors = ["lightblue", "lightgreen"];
+    //const playerColors = ["transparent", "transparent"];
+    const squareColor = playerColor == CHESS.__PLAYER_WHITE__ ? playerColors[0] : playerColors[1];
     const otherPlayer = CHESS.otherPlayer(playerColor);
     const attackedState = CHESS.__ATTACK_PIECE__;
     const selector =
       `chess-board[player="${playerColor}"] ` + // if playerColor
       `chess-square[piece*="${otherPlayer}"]:not([state="${attackedState}"])`; // if piece is not captured
+    // disable oponent player squares
     return /*css*/ `${selector} {
-        pointer-events:none;
-        background: ${squareColor}}`;
+          pointer-events:none;
+          background: ${squareColor}
+        }`;
   }
 
   const chessboardSTYLES =
@@ -63,7 +65,7 @@
 
   const labelsSTYLE = styleHTML(
     "squarelabels",
-    /*css*/ `chess-square:after {
+    /*css*/ `chess-board[labels] chess-square:after {
           content: attr(at);
           height: 100%;
           width: 100%;

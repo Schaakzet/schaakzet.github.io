@@ -44,6 +44,8 @@ window.CHESS = Object.assign(
     __MOVETYPE_MOVE__: "-", // used in move notation
     __MOVETYPE_CAPTURE__: "x", // used in move notation
 
+    __MOVETYPE_ILLEGAL__: "X", // used in move notation
+
     __PLAYER_WHITE__: "wit", // used as player color AND chesspiece names
     __PLAYER_BLACK__: "zwart", // used as player color AND chesspiece names
     __PIECE_SEPARATOR__: "-", //
