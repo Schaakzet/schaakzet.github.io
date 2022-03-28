@@ -21,12 +21,13 @@
           this.piece.potentialMoves(this.at);
           this.piece.potentialKingMoves(this.at);
           this.chessboard.pieceClicked = this.piece; // Hier wordt pieceClicked pas gedefinieerd.
+          //   this.piece.moves = this.piece.moves.filter((move) => !chessboard.pieceClicked.illegalMoves.includes(move));
           console.log("Mogelijke zetten: ", this.piece.pieceName, this.chessboard.pieceClicked.moves);
         }
       }
       // ======================================================== <chess-square>.handleSecondClick
       handleSecondClick() {
-        const { chessboard, piece, at } = this;
+        const { chessboard, at } = this;
         if (chessboard.pieceClicked) {
           if (/* piece on target or not, move piece */ chessboard.pieceClicked.moves.includes(at)) {
             chessboard.movePiece(chessboard.pieceClicked, at);
@@ -65,14 +66,21 @@
         let name;
         if (isString(piece)) {
           name = piece.length == 1 ? CHESS.convertFEN(piece) : piece;
-          piece = document.createElement(CHESS.__WC_CHESS_PIECE__); // create <chess-piece is="wit-koning" at="d5">
-          piece.is = name;
+          if (true) {
+            piece = document.createElement(CHESS.__WC_CHESS_PIECE__); // create <chess-piece is="wit-koning">
+            piece.is = name;
+          } else {
+            this.innerHTML = `<chess-piece is="${name}"></chess-piece>`;
+            piece = this.querySelector("chess-piece");
+            console.warn("77", piece);
+          }
         } else {
           name = piece.is;
         }
         this.clear();
         this.pieceName = name;
-        return this.appendChild(piece);
+        piece = this.appendChild(piece);
+        return piece;
       }
       // ======================================================== <chess-square>.addAttribute
       addAttribute(attr_name, arr, piece) {

@@ -41,6 +41,7 @@
 
             this.initPlayerTurn();
 
+            console.log("connected", this.id);
             CHESS.analysis(this, "start");
           });
         });
@@ -358,7 +359,7 @@
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
-        console.log("%c set fen: ","background:orange", fenString);
+        console.log("%c set fen: ", "background:orange", fenString);
         this.castlingArray = [CHESS.__FEN_WHITE_KING__, CHESS.__FEN_WHITE_QUEEN__, CHESS.__FEN_BLACK_KING__, CHESS.__FEN_BLACK_QUEEN__]; // Halen we uit FEN
 
         //! THIS WILL TRIGGER set fen again: this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
@@ -403,6 +404,7 @@
 
         // only analyze the board when there are squares on the board.
         setTimeout(() => {
+          console.log("setTimeout fen, analysis");
           if (this._savedfen) this.fen = this._savedfen;
           if (this.getSquare("e3")) CHESS.analysis(this, "start");
         });

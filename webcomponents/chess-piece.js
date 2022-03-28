@@ -16,8 +16,9 @@
         this.innerHTML = HTML_ImageChessPiece(newValue);
       }
       // ======================================================== <chess-piece>.movePiece
-      movePieceTo(at) {
-        this.chessboard.movePiece(this, at);
+      movePieceTo(at, animated = true) {
+        console.log(this.at);
+        this.chessboard.movePiece(this, at, animated);
       }
       // ======================================================== <chess-piece>.is
       get is() {
@@ -334,6 +335,14 @@
           }
           this.moves = allowedMoves;
         }
+      }
+      // ======================================================== <chess-piece>.illegalMoves
+      illegalMove() {
+        let illegalMove = "";
+        const localFEN = localStorage.getItem(this.localStorageGameID);
+
+        $chessboard.createboard("temp1");
+        temp1.fen = localFEN;
       }
       // ======================================================== <chess-piece>.animateTo
       animateTo(destinationSquare) {

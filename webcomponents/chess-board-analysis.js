@@ -8,6 +8,10 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   const movePiece = /* function */ (piece, to) => $chessboard.movePiece(piece, to);
 
   let lastMovedPiece;
+  if (type == "checkcheck") {
+    analyzeWholeBoard();
+    return isInCheck(CHESS.otherPlayer($chessboard.player));
+  }
 
   if ($chessboard.lastMove) {
     lastMovedPiece = $chessboard.lastMove.toSquare.piece;
@@ -306,6 +310,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       if (_kingSquare) {
         const kingPiece = getPiece(_kingSquare);
         const isCheck = isInCheck(color);
+        console.error(66, kingPiece, _kingSquare);
         const kingHasNoMoves = kingPiece.moves.length == 0;
         const kinghasFalseMoves = kingPiece.falseMoves.length > 0;
         if (!isCheck && noOtherMoves() && kingHasNoMoves && kinghasFalseMoves) {

@@ -14,11 +14,12 @@
       <button onclick="setStart()">Startpositie</button>
       <button onclick="document.querySelector('chess-board').undoMove()">Undo move</button>
       <chess-game>
-        <chess-board id="schaak3" fen="r3k2r/ppp1bpp1/2nqbn1p/3pp3/3PP2P/2NQBN2/PPP1BPP1/R3K2R w KQkq -" labels></chess-board>
-        <chess-boards>
+        <chess-board id="schaak3" fen="r1bqk1nr/pppp1ppp/2n5/4p3/1b2P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -" labels></chess-board>
+        <!-- <chess-boards>
           rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - | r3k2r/ppp1bpp1/2nqbn1p/3pp3/3PP2P/2NQBN2/PPP1BPP1/R3K2R w KQkq - |
           r1bqk1nr/pppp1ppp/2n5/2b1p3/4P3/4KN2/PPPP1PPP/RNBQ1B1R w KQkq - | K7/8/8/6Q1/8/8/5R2/7k w - -
-        </chess-boards>
+        </chess-boards> -->
+        <forward-boards id="TESTBOARD" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1em"> </forward-boards>
       </chess-game>
       <div id="message">[MESSAGE]</div>
     </main>
@@ -43,6 +44,37 @@
         chessboard.capturedWhitePieces = [];
         chessboard.capturedBlackPieces = [];
       };
+      setTimeout(() => {
+        let chessboard = document.querySelector("chess-board");
+        chessboard.labels = false;
+
+        let clickSquare = "d2";
+        setTimeout(() => {
+          let piece = chessboard.getPiece(clickSquare);
+          piece.click();
+          console.log("check check moves", piece.moves);
+          let illegalMoves = piece.moves.filter((move, idx) => {
+            // let newBoard = document.createElement("chess-board");
+            // TESTBOARD.appendChild(newBoard);
+
+            console.log(21);
+            TESTBOARD.insertAdjacentHTML("beforeend", `<chess-board id="test${idx}"></chess-board>`);
+            let newBoard = TESTBOARD.querySelector(`#test${idx}`);
+            console.log(22);
+            //setTimeout(() => {
+            newBoard.fen = chessboard.fen;
+            newBoard.labels = false;
+            let piece = newBoard.getPiece(clickSquare);
+            console.log(piece);
+            piece.movePieceTo(move, false); // move piece without animation
+            return CHESS.analysis(newBoard, "checkcheck");
+            //}, 100);
+          });
+          console.error("illegalMoves", illegalMoves);
+          //newBoard.getPiece("d2").click();
+          //chessboard.play([["d2", "d3"]]);
+        }, 100);
+      }, 500);
     </script>
   </body>
 </html>
