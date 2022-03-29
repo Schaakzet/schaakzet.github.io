@@ -17,20 +17,40 @@
       </todo-list>
     </header>
     <main>
+      <button onclick="setStart()">Startpositie</button>
+      <button onclick="document.querySelector('chess-board').undoMove()">Undo move</button>
       <chess-game>
-        <chess-board id="matchboard" record labels></chess-board>
+        <chess-board id="matchboard" fen="rn3bnr/ppp2kpp/3p4/4p3/4b3/2NPB2N/PPPRBPqP/2K5 b Qkq -" record labels></chess-board>
         <chess-game-progress></chess-game-progress>
       </chess-game>
       <div id="message"></div>
     </main>
     <footer></footer>
     <script>
-      // make sure our dev code executes after all chess boards are 100% created
-      window.addEventListener("load", () => {
+      //reset to startposition
+      function setStart() {
         let chessboard = document.querySelector("chess-board");
-        let piece = matchboard.getPiece("a8");
-        piece.onclick = (evt) => console.log(666);
-      });
+        chessboard.clear();
+        setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -");
+        document.getElementById("message").innerText = "";
+        chessboard.capturedWhitePieces = [];
+        chessboard.capturedBlackPieces = [];
+      }
+    </script>
+    <script>
+      // define a GLOBAL setFEN function so all inputs can call this function
+      window.setFEN = function (fenString) {
+        let chessboard = document.querySelector("chess-board");
+        chessboard.fen = fenString;
+        console.clear();
+        document.getElementById("message").innerText = "";
+        chessboard.capturedWhitePieces = [];
+        chessboard.capturedBlackPieces = [];
+      };
+    </script>
+    <script>
+      // make sure our dev code executes after all chess boards are 100% created
+      window.addEventListener("load", () => {});
     </script>
   </body>
 </html>

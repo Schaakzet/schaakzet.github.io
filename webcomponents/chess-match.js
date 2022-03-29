@@ -26,16 +26,14 @@
       getPlayerName(idx = 0) {
         if (idx == "white") idx = 0;
         if (idx == "black") idx = 1;
-        if (idx) return "WHITE";
+        if (idx == 0) return "WHITE";
         else return "BLACK";
-        return this.root.querySelectorAll("chess-player")[idx].value || ["W", "B"][idx];
       }
       addListeners() {
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.storeMove(evt.detail));
         this.addListeners = () => {}; // attach listeners only once
       }
       storeMove({ chessboard, move, fromsquare, tosquare, fen }) {
-
         chessboard.saveFENinLocalStorage();
 
         chessboard.updateFENonScreen();

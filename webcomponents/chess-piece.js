@@ -124,10 +124,7 @@
         const y = ranks.indexOf(fromSquare[1]);
         const toFile = files[x + x_move];
         const toRank = ranks[y + y_move];
-        // TODO: Shorter code, and move to translate in BaseClass at top of code
-        // const [file, rank] = this.at;
-        // const toFile = [files.indexOf(file) + x_move];
-        // const toRank = [ranks.indexOf(rank) + y_move];
+        // TODO: Shorter code, and move to translate in BaseClass at top of code. Sandro: I don't understand.
 
         // both need to be defined
         if (toFile && toRank) {
@@ -234,7 +231,6 @@
         if (isKing) {
           // ROQUEREN
           const _potentialMovesArray = this.moves;
-          // TODO: ?? gaat dit wel goed als er andere stukken staan?
           const longWhiteRook = $chessboard.getPiece(CHESS.__SQUARE_BOTTOM_LEFT__);
           const shortWhiteRook = $chessboard.getPiece(CHESS.__SQUARE_BOTTOM_RIGHT__);
           const longBlackRook = $chessboard.getPiece(CHESS.__SQUARE_TOP_LEFT__);
@@ -242,9 +238,9 @@
 
           const playerColor = $chessboard.player;
           const castlingArray = $chessboard.castlingArray;
-          // TODO: Inkorten
           function isCastling(castlingLetter, typeOfRook, rookSquareName) {
             return (
+              typeOfRook.isRook && //
               castlingArray.includes(castlingLetter) && //
               typeOfRook.moves && //
               typeOfRook.moves.includes(rookSquareName) //
@@ -257,23 +253,15 @@
           // True: Castling interrupted
           function castlingInterrupt(color, offset) {
             let kingPosition = $chessboard.getSquare(color == CHESS.__PLAYER_WHITE__ ? CHESS.__SQUARE_WHITE_KING_START__ : CHESS.__SQUARE_BLACK_KING_START__);
+            let checkInterrupt = (i) => {
+              let squareName = kingPosition.translate(i, 0);
+              let squareElement = $chessboard.getSquare(squareName);
+              if (squareElement.isDefendedBy(CHESS.otherPlayer(color)) || kingPosition.attackers.length) return true;
+            };
             if (offset < 0) {
-              for (let i = -1; i >= offset; i--) {
-                // TODO: volgende 5 regels zijn hetzelfde als in de 2e for loop, maak er een functie van
-                let squareName = kingPosition.translate(i, 0);
-                let squareElement = $chessboard.getSquare(squareName);
-                if (squareElement.isDefendedBy(CHESS.otherPlayer(color)) || kingPosition.attackers.length) {
-                  return true;
-                }
-              }
+              for (let i = -1; i >= offset; i--) checkInterrupt(i);
             } else if (offset > 0) {
-              for (let i = 1; i <= offset; i++) {
-                let squareName = kingPosition.translate(i, 0);
-                let squareElement = $chessboard.getSquare(squareName);
-                if (squareElement.isDefendedBy(CHESS.otherPlayer(color)) || kingPosition.attackers.length) {
-                  return true;
-                }
-              }
+              for (let i = 1; i <= offset; i++) checkInterrupt(i);
             }
             return false; // Castling possible
           }
@@ -335,14 +323,6 @@
           this.moves = allowedMoves;
         }
       }
-      // ======================================================== <chess-piece>.illegalMoves
-      illegalMove() {
-        let illegalMove = "";
-        const localFEN = localStorage.getItem(this.localStorageGameID);
-
-        $chessboard.createboard("temp1");
-        temp1.fen = localFEN;
-      }
       // ======================================================== <chess-piece>.animateTo
       animateTo(destinationSquare) {
         let { top, left } = this.getBoundingClientRect();
@@ -363,7 +343,8 @@
         showboardsIn = console.error("%c Cant test move on same board yet, it removes any captured pieces", "background:red;color:yellow"), // a DOM element where all possible moves for this piece are shown
         matchboard = this.chessboard, // the board where the disabled squares/moves are shown
       }) {
-        this.moves.forEach((to, idx) => { // loop all possible moves
+        this.moves.forEach((to) => {
+          // loop all possible moves
           let testboard = this.chessboard;
           if (showboardsIn) {
             // create a new board for every possible move
@@ -375,7 +356,8 @@
             // force a hidden board if user did not supply a DOM container to place all possible move/boards into
             if (showboardsIn == document.body) testboard.style.display = "none";
           }
-          setTimeout(() => // not sure we need the setTimeout, but it seems to be needed to make sure the board is created before we try to move the piece
+          setTimeout(() =>
+            // not sure we need the setTimeout, but it seems to be needed to make sure the board is created before we try to move the piece
             testboard.trymove({
               from: this.at, //
               to, // all moves from this.moves

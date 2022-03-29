@@ -1,62 +1,57 @@
 <html>
+  <head>
+    <script src="./webcomponents/schaakzet.js"></script>
+  </head>
 
-<head>
-  <script src="./webcomponents/schaakzet.js"></script>
-</head>
+  <body>
+    <main>
+      <h1-chess></h1-chess>
+      <todo-list> Make it a playable board, without opponent color. If check, no castling. Stalemate. </todo-list>
 
-<body>
-  <main>
-    <h1-chess></h1-chess>
-    <todo-list> Make it a playable board, without opponent color. If check, no castling. Stalemate. </todo-list>
-
-    <label for="enterFEN">enter FEN:</label> <input id="fen" type="text" size="100" style="width: 40em" />
-    <br />
-    <button onclick="setFEN(fen.value)">Set FEN</button>
-    <button onclick="setStart()">Startpositie</button>
-    <button onclick="document.querySelector('chess-board').undoMove()">Undo move</button>
-    <chess-game>
-      <chess-board id="schaak3" fen="r1b1k1nr/pppq1ppp/2np4/4p3/1b2P3/3P1N2/PPPB1PPP/RN1QKB1R w kq -" labels>
-      </chess-board>
-      <!-- <chess-boards>
+      <label for="enterFEN">enter FEN:</label> <input id="fen" type="text" size="100" style="width: 40em" />
+      <br />
+      <button onclick="setFEN(fen.value)">Set FEN</button>
+      <button onclick="setStart()">Startpositie</button>
+      <button onclick="document.querySelector('chess-board').undoMove()">Undo move</button>
+      <chess-game>
+        <chess-board id="schaak3" fen="r1b1k1nr/pppq1ppp/2np4/4p3/1b2P3/3P1N2/PPPB1PPP/RN1QKB1R w kq -" labels> </chess-board>
+        <!-- <chess-boards>
           rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - | r3k2r/ppp1bpp1/2nqbn1p/3pp3/3PP2P/2NQBN2/PPP1BPP1/R3K2R w KQkq - |
           r1bqk1nr/pppp1ppp/2n5/2b1p3/4P3/4KN2/PPPP1PPP/RNBQ1B1R w KQkq - | K7/8/8/6Q1/8/8/5R2/7k w - -
         </chess-boards> -->
-      <div id="TEST4CHECKBOARDS"
-        style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1em">
-      </div>
-    </chess-game>
-    <div id="message">[MESSAGE]</div>
-  </main>
-  <script>
-    //reset to startposition
-    function setStart() {
-      let chessboard = document.querySelector("chess-board");
-      chessboard.clear();
-      setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -");
-      document.getElementById("message").innerText = "";
-      chessboard.capturedWhitePieces = [];
-      chessboard.capturedBlackPieces = [];
-    }
-  </script>
-  <script>
-    // define a GLOBAL setFEN function so all inputs can call this function
-    window.setFEN = function (fenString) {
-      let chessboard = document.querySelector("chess-board");
-      chessboard.fen = fenString;
-      console.clear();
-      document.getElementById("message").innerText = "";
-      chessboard.capturedWhitePieces = [];
-      chessboard.capturedBlackPieces = [];
-    };
-    customElements.whenDefined("chess-board").then(() => {
-      let chessboard = document.querySelector("chess-board");
-      setTimeout(() => {
-        let piece = chessboard.getPiece("d2");
-        piece.click();
-        //chessboard.play([["d2", "d3"]]);
-      }, 100);
-    });
-  </script>
-</body>
-
+        <div id="TEST4CHECKBOARDS" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1em"></div>
+      </chess-game>
+      <div id="message">[MESSAGE]</div>
+    </main>
+    <script>
+      //reset to startposition
+      function setStart() {
+        let chessboard = document.querySelector("chess-board");
+        chessboard.clear();
+        setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -");
+        document.getElementById("message").innerText = "";
+        chessboard.capturedWhitePieces = [];
+        chessboard.capturedBlackPieces = [];
+      }
+    </script>
+    <script>
+      // define a GLOBAL setFEN function so all inputs can call this function
+      window.setFEN = function (fenString) {
+        let chessboard = document.querySelector("chess-board");
+        chessboard.fen = fenString;
+        console.clear();
+        document.getElementById("message").innerText = "";
+        chessboard.capturedWhitePieces = [];
+        chessboard.capturedBlackPieces = [];
+      };
+      customElements.whenDefined("chess-board").then(() => {
+        let chessboard = document.querySelector("chess-board");
+        setTimeout(() => {
+          let piece = chessboard.getPiece("d2");
+          piece.click();
+          //chessboard.play([["d2", "d3"]]);
+        }, 100);
+      });
+    </script>
+  </body>
 </html>

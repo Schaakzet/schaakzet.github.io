@@ -18,8 +18,10 @@
         this.chessMoves = [];
         this.doingCastling = false;
       }
+
+      // ======================================================= <chess-board>.localStorageGameID
       get localStorageGameID() {
-        return this.database_id;
+        return "fen"; //this.database_id;
       }
       // ======================================================== <chess-board>.connectedCallback
       connectedCallback() {
@@ -495,7 +497,6 @@
         to, // "e3"
         matchboard = this, // the <chess-board> the user is playing
       }) {
-        let savedfen = this.fen;
         this.getPiece(from).movePieceTo(to, false); // move piece without animation
         if (CHESS.analysis(this, "checkcheck")) matchboard.markIllegalMove(to);
         //this.fen = savedfen;
@@ -503,6 +504,7 @@
       // ======================================================== <chess-board>.markIllegalMove
       markIllegalMove(at) {
         this.getSquare(at).highlight(CHESS.__MOVETYPE_ILLEGAL__);
+        this.pieceClicked.moves = this.pieceClicked.moves.filter((move) => move !== this.getSquare(at).at);
       }
       // ======================================================== <chess-board>.player
       get player() {

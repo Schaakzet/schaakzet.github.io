@@ -244,21 +244,17 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
             // 3. Is there 1 or more squares in between attacking piece and king?
             if (attackingPiece(color) !== horse(color)) {
               // We know attacking piece is not a horse, and calculate squares between.
-              const fileDifference = Math.abs(attackingPieceSquare(color).file - _kingSquare.file);
+              const files = $chessboard.files;
+              const fileDifference = Math.abs(files.indexOf(attackingPieceSquare(color).file) - files.indexOf(_kingSquare.file));
               const rankDifference = Math.abs(attackingPieceSquare(color).rank - _kingSquare.rank);
               if (fileDifference >= 2 || rankDifference >= 2) {
+                console.log("Intervening Check");
                 // 4. Left with Bishop and Rook moves.
                 // 5. findSquaresBetween horizontally, vertically or diagonally.
                 const squaresBetween = findSquaresBetween(attackingPieceSquare(color), _kingSquare);
+                console.log("Squares between", squaresBetween);
                 // 6. defendedby lower or upper. Alleen (color)-stukken en niet de koning en intervenedByPawn.
-                squaresBetween.forEach(
-                  /* function */ (element) => {
-                    if (getSquare(element).isMovesFrom(color)) {
-                      log(getSquare(element), " kan er tussen");
-                      return true;
-                    }
-                  }
-                );
+                return squaresBetween.filter(/* function */ (element) => getSquare(element).isMovesFrom(color)).length;
               }
             } else {
               log("Horse, so no squares between calculation.");
@@ -278,6 +274,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   function checkMate(color) {
     const isCheck = isInCheck(color);
     const checkCanBeNegated = negatingCheck(color);
+    console.log("Check can be negated", checkCanBeNegated);
     if (isCheck) {
       if (checkCanBeNegated) {
         log("You can get out of check.");
@@ -310,7 +307,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       if (_kingSquare) {
         const kingPiece = getPiece(_kingSquare);
         const isCheck = isInCheck(color);
-        console.assert(kingPiece.moves,"Kingpiece moves not defined");
+        console.assert(kingPiece.moves, "Kingpiece moves not defined");
         const kingHasNoMoves = kingPiece.moves.length == 0;
         const kinghasFalseMoves = kingPiece.falseMoves.length > 0;
         if (!isCheck && noOtherMoves() && kingHasNoMoves && kinghasFalseMoves) {
