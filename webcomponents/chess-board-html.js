@@ -23,9 +23,8 @@
     /*css*/ `chess-board {
       --width: 100%;
       width: var(--width);
-      max-width:70vh;
-      height: var(--width);
-      max-height:70vh;
+      height: var(--height);
+      max-height:45vw;
       display: inline-block;
       position: relative;
       border: calc(var(--width) / 40) solid gray;

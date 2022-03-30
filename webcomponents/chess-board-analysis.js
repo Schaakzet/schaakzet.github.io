@@ -229,7 +229,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       const _kingSquare = kingSquare(color);
       if (_kingSquare && _kingSquare.isAttacked) {
         if (_kingSquare.attackers.length == 1) {
-          const attackingPiece = /* function */ (color) => getPiece(_kingSquare.attackers[0].substring(1, 3));
+          const attackingPiece = /* function */ () => getPiece(_kingSquare.attackers[0].substring(1, 3));
           //console.log(attackingPiece(color));
           const attackingPieceSquare = /* function */ (color) => attackingPiece(color).square;
           // Capture Attacking Piece --- Works only for one attacking piece, because if we get more, you can capture only one.
@@ -248,11 +248,9 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
               const fileDifference = Math.abs(files.indexOf(attackingPieceSquare(color).file) - files.indexOf(_kingSquare.file));
               const rankDifference = Math.abs(attackingPieceSquare(color).rank - _kingSquare.rank);
               if (fileDifference >= 2 || rankDifference >= 2) {
-                console.log("Intervening Check");
                 // 4. Left with Bishop and Rook moves.
                 // 5. findSquaresBetween horizontally, vertically or diagonally.
                 const squaresBetween = findSquaresBetween(attackingPieceSquare(color), _kingSquare);
-                console.log("Squares between", squaresBetween);
                 // 6. defendedby lower or upper. Alleen (color)-stukken en niet de koning en intervenedByPawn.
                 return squaresBetween.filter(/* function */ (element) => getSquare(element).isMovesFrom(color)).length;
               }
@@ -274,8 +272,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   function checkMate(color) {
     const isCheck = isInCheck(color);
     const checkCanBeNegated = negatingCheck(color);
-    console.log("Check can be negated", checkCanBeNegated);
-    if (isCheck) {
+    if (isCheck && !getPiece(kingSquare(color)).moves) {
       if (checkCanBeNegated) {
         log("You can get out of check.");
       } else {

@@ -157,6 +157,7 @@ Object.assign(CHESS, {
 Object.assign(CHESS, {
   __API_RECORDS__: "https://schaakzet.nl/api/crud/index.php/records/",
   __API_SCHAAKZET__: "https://schaakzet.nl/api/rt/index.php/?action=",
+  __API_MATCHES__: "https://schaakzet.nl/api/rt/matches.php",
   __API_TABLE_MATCHMOVES__: "matchmoves",
   __API_HEADERS__: {
     Accept: "application/json",

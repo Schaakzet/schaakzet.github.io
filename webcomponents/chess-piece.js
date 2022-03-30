@@ -235,9 +235,9 @@
           const shortWhiteRook = $chessboard.getPiece(CHESS.__SQUARE_BOTTOM_RIGHT__);
           const longBlackRook = $chessboard.getPiece(CHESS.__SQUARE_TOP_LEFT__);
           const shortBlackRook = $chessboard.getPiece(CHESS.__SQUARE_TOP_RIGHT__);
-
           const playerColor = $chessboard.player;
           const castlingArray = $chessboard.castlingArray;
+
           function isCastling(castlingLetter, typeOfRook, rookSquareName) {
             return (
               typeOfRook.isRook && //
@@ -246,23 +246,29 @@
               typeOfRook.moves.includes(rookSquareName) //
             );
           }
+
           const longWhiteCastling = isCastling(CHESS.__FEN_WHITE_QUEEN__, longWhiteRook, "d1");
           const shortWhiteCastling = isCastling(CHESS.__FEN_WHITE_KING__, shortWhiteRook, "f1");
           const longBlackCastling = isCastling(CHESS.__FEN_BLACK_QUEEN__, longBlackRook, "d8");
           const shortBlackCastling = isCastling(CHESS.__FEN_BLACK_KING__, shortBlackRook, "f8");
-          // True: Castling interrupted
+
           function castlingInterrupt(color, offset) {
+            // True: Castling interrupted
+
             let kingPosition = $chessboard.getSquare(color == CHESS.__PLAYER_WHITE__ ? CHESS.__SQUARE_WHITE_KING_START__ : CHESS.__SQUARE_BLACK_KING_START__);
+
             let checkInterrupt = (i) => {
               let squareName = kingPosition.translate(i, 0);
               let squareElement = $chessboard.getSquare(squareName);
               if (squareElement.isDefendedBy(CHESS.otherPlayer(color)) || kingPosition.attackers.length) return true;
             };
+
             if (offset < 0) {
-              for (let i = -1; i >= offset; i--) checkInterrupt(i);
+              for (let i = -1; i >= offset; i--) return checkInterrupt(i);
             } else if (offset > 0) {
-              for (let i = 1; i <= offset; i++) checkInterrupt(i);
+              for (let i = 1; i <= offset; i++) return checkInterrupt(i);
             }
+
             return false; // Castling possible
           }
 
@@ -271,7 +277,7 @@
               console.log("No castling interrupt", squareName);
               square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
               _potentialMovesArray.push(squareName);
-            }
+            } else console.log("Castling interrupt", squareName);
           }
 
           if (playerColor == CHESS.__PLAYER_WHITE__) {
@@ -289,7 +295,6 @@
             const ultimateDefenders = defender_square.defenders.filter((defender_FENat) => {
               let myFENpos = CHESS.convertFEN(this.is) + this.at;
               let defender = $chessboard.getPiece(defender_FENat.substring(1, 3));
-              // console.log(squareName, defender_FENat, defender_FENat == myFENpos, defender.color, playerColor);
               return defender_FENat !== myFENpos && defender.color !== playerColor;
             });
             return !ultimateDefenders.length;
@@ -354,7 +359,7 @@
               })
             );
             // force a hidden board if user did not supply a DOM container to place all possible move/boards into
-            if (showboardsIn == document.body) testboard.style.display = "none";
+            /* if (showboardsIn == document.body) */ testboard.style.display = "none";
           }
           setTimeout(() =>
             // not sure we need the setTimeout, but it seems to be needed to make sure the board is created before we try to move the piece
