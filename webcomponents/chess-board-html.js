@@ -25,6 +25,7 @@
       width: var(--width);
       max-width:70vh;
       height: var(--width);
+      max-height:70vh;
       display: inline-block;
       position: relative;
       border: calc(var(--width) / 40) solid gray;
