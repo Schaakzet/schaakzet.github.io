@@ -65,7 +65,7 @@
         data.append("table", "matches");
         data.append("data[player_White]", "klaas");
         data.append("data[player_Black]", "jantje");
-
+        
         fetch(CHESS.__API_MATCHES__, {
           method: "POST",
           headers: CHESS.__API_HEADERS__,
