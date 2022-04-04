@@ -54,7 +54,7 @@
     let uri = __CRUDAPI__ + table;
     if (match_id) uri += "/" + match_id;
     if (uri_filter) uri += (uri_filter[0] == "?" ? "" : "?") + uri_filter; // ensure ? at the beginning of the filter
-    console.log(uri);
+    //console.log(uri);
     // ======================================================== fetch
     fetch(uri, options)
       .then((response) => response.json())

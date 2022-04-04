@@ -1,56 +1,32 @@
 <html>
-  <head>
-    <script src="./webcomponents/schaakzet.js"></script>
-  </head>
 
-  <body>
-    <chess-match></chess-match>
-    <header>
-      <h1-chess></h1-chess>
-      <h2>
-        Match
-        <chess-players></chess-players>
-      </h2>
-      <todo-list>
-        * Use player names for database ID with &lt;chess-player-white and -black> component, allow only one entry AND save the values to localStorage so the user can press F5
-        savely * record chessmoves in &lt;chess-game-progress>
-      </todo-list>
-    </header>
-    <main>
-      <button onclick="setStart()">Startpositie</button>
-      <button onclick="document.querySelector('chess-board').undoMove()">Undo move</button>
+<head>
+  <script src="./webcomponents/schaakzet.js"></script>
+</head>
+
+<body>
+  <header>
+    <h2>
+      Match
+      <chess-players></chess-players>
+    </h2>
+    <todo-list>
+      * Use player names for database ID with &lt;chess-player-white and -black> component, allow only one entry AND
+      save the values to localStorage so the user can press F5 savely
+      * record chessmoves in &lt;chess-game-progress>
+    </todo-list>
+  </header>
+  <main>
+    <chess-match match_id="new">
+      <chess-match-buttons></chess-match-buttons>
       <chess-game>
-        <chess-board id="matchboard" fen="rn3bnr/ppp2kpp/3p4/4p3/4b3/2NPB2N/PPPRBPqP/2K5 b Qkq -" record labels></chess-board>
+        <chess-board id="matchboard" fen="" record labels></chess-board>
         <chess-game-progress></chess-game-progress>
       </chess-game>
       <div id="message"></div>
-    </main>
-    <footer></footer>
-    <script>
-      //reset to startposition
-      function setStart() {
-        let chessboard = document.querySelector("chess-board");
-        chessboard.clear();
-        setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -");
-        document.getElementById("message").innerText = "";
-        chessboard.capturedWhitePieces = [];
-        chessboard.capturedBlackPieces = [];
-      }
-    </script>
-    <script>
-      // define a GLOBAL setFEN function so all inputs can call this function
-      window.setFEN = function (fenString) {
-        let chessboard = document.querySelector("chess-board");
-        chessboard.fen = fenString;
-        console.clear();
-        document.getElementById("message").innerText = "";
-        chessboard.capturedWhitePieces = [];
-        chessboard.capturedBlackPieces = [];
-      };
-    </script>
-    <script>
-      // make sure our dev code executes after all chess boards are 100% created
-      window.addEventListener("load", () => {});
-    </script>
-  </body>
+    </chess-match>
+  </main>
+  <footer></footer>
+</body>
+
 </html>

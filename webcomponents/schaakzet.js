@@ -37,7 +37,12 @@
     idx = 0,
   }) {
     let scriptElement = $createElement("script", {
-      src: `./webcomponents/${file}.js?` + String(new Date() / 1).split("").slice(-5).join(""),
+      src:
+        `./webcomponents/${file}.js?` +
+        String(new Date() / 1)
+          .split("")
+          .slice(-5)
+          .join(""),
       type,
       onerror: () => {
         console.warn("script load error", file);
@@ -60,13 +65,14 @@
         })
       );
     } else {
-
       loadScriptsAsynchronous([
         ["create-html", "todo-list"], // HTML components
         ["chess-api-matches"],
-        ["h1-chess", "chess-game-progress", "chess-match-board","chess-match", "chess-matches", "chess-players"], // Chess Components
+        ["h1-chess"],
+        ["chess-game-progress"],
+        ["chess-match-board", "chess-match", "chess-match-buttons", "chess-matches", "chess-players"], // Chess Components
       ]);
-    
+
       console.groupCollapsed(`%c Loaded ${loaded.length} scripts `, "background:green;color:gold");
       loaded.map((args) => console.log(...args));
       console.groupEnd();
@@ -78,6 +84,4 @@
       ...scripts.flat().map((file, idx) => script({ file, idx }))
     );
   }
-
-
 })();

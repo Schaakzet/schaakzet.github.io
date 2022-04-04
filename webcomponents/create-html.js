@@ -35,12 +35,16 @@ customElements.define(
     }
     dispatch(button, eventName) {
       console.log("dispatch", eventName, button);
+      let [name,value] = eventName.split(":");
       this.dispatchEvent(
-        new CustomEvent(eventName, {
+        new CustomEvent(name, {
           bubbles: true,
           composed: true,
           cancelable: false,
-          detail: {},
+          detail: {
+            value,
+            button,
+          },
         })
       );
     }

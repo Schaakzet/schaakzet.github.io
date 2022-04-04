@@ -46,19 +46,18 @@
             this.initPlayerTurn();
 
             CHESS.analysis(this, "start");
-            this.windowResizeCheck();
+            this.resizeCheck();
           });
         });
       }
       // ======================================================== <chess-board>.windowResizeCheck
-      windowResizeCheck(e) {
+      resizeCheck(e) {
         setTimeout(() => {
-          if (this.hasAttribute("disabled")) return;
-          // TODO: check if board is in viewport
-          // if not, change CSSproperty --resizewidth in chess-board-html.js
+          if (this.disabled) return; // do not resize mini boards
           let { left, top, bottom, right } = this.getBoundingClientRect();
-          console.warn("resize", left, top, bottom, right);
-          //this.style.setProperty("--resizewidth", window.innerWidth);
+          console.todo("<chess-board>.resizeCheck, set board to fill container. bottom:", bottom, "vp:", window.visualViewport.height);
+          // todo if bottom is past viewPosrt Height then calculate new width
+          // todo this.style.setProperty("--resizewidth", window.innerWidth);
         }, 1);
       }
       // ======================================================== <chess-board>.attributeChangedCallback
@@ -230,20 +229,17 @@
         if (this.record) {
           console.warn("recordMoveInDatabase:", fromSquare.at, toSquare.at, move);
           // emit Event to <chess-match> which records all moves in database
-          document.dispatchEvent(
-            new CustomEvent(CHESS.__STORECHESSMOVE__, {
-              bubbles: true,
-              composed: true,
-              cancelable: false,
-              detail: {
-                chessboard: this, // chessboard.record TRUE/FALSE if the move will be recorded
-                move,
-                fromsquare: fromSquare.at,
-                tosquare: toSquare.at,
-                fen: this.fen,
-              },
-            })
-          );
+          this.dispatch({
+            root: document,
+            name: CHESS.__STORECHESSMOVE__,
+            detail: {
+              chessboard: this, // chessboard.record TRUE/FALSE if the move will be recorded
+              move,
+              fromsquare: fromSquare.at,
+              tosquare: toSquare.at,
+              fen: this.fen,
+            },
+          });
         }
       }
       // ======================================================== <chess-board>.movePiece
@@ -487,7 +483,7 @@
       play(moves = this._moves) {
         // chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
         // TODO: rewrite to ["e2-e4", "e7-e5", "g1-f3", "b8-c6"] so "x" take piece can be used
-        // if (!this._moves) this._moves = moves || console.warn("No play moves");
+        if (!this._moves) this._moves = moves || console.warn("No play moves");
         if (this._moves && this._moves.length) {
           let [from, to] = this._moves.shift();
           let simulateClicks = false; // TODO: make simulateClicks work
@@ -520,7 +516,7 @@
         this.getSquare(at).highlight(CHESS.__MOVETYPE_ILLEGAL__);
         this.pieceClicked.moves = this.pieceClicked.moves.filter((move) => move !== this.getSquare(at).at);
       }
-      // ======================================================== <chess-board>.player
+      // ======================================================== <chess-board>.player = current player
       get player() {
         return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__);
       }
