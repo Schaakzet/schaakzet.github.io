@@ -41,11 +41,25 @@
             else if (this._savedfen) this.fen = this._savedfen;
             else this.fen = undefined; // use default all pieces start board
 
+            window.addEventListener("resize", (e) => this.windowResizeCheck(e));
+
             this.initPlayerTurn();
 
             CHESS.analysis(this, "start");
+            this.windowResizeCheck();
           });
         });
+      }
+      // ======================================================== <chess-board>.windowResizeCheck
+      windowResizeCheck(e) {
+        setTimeout(() => {
+          if (this.hasAttribute("disabled")) return;
+          // TODO: check if board is in viewport
+          // if not, change CSSproperty --resizewidth in chess-board-html.js
+          let { left, top, bottom, right } = this.getBoundingClientRect();
+          console.warn("resize", left, top, bottom, right);
+          //this.style.setProperty("--resizewidth", window.innerWidth);
+        }, 1);
       }
       // ======================================================== <chess-board>.attributeChangedCallback
       attributeChangedCallback(name, oldValue, newValue) {

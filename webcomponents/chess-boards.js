@@ -22,13 +22,15 @@
             if (fen == "") return false;
             else
               return CHESS.createBoardElement({
-                id: "b" + idx,
-                fen,
-                disabled: true,
-                onclick: (evt) => {
-                  let chessboard = document.querySelector("chess-board");
-                  chessboard.fen = fen;
-                }, // onclick
+                props: {
+                  id: "b" + idx,
+                  fen,
+                  disabled: true,
+                  onclick: (evt) => {
+                    let chessboard = document.querySelector("chess-board");
+                    chessboard.fen = fen;
+                  }, // onclick
+                },
               });
           })
           .filter(Boolean); // disregard empty lines

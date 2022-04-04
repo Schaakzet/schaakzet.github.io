@@ -355,7 +355,9 @@
             // create a new board for every possible move
             testboard = showboardsIn.appendChild(
               CHESS.createBoardElement({
-                fen: matchboard.fen,
+                props: {
+                  fen: matchboard.fen,
+                },
               })
             );
             // force a hidden board if user did not supply a DOM container to place all possible move/boards into

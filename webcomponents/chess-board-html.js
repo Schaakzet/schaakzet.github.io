@@ -21,9 +21,10 @@
     squareStateCSS(CHESS.__PLAYER_WHITE__) +
     squareStateCSS(CHESS.__PLAYER_BLACK__) +
     /*css*/ `chess-board {
-      --width: 100%;
+      --width: var(--resizewidth, 100%);
+      aspect-ratio: 1 / 1;
       width: var(--width);
-      height: var(--height);
+      height: var(--width);
       max-height:45vw;
       display: inline-block;
       position: relative;

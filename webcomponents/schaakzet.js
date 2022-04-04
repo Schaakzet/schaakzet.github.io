@@ -21,7 +21,8 @@
   ]);
   loadScriptsAsynchronous([
     ["create-html", "todo-list"], // HTML components
-    ["h1-chess", "chess-game-progress", "chess-match", "chess-matches", "chess-players"], // Chess Components
+    ["chess-api-matches"],
+    ["h1-chess", "chess-game-progress", "chess-match-board","chess-match", "chess-matches", "chess-players"], // Chess Components
   ]);
 
   function $createElement(tag, props = {}) {
@@ -72,4 +73,6 @@
       ...scripts.flat().map((file, idx) => script({ file, idx }))
     );
   }
+
+
 })();
