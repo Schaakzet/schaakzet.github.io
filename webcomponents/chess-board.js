@@ -4,7 +4,7 @@
    */
   customElements.define(
     CHESS.__WC_CHESS_BOARD__,
-    class extends CHESS.ChessBaseElement {
+    class extends CHESS.ChessBaseSquarePieceElement {
       // ======================================================== <chess-board>.observedAttributes
       static get observedAttributes() {
         return [CHESS.__WC_ATTRIBUTE_FEN__];

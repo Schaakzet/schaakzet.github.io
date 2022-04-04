@@ -1,6 +1,6 @@
 customElements.define(
   "todo-list",
-  class extends HTMLElement {
+  class extends CHESS.ChessBaseElement {
     connectedCallback() {
       setTimeout(() => {
         this.innerHTML =

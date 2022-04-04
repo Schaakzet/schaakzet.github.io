@@ -11,18 +11,16 @@
     })
   );
   loadScriptsWithDependencyOrder([
+    "app-base-functions", // generic functions
+    "chess-base-constants", // required
     "chess-base-class", // required baseclass
+    "chess-base-class-components", // required baseclass for <piece> <square> <board>
     "chess-board-analysis", // optional analysis
     "chess-piece",
     "chess-square",
     "chess-board-html",
     "chess-board",
     "chess-boards",
-  ]);
-  loadScriptsAsynchronous([
-    ["create-html", "todo-list"], // HTML components
-    ["chess-api-matches"],
-    ["h1-chess", "chess-game-progress", "chess-match-board","chess-match", "chess-matches", "chess-players"], // Chess Components
   ]);
 
   function $createElement(tag, props = {}) {
@@ -62,6 +60,13 @@
         })
       );
     } else {
+
+      loadScriptsAsynchronous([
+        ["create-html", "todo-list"], // HTML components
+        ["chess-api-matches"],
+        ["h1-chess", "chess-game-progress", "chess-match-board","chess-match", "chess-matches", "chess-players"], // Chess Components
+      ]);
+    
       console.groupCollapsed(`%c Loaded ${loaded.length} scripts `, "background:green;color:gold");
       loaded.map((args) => console.log(...args));
       console.groupEnd();

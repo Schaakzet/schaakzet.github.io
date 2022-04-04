@@ -6,7 +6,7 @@
   // ********************************************************** <chess-boards>
   customElements.define(
     "chess-boards",
-    class extends HTMLElement {
+    class extends CHESS.ChessBaseElement {
       constructor() {
         super().attachShadow({ mode: "open" }).innerHTML = `<style>${CSS_Boards}</style>${DIV_Boards}`;
       }

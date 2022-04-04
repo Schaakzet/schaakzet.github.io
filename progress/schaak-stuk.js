@@ -3,7 +3,7 @@
 */
 customElements.define(
   "schaak-stuk",
-  class extends HTMLElement {
+  class extends CHESS.ChessBaseElement {
     connectedCallback() {
       this.render();
     }

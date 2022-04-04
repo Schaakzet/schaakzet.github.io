@@ -9,7 +9,7 @@
     <schaakzet-teams></schaakzet-teams>
   </main>
   <script>
-    customElements.define("schaakzet-teams", class extends HTMLElement {
+    customElements.define("schaakzet-teams", class extends CHESS.ChessBaseElement {
       connectedCallback() {
         this.innerHTML = [
           ["https://www.schaakzet.nl", "", "Nancy & Team"],

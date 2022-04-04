@@ -5,7 +5,7 @@
   // communicates with server
   customElements.define(
     "chess-match",
-    class extends HTMLElement {
+    class extends CHESS.ChessBaseElement {
       get root() {
         return this.shadowRoot || this;
       }
@@ -26,12 +26,15 @@
         const player = (color) => document.querySelector("chess-player-" + color).value;
         return player("white") + player("black");
       }
-
       getPlayerName(idx = 0) {
         if (idx == "white") idx = 0;
         if (idx == "black") idx = 1;
         if (idx == 0) return "WHITE";
         else return "BLACK";
+      }
+
+      get match_id(){
+
       }
 
       // ================================================== storeMove
@@ -45,6 +48,19 @@
 
         chessboard.updateFENonScreen();
 
+        this.store_matchmoves({ chessboard, move, fromsquare, tosquare, fen });
+        this.store_matches({ chessboard, move, fromsquare, tosquare, fen })
+
+      } // storeMove
+      // ================================================== store_matches
+      store_matches(){
+        CHESS.API.matches.update({
+          match_id,
+          fen
+        })
+      }
+      // ================================================== store_matchmoves
+      store_matchmoves({ chessboard, move, fromsquare, tosquare, fen }) {
         fetch(CHESS.__API_RECORDS__ + CHESS.__API_TABLE_MATCHMOVES__, {
           method: "POST",
           headers: CHESS.__API_HEADERS__,
@@ -56,8 +72,7 @@
             fen,
           }),
         });
-      } // storeMove
-
+      }
       // ================================================== createMatch
       createMatch({ chessboard, move, fromsquare, tosquare, fen }) {
         const data = new FormData();

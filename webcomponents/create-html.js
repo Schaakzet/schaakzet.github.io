@@ -1,6 +1,6 @@
 customElements.define(
   "create-html",
-  class extends HTMLElement {
+  class extends CHESS.ChessBaseElement {
     connectedCallback() {
       setTimeout(() => {
         this.innerHTML = this.innerHTML

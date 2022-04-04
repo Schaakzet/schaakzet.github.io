@@ -5,7 +5,7 @@
   // ********************************************************** <chess-piece is="wit-paard" at="D5"> Web Component
   customElements.define(
     CHESS.__WC_CHESS_PIECE__,
-    class extends CHESS.ChessBaseElement {
+    class extends CHESS.ChessBaseSquarePieceElement {
       // ======================================================== <chess-piece>.observedAttributes
       static get observedAttributes() {
         return [CHESS.__WC_ATTRIBUTE_IS__]; // listen to is attribute

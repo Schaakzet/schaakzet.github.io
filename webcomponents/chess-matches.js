@@ -28,7 +28,7 @@
   // ********************************************************** <chess-matches>
   customElements.define(
     "chess-matches",
-    class extends HTMLElement {
+    class extends CHESS.ChessBaseElement {
       constructor() {
         super().attachShadow({ mode: "open" }).innerHTML = `<style>${CSS_Boards}</style>${DIV_Boards}`;
       }

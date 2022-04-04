@@ -17,7 +17,7 @@ function hideAllExercises_and_Show_One(a) {
 
 customElements.define(
   "chess-exercise",
-  class extends HTMLElement {
+  class extends CHESS.ChessBaseElement {
     constructor() {
       super()
         .attachShadow({ mode: "open" })

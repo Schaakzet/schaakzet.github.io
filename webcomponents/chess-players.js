@@ -1,5 +1,5 @@
 !(function () {
-  class ChessPlayer extends HTMLElement {
+  class ChessPlayer extends CHESS.ChessBaseElement {
     connectedCallback() {
       let placeholder = this.localName;
       this.innerHTML = /*html*/ `<label>${this.getAttribute("label") || ""}<input type="text" placeholder="${placeholder}" value="${
@@ -34,7 +34,7 @@
   customElements.define("chess-player-black", class extends ChessPlayer {});
   customElements.define(
     "chess-players",
-    class extends HTMLElement {
+    class extends CHESS.ChessBaseElement {
       connectedCallback() {
         this.innerHTML = `
       <chess-player-white name="Player White"></chess-player-white>

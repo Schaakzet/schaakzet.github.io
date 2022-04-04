@@ -5,7 +5,7 @@
   // communicates with server
   customElements.define(
     "chess-match-board",
-    class extends HTMLElement {
+    class extends CHESS.ChessBaseElement {
       get root() {
         return this.shadowRoot || this;
       }

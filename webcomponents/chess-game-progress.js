@@ -2,7 +2,7 @@
   // ********************************************************** IIFE
   customElements.define(
     "chess-game-progress",
-    class extends HTMLElement {
+    class extends CHESS.ChessBaseElement {
       connectedCallback() {
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.processMoves(evt.detail));
       }

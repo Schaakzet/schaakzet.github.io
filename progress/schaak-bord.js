@@ -1,7 +1,7 @@
 /*
  <schaak-bord> Web Component
 */
-customElements.define("schaak-bord", class extends HTMLElement {
+customElements.define("schaak-bord", class extends CHESS.ChessBaseElement {
     connectedCallback() {
         this.createboard("SCHAAKBORD_ROB");
     }

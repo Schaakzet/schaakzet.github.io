@@ -18,7 +18,7 @@ console.logColor =
         .split("at ") //
         .filter((line, idx) => idx > 1 && line.includes(".js")) //discard extractLineNr, console.log itself
         .map((logline,idx,lines) => {
-          // console.warn(logline) // if starts with HTMLElement extract method
+          // console.warn(logline) // if starts with CHESS.ChessBaseElement extract method
           let [funcname, uri] = logline.split(" ");
           //console.LOG(logline);
           try {
