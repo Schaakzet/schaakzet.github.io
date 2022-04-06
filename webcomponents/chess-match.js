@@ -48,7 +48,7 @@
       }
       // ================================================== createMatch
       createMatch() {
-        CHESS.CRUDAPI = document.location.hostname.includes("127");
+        CHESS.CRUDAPI = false; // document.location.hostname.includes("127");
         if (CHESS.CRUDAPI) {
           // ------------------------------------------------- CHESS.API.matches.create
           CHESS.API.matches.create({
@@ -56,26 +56,33 @@
           });
         } else {
           // ------------------------------------------------- RT API
-          const body = new FormData();
-          body.append("function", "insert");
-          body.append("table", "matches");
-          body.append("data[player_White]", "klaas");
-          body.append("data[player_Black]", "jantje");
+          let data = new FormData();
+          data.append("function", "insert");
+          data.append("table", "matches");
+          data.append("data[player_white]", this.getPlayerName(0));
+          data.append("data[player_black]", this.getPlayerName(1));
+
+          // body = JSON.stringify({
+          //   function: "insert",
+          //   player_white: "WIT",
+          //   player_black: "ZWART",
+          // });
 
           fetch(CHESS.__API_MATCHES__, {
             method: "POST",
-            headers: CHESS.__API_HEADERS__,
-            body,
+            body: data,
           })
-            .then((response) => response.json())
-            .then((result) => {
-              log("RT API success: ", result);
+            .then((response) => response.text())
+            .then((match_id) => {
+              log("RT API success: ", match_id);
               this.initGame(match_id);
             });
         }
       } //createMatch
       // ================================================== update matches
       updateMatch(match_id) {
+        const chessboard = this.chessboard;
+        const fen = chessboard.fen;
         CHESS.API.matches.update({
           player_white: this.getPlayerName(0),
           player_black: this.getPlayerName(1),

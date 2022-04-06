@@ -1,32 +1,29 @@
 <html>
+  <head>
+    <script src="./webcomponents/schaakzet.js"></script>
+  </head>
 
-<head>
-  <script src="./webcomponents/schaakzet.js"></script>
-</head>
-
-<body>
-  <header>
-    <h2>
-      Match
-      <chess-players></chess-players>
-    </h2>
-    <todo-list>
-      * Use player names for database ID with &lt;chess-player-white and -black> component, allow only one entry AND
-      save the values to localStorage so the user can press F5 savely
-      * record chessmoves in &lt;chess-game-progress>
-    </todo-list>
-  </header>
-  <main>
-    <chess-match match_id="new">
-      <chess-match-buttons></chess-match-buttons>
-      <chess-game>
-        <chess-board id="matchboard" fen="" record labels></chess-board>
-        <chess-game-progress></chess-game-progress>
-      </chess-game>
-      <div id="message"></div>
-    </chess-match>
-  </main>
-  <footer></footer>
-</body>
-
+  <body>
+    <header>
+      <h2>
+        Match
+        <chess-players></chess-players>
+      </h2>
+      <todo-list>
+        * Use player names for database ID with &lt;chess-player-white and -black> component, allow only one entry AND save the values to localStorage so the user can press F5
+        savely * record chessmoves in &lt;chess-game-progress>
+      </todo-list>
+    </header>
+    <main>
+      <chess-match>
+        <chess-match-buttons></chess-match-buttons>
+        <chess-game>
+          <chess-board id="matchboard" fen="" record labels></chess-board>
+          <chess-game-progress></chess-game-progress>
+        </chess-game>
+        <div id="message"></div>
+      </chess-match>
+    </main>
+    <footer></footer>
+  </body>
 </html>

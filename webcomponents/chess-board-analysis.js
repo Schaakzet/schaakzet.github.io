@@ -272,7 +272,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   function checkMate(color) {
     const isCheck = isInCheck(color);
     const checkCanBeNegated = negatingCheck(color);
-    if (isCheck && !getPiece(kingSquare(color)).moves) {
+    if (isCheck && !getPiece(kingSquare(color)).moves.length) {
       if (checkCanBeNegated) {
         log("You can get out of check.");
       } else {
