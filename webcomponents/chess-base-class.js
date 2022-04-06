@@ -26,16 +26,22 @@ CHESS.ChessBaseElement = class extends HTMLElement {
   }
 
   dispatch({
-    root = this,
+    root = this, // default dispatch from current this element or use something like root:document
+    name, // EventName
     detail = {}, // event.detail
+    // override options PER option:
+    bubbles = true, // default, bubbles up the DOM
+    composed = true, // default, escape shadowRoots
+    cancelable = true, // default, cancelable event bubbling
+    // options PER event:
     options = {
-      bubbles: true,
-      composed: true,
-      cancelable: false,
+      bubbles,
+      composed,
+      cancelable,
     },
   }) {
     root.dispatchEvent(
-      new CustomEvent(CHESS.__STORECHESSMOVE__, {
+      new CustomEvent(name, {
         ...options, //
         detail,
       })

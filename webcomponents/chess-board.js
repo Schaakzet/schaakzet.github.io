@@ -41,7 +41,7 @@
             else if (this._savedfen) this.fen = this._savedfen;
             else this.fen = undefined; // use default all pieces start board
 
-            window.addEventListener("resize", (e) => this.windowResizeCheck(e));
+            window.addEventListener("resize", (e) => this.resizeCheck(e));
 
             this.initPlayerTurn();
 
@@ -227,7 +227,6 @@
         move, // e2-e4  d7xh8  O-O-O
       }) {
         if (this.record) {
-          console.warn("recordMoveInDatabase:", fromSquare.at, toSquare.at, move);
           // emit Event to <chess-match> which records all moves in database
           this.dispatch({
             root: document,
