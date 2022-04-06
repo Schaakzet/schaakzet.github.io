@@ -13,7 +13,9 @@
       connectedCallback() {
         this.render();
         setTimeout(() => {
-          this.createMatch(); // call back-end for match_id, then this.initGame(match_id)
+          let match_id = localStorage.getItem("match_id");
+          if (match_id) this.restartGame(match_id);
+          else this.createMatch(); // call back-end for match_id, then this.initGame(match_id)
         });
       }
       // ================================================== get chessboard
@@ -26,15 +28,6 @@
       render() {
         // todo render the HTML from match.html
       }
-      // ================================================== initGame
-      initGame(match_id) {
-        log("initGame match_id:", match_id);
-        console.todo("verify FEN is correct in Database, localStorage");
-        this.match_id = match_id;
-        this.addListeners();
-        this.chessboard.fen = undefined; // set start FEN
-        this.chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
-      }
       // ================================================== getPlayerName
       getPlayerName(idx = 0) {
         // handle: 0,1,white,black
@@ -43,7 +36,7 @@
         if (idx) return "BLACK";
         else return "WHITE";
       }
-      // ================================================== storeMove
+      // ================================================== addListeners
       addListeners() {
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.storeMove(evt.detail));
 
@@ -81,6 +74,15 @@
             });
         }
       } //createMatch
+      // ================================================== update matches
+      updateMatch(match_id) {
+        CHESS.API.matches.update({
+          player_white: this.getPlayerName(0),
+          player_black: this.getPlayerName(1),
+          match_id,
+          fen,
+        });
+      }
       // ================================================== storeMove
       storeMove({
         chessboard = this.chessboard, //
@@ -94,12 +96,7 @@
         chessboard.updateFENonScreen();
 
         // ------------------------------------------------- store move in matches
-        CHESS.API.matches.update({
-          player_white: this.getPlayerName(0),
-          player_black: this.getPlayerName(1),
-          match_id: this.match_id,
-          fen,
-        });
+        this.updateMatch(this.match_id);
         // ------------------------------------------------- store move in matchmoves
         fetch(CHESS.__API_RECORDS__ + CHESS.__API_TABLE_MATCHMOVES__, {
           method: "POST",
@@ -113,24 +110,48 @@
           }),
         });
         // ------------------------------------------------- store move in matchmoves
-        this.checkDatabase();
+        this.checkDatabase(this.match_id);
       }
       // ================================================== checkDatabase
-      checkDatabase(){
+      checkDatabase(match_id) {
+        this.match_id = match_id;
+        localStorage.setItem("match_id", this.match_id);
         CHESS.API.matches.read({
           match_id: this.match_id,
           callback: (match) => {
-            log("checkDatabase FEN:", match.fen);
-          }
-        })
+            log("checkDatabase FEN:", { match });
+            // todo set match values
+            // set chessboard.fen
+            // set playernames
+          },
+        });
+      }
+      // ================================================== initGame
+      initGame(match_id) {
+        log("initGame match_id:", match_id);
+        console.todo("verify FEN is correct in Database, localStorage");
+        this.match_id = match_id;
+        this.addListeners();
+        this.chessboard.fen = undefined; // set start FEN
+        this.testGame();
+      }
+      // ================================================== testGame
+      testGame() {
+        this.chessboard.play([
+          ["e2", "e4"],
+          ["e7", "e5"],
+          ["g1", "f3"],
+          ["b8", "c6"],
+        ]);
       }
       // ================================================== restartGame
-      restartGame() {
-        log("RESTART GAME"); //todo
+      restartGame(match_id) {
+        log("RESTART GAME", match_id); //todo test
+        this.checkDatabase(match_id);
       }
       // ================================================== undoMove
       undoMove() {
-        log("UNDO MOVE"); //todo
+        log("UNDO MOVE"); //todo test
         this.chessboard.undoMove();
       }
       // ==================================================
