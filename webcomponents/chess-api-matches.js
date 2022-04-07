@@ -16,7 +16,7 @@
   //    update({ match_id, [...] });
   //    delete({ match_id });
   
-  const __CRUDAPI__ = "https:/schaakzet.nl/api/crud/index.php/records/";
+  const __CRUDAPI__ = "https://schaakzet.nl/api/crud/index.php/records/";
   const __TABLE_NAME__ = "matches";
   const __FILTER_AVAILABLE_BOARDS__ = "?filter1=player_white,eq,&filter2=player_black,eq,"
   
