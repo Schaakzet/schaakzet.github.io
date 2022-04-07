@@ -33,8 +33,8 @@
         // handle: 0,1,white,black
         if (idx == "white") idx = 0;
         if (idx == "black") idx = 1;
-        if (idx) return "BLACK";
-        else return "WHITE";
+        if (idx) return "player_black";
+        else return "Laurent";
       }
       // ================================================== addListeners
       addListeners() {
