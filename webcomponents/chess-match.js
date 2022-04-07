@@ -16,6 +16,7 @@
           let match_id = localStorage.getItem("match_id");
           if (match_id) this.restartGame(match_id);
           else this.createMatch(); // call back-end for match_id, then this.initGame(match_id)
+          this.addListeners();
         });
       }
       // ================================================== get chessboard
@@ -39,9 +40,8 @@
       // ================================================== addListeners
       addListeners() {
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.storeMove(evt.detail));
-
         // handle game buttons
-        this.addEventListener(this.localName, (e) => {
+        document.addEventListener(this.localName, (e) => {
           if (this[e.detail.value]) this[e.detail.value](e);
         });
         this.addListeners = () => {}; // attach listeners only once
@@ -138,7 +138,6 @@
         log("initGame match_id:", match_id);
         console.todo("verify FEN is correct in Database, localStorage");
         this.match_id = match_id;
-        this.addListeners();
         this.chessboard.fen = undefined; // set start FEN
         // this.testGame();
       }

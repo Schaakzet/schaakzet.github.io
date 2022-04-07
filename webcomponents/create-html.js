@@ -34,8 +34,8 @@ customElements.define(
       });
     }
     dispatch(button, eventName) {
-      console.log("dispatch", eventName, button);
-      let [name,value] = eventName.split(":");
+      let [name, value] = eventName.split(":");
+      console.log("dispatch", name, value, this);
       this.dispatchEvent(
         new CustomEvent(name, {
           bubbles: true,
