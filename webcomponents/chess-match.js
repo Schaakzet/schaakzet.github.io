@@ -16,6 +16,7 @@
           let match_id = localStorage.getItem("match_id");
           if (match_id) this.restartGame(match_id);
           else this.createMatch(); // call back-end for match_id, then this.initGame(match_id)
+          this.addListeners();
         });
       }
       // ================================================== get chessboard
@@ -33,22 +34,21 @@
         // handle: 0,1,white,black
         if (idx == "white") idx = 0;
         if (idx == "black") idx = 1;
-        if (idx) return "BLACK";
-        else return "WHITE";
+        if (idx) return "player_black";
+        else return "Laurent";
       }
       // ================================================== addListeners
       addListeners() {
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.storeMove(evt.detail));
-
         // handle game buttons
-        this.addEventListener(this.localName, (e) => {
+        document.addEventListener(this.localName, (e) => {
           if (this[e.detail.value]) this[e.detail.value](e);
         });
         this.addListeners = () => {}; // attach listeners only once
       }
       // ================================================== createMatch
       createMatch() {
-        CHESS.CRUDAPI = document.location.hostname.includes("127");
+        CHESS.CRUDAPI = false; // document.location.hostname.includes("127");
         if (CHESS.CRUDAPI) {
           // ------------------------------------------------- CHESS.API.matches.create
           CHESS.API.matches.create({
@@ -56,26 +56,33 @@
           });
         } else {
           // ------------------------------------------------- RT API
-          const body = new FormData();
-          body.append("function", "insert");
-          body.append("table", "matches");
-          body.append("data[player_White]", "klaas");
-          body.append("data[player_Black]", "jantje");
+          let data = new FormData();
+          data.append("function", "insert");
+          data.append("table", "matches");
+          data.append("data[player_white]", this.getPlayerName(0));
+          data.append("data[player_black]", this.getPlayerName(1));
+
+          // body = JSON.stringify({
+          //   function: "insert",
+          //   player_white: "WIT",
+          //   player_black: "ZWART",
+          // });
 
           fetch(CHESS.__API_MATCHES__, {
             method: "POST",
-            headers: CHESS.__API_HEADERS__,
-            body,
+            body: data,
           })
-            .then((response) => response.json())
-            .then((result) => {
-              log("RT API success: ", result);
+            .then((response) => response.text())
+            .then((match_id) => {
+              log("RT API success: ", match_id);
               this.initGame(match_id);
             });
         }
       } //createMatch
       // ================================================== update matches
       updateMatch(match_id) {
+        const chessboard = this.chessboard;
+        const fen = chessboard.fen;
         CHESS.API.matches.update({
           player_white: this.getPlayerName(0),
           player_black: this.getPlayerName(1),
@@ -102,7 +109,7 @@
           method: "POST",
           headers: CHESS.__API_HEADERS__,
           body: JSON.stringify({
-            name: chessboard.database_id,
+            match_id: this.match_id,
             move,
             fromsquare,
             tosquare,
@@ -131,9 +138,8 @@
         log("initGame match_id:", match_id);
         console.todo("verify FEN is correct in Database, localStorage");
         this.match_id = match_id;
-        this.addListeners();
         this.chessboard.fen = undefined; // set start FEN
-        this.testGame();
+        // this.testGame();
       }
       // ================================================== testGame
       testGame() {
@@ -147,6 +153,9 @@
       // ================================================== restartGame
       restartGame(match_id) {
         log("RESTART GAME", match_id); //todo test
+        localStorage.removeItem("fen");
+        localStorage.removeItem("match_id");
+        this.chessboard.fen = undefined; // set start FEN
         this.checkDatabase(match_id);
       }
       // ================================================== undoMove

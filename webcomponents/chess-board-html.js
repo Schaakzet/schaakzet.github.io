@@ -25,10 +25,9 @@
       aspect-ratio: 1 / 1;
       width: var(--width);
       height: var(--width);
-      max-height:45vw;
       display: inline-block;
       position: relative;
-      border: calc(var(--width) / 40) solid gray;
+      xborder: calc(var(--width) / 40) solid gray;
     }` +
     /*css*/ `chess-board:after{content:"";display:block;padding-bottom:100%}` + // make sure chessboard displays as a square
     /* position multiple layers on top of eachother */
