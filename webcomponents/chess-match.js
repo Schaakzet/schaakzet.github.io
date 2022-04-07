@@ -109,7 +109,7 @@
           method: "POST",
           headers: CHESS.__API_HEADERS__,
           body: JSON.stringify({
-            name: chessboard.database_id,
+            match_id: this.match_id,
             move,
             fromsquare,
             tosquare,
@@ -140,7 +140,7 @@
         this.match_id = match_id;
         this.addListeners();
         this.chessboard.fen = undefined; // set start FEN
-        this.testGame();
+        // this.testGame();
       }
       // ================================================== testGame
       testGame() {
@@ -154,6 +154,8 @@
       // ================================================== restartGame
       restartGame(match_id) {
         log("RESTART GAME", match_id); //todo test
+        localStorage.removeItem("fen");
+        localStorage.removeItem("match_id");
         this.checkDatabase(match_id);
       }
       // ================================================== undoMove
