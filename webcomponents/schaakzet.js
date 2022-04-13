@@ -69,7 +69,7 @@
         ["create-html", "todo-list"], // HTML components
         ["chess-api-matches"],
         ["h1-chess"],
-        ["chess-game-progress"],
+        ["chess-game-progress", "chess-show-captured-pieces"],
         ["chess-match-board", "chess-match", "chess-match-buttons", "chess-matches", "chess-players"], // Chess Components
       ]);
 

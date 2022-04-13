@@ -1,13 +1,15 @@
 !(function () {
   // ********************************************************** IIFE
   customElements.define(
-    "chess-game-progress",
+    "chess-show-captured-pieces",
     class extends CHESS.ChessBaseElement {
       connectedCallback() {
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.processMoves(evt.detail));
       }
       processMoves(detail) {
-        this.innerHTML += detail.move + "<br>";
+        console.warn("processMoves", detail);
+        // Array capturedWhitePieces, for-loop(get-img, show-img)
+        console.log(detail.chessboard.capturedWhitePieces);
       }
     }
   );

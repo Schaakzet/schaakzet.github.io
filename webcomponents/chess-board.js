@@ -258,10 +258,23 @@
             let toSquare = this.getSquare(square);
             const lastFEN = this.fen;
 
-            toSquare.pieceName = chessPiece.is; // REQUIRED?
+            // Clear en Passant pawn
             if (this.lastMove && toSquare.at == this.enPassantPosition && chessPiece.isPawn) {
               console.log("We had En Passant. Clear piece.");
               this.lastMove.toSquare.clear();
+            }
+
+            // Strike rook, clean castlingArray
+            if (toSquare.piece.isRook) {
+              if (toSquare.at == CHESS.__SQUARE_BOTTOM_LEFT__) {
+                this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_WHITE_QUEEN__);
+              } else if (toSquare.at == CHESS.__SQUARE_BOTTOM_RIGHT__) {
+                this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_WHITE_KING__);
+              } else if (toSquare.at == CHESS.__SQUARE_TOP_LEFT__) {
+                this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_BLACK_QUEEN__);
+              } else if (toSquare.at == CHESS.__SQUARE_TOP_RIGHT__) {
+                this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_BLACK_KING__);
+              }
             }
 
             toSquare.addPiece(chessPiece);
