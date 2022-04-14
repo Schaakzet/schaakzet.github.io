@@ -7,7 +7,8 @@ a|index.html|schaakzet
 |Play:
 button|chess-match:initGame|START
 button|chess-match:restartGame|restart
-button|chess-match:undoMove|Undo last move
+button|chess-match:undoMove|undo last move
+button|chess-match:remise|remise
 </create-html>`;
     }
   }

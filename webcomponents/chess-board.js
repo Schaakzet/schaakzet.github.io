@@ -12,7 +12,6 @@
       // ======================================================== <chess-board>.constructor
       constructor() {
         super();
-        // TODO: Looks like a bug, every piece moved ends up in this array
         this.capturedBlackPieces = [];
         this.capturedWhitePieces = [];
         this.chessMoves = [];
@@ -164,7 +163,7 @@
           this.toggleAttribute("disabled", on);
         });
       }
-      // ======================================================== setMessage
+      // ======================================================== <chess-board>.setMessage
       setMessage(msg) {
         if (msg) console.warn("setMessage", msg);
         document.getElementById("message").innerText = msg;
@@ -219,6 +218,10 @@
       initPlayerTurn() {
         delete this.pieceClicked;
         this.initAnalysis();
+        this.highlightOff();
+      }
+      // ======================================================== <chess-board>.highlightOff
+      highlightOff() {
         for (let element of this.squares) {
           let chessSquare = this.getSquare(element);
           chessSquare.highlight(false);
@@ -256,10 +259,14 @@
         const /* function */ movedPiece = () => {
             let fromSquare = chessPiece.square;
             let toSquare = this.getSquare(square);
+            let moveType = toSquare.piece ? CHESS.__MOVETYPE_CAPTURE__ : CHESS.__MOVETYPE_MOVE__;
             const lastFEN = this.fen;
 
-            // Clear en Passant pawn
+            // Clear en Passant pawn and add to capturedPiece
             if (this.lastMove && toSquare.at == this.enPassantPosition && chessPiece.isPawn) {
+              this.lastMove.toSquare.capturePieceBy(chessPiece);
+              moveType = CHESS.__MOVETYPE_CAPTURE__;
+
               console.log("We had En Passant. Clear piece.");
               this.lastMove.toSquare.clear();
             }
@@ -276,7 +283,10 @@
                 this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_BLACK_KING__);
               }
             }
+            // Capture Piece => capturePieceBy
+            toSquare.capturePieceBy(chessPiece);
 
+            // movePiece
             toSquare.addPiece(chessPiece);
             fromSquare.clear();
             chessPiece.animateFinished(); // do <chess-piece> CSS stuff after animation finished
@@ -321,7 +331,7 @@
               this.recordMoveInDatabase({
                 fromSquare,
                 toSquare,
-                move: fromSquare.at + (toSquare.piece ? CHESS.__MOVETYPE_CAPTURE__ : CHESS.__MOVETYPE_MOVE__) + toSquare.at, // O-O-O
+                move: fromSquare.at + moveType + toSquare.at, // O-O-O
               });
               this.changePlayer();
             }

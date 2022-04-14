@@ -163,7 +163,13 @@
         log("UNDO MOVE"); //todo test
         this.chessboard.undoMove();
       }
-      // ==================================================
+      // ================================================== remise
+      remise() {
+        if (confirm("Remise?")) {
+          this.chessboard.setMessage("Game over. Gelijkspel.");
+          this.chessboard.classList.add("game_over");
+        }
+      }
     } //class
   ); //customElements.define("chess-match", class extends CHESS.ChessBaseElement
   // ********************************************************** end IIFE

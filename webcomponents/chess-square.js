@@ -18,6 +18,7 @@
       // ======================================================== <chess-square>.handleFirstClick
       handleFirstClick() {
         if (this.hasAttribute(CHESS.__WC_ATTRIBUTE_PIECENAME__)) {
+          this.chessboard.highlightOff();
           this.piece.potentialMoves(this.at);
           this.piece.potentialKingMoves(this.at);
           this.chessboard.pieceClicked = this.piece; // Hier wordt pieceClicked pas gedefinieerd.
@@ -30,11 +31,12 @@
       // ======================================================== <chess-square>.handleSecondClick
       handleSecondClick() {
         const { chessboard, at } = this;
+        let validMove = chessboard.pieceClicked.moves.includes(at);
         if (chessboard.pieceClicked) {
-          if (/* piece on target or not, move piece */ chessboard.pieceClicked.moves.includes(at)) {
-            chessboard.movePiece(chessboard.pieceClicked, at);
-          } else {
-            chessboard.initPlayerTurn();
+          if (validMove) chessboard.movePiece(chessboard.pieceClicked, at);
+          else {
+            this.handleFirstClick();
+            //chessboard.initPlayerTurn(); niet nodig hier?
           }
         } else {
           console.warn("handleSecondClick : No piece clicked");
@@ -148,7 +150,7 @@
             {
               [CHESS.__ATTACK_PIECE__]: "5px solid red",
               [CHESS.__EMPTY_SQUARE__]: "5px solid green",
-              [CHESS.__PROTECT_PIECE__]: "5px solid orange",
+              // [CHESS.__PROTECT_PIECE__]: "5px solid orange",
               [CHESS.__MOVETYPE_ILLEGAL__]: "2px dashed red",
             }[state] || "2px dashed hotpink";
         } else {
@@ -158,9 +160,9 @@
       }
       // ======================================================== <chess-square>.clear
       clear() {
-        this.removeAttribute(CHESS.__WC_ATTRIBUTE_PIECENAME__);
+        this.removeAttribute(CHESS.__WC_ATTRIBUTE_PIECENAME__); // Removes from Square
         this.style.border = "";
-        this.innerHTML = "";
+        this.innerHTML = ""; // Removes from board
         this.clearAttributes();
       }
       // ======================================================== <chess-square>.clearAttributes
@@ -189,8 +191,8 @@
             chessboard.capturedBlackPieces.push(pieceName);
             console.log("Captured Black Pieces:", chessboard.capturedBlackPieces);
           }
-          this.clear();
-          this.append(chessPiece); // put piece in new location
+          // this.clear();
+          // this.append(chessPiece); // put piece in new location
           return pieceName;
         } else return false;
       }
