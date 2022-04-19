@@ -1,8 +1,7 @@
 !(function () {
   // ********************************************************** CSS and HTML for <chess-board>
   function squareStateCSS(playerColor) {
-    const playerColors = ["lightblue", "lightgreen"];
-    //const playerColors = ["transparent", "transparent"];
+    const playerColors = ["lightbrown", "lightbrown"];
     const squareColor = playerColor == CHESS.__PLAYER_WHITE__ ? playerColors[0] : playerColors[1];
     const otherPlayer = CHESS.otherPlayer(playerColor);
     const attackedState = CHESS.__ATTACK_PIECE__;
@@ -12,7 +11,7 @@
     // disable oponent player squares
     return /*css*/ `${selector} {
           pointer-events:none;
-          background: ${squareColor}
+          /* background: ${squareColor} */
         }`;
   }
 

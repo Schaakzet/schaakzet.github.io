@@ -128,7 +128,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   }
   // ======================================================== reduceCastlingArray
   function reduceCastlingArray(lastReduceMove) {
-    const cleanCastlingArray = (castlingFEN) => (chessboard.castlingArray = $chessboard.castlingArray.filter((item) => item !== castlingFEN));
+    const cleanCastlingArray = (castlingFEN) => ($chessboard.castlingArray = $chessboard.castlingArray.filter((item) => item !== castlingFEN));
     if (lastReduceMove == CHESS.__SQUARE_BOTTOM_LEFT__) {
       cleanCastlingArray(CHESS.__FEN_WHITE_QUEEN__);
     } else if (lastReduceMove == CHESS.__SQUARE_BOTTOM_RIGHT__) {

@@ -214,6 +214,7 @@
 
         this.capturedWhitePieces = [];
         this.capturedBlackPieces = [];
+        this.chessMoves = [];
 
         localStorage.removeItem("fen");
         this.fen = undefined; // force start position
