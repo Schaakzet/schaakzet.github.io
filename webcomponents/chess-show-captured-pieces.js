@@ -13,7 +13,8 @@
       }
 
       render() {
-        this.innerHTML = "<div id='showWhite'></div><br /><div id='showBlack'></div>";
+        let style = "<style>#showWhite img, #showBlack img{width:30px}</style>";
+        this.innerHTML = style + "<div id='showWhite'></div><br /><div id='showBlack'></div>";
       }
 
       clear() {

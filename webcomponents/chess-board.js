@@ -522,7 +522,7 @@
       play(moves = this._moves) {
         // chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
         // TODO: rewrite to ["e2-e4", "e7-e5", "g1-f3", "b8-c6"] so "x" take piece can be used
-        if (!this._moves) this._moves = moves || console.warn("No play moves");
+        if (!this._moves) this._moves = moves;
         if (this._moves && this._moves.length) {
           let [from, to] = this._moves.shift();
           let simulateClicks = false; // TODO: make simulateClicks work

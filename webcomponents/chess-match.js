@@ -48,7 +48,7 @@
       }
       // ================================================== createMatch
       createMatch() {
-        CHESS.CRUDAPI = false; // document.location.hostname.includes("127");
+        CHESS.CRUDAPI = true; // document.location.hostname.includes("127");
         if (CHESS.CRUDAPI) {
           // ------------------------------------------------- CHESS.API.matches.create
           CHESS.API.matches.create({
@@ -67,7 +67,7 @@
           //   player_white: "WIT",
           //   player_black: "ZWART",
           // });
-
+console.error(666);
           fetch(CHESS.__API_MATCHES__, {
             method: "POST",
             body: data,

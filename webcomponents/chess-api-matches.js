@@ -52,7 +52,6 @@
     if (method == "GET") delete options.body;
     // ======================================================== create uri
     let uri = __CRUDAPI__ + table;
-    console.warn(match_id);
     if (match_id) uri += "/" + match_id;
     if (uri_filter) uri += (uri_filter[0] == "?" ? "" : "?") + uri_filter; // ensure ? at the beginning of the filter
     //console.log(uri);
