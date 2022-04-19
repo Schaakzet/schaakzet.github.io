@@ -153,9 +153,8 @@
       // ================================================== restartGame
       restartGame(match_id) {
         log("RESTART GAME", match_id); //todo test
-        localStorage.removeItem("fen");
         localStorage.removeItem("match_id");
-        this.chessboard.fen = undefined; // set start FEN
+        this.chessboard.restart();
         this.checkDatabase(match_id);
       }
       // ================================================== undoMove

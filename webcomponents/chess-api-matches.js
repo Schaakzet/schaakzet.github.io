@@ -1,5 +1,5 @@
 !(function () {
-  // TABLE MATCHES
+  // TABLE matches
   //    match_id       - PRIMARY KEY   - set by database
   //    wp_user_white  - INT           - user id in the wp_user WordPress table
   //    wp_user_black  - INT           - user id in the wp_user WordPress table
@@ -9,17 +9,17 @@
   //    endtime        - TIMESTAMP     - when the match ended - default NULL set by database
   //    fen            - VARCHAR(64)   - FEN string of the chessboard, default set by database
   //    result         - VARCHAR(64)   - match result, default "" set by database
-  
+
   // API functions:
   //    create({ player_white, player_black });
   //    read({ match_id });
   //    update({ match_id, [...] });
   //    delete({ match_id });
-  
+
   const __CRUDAPI__ = "https://schaakzet.nl/api/crud/index.php/records/";
   const __TABLE_NAME__ = "matches";
-  const __FILTER_AVAILABLE_BOARDS__ = "?filter1=player_white,eq,&filter2=player_black,eq,"
-  
+  const __FILTER_AVAILABLE_BOARDS__ = "?filter1=player_white,eq,&filter2=player_black,eq,";
+
   // **********************************************************
   // stick all API interactions on the global object
   window.CHESS.API = window.CHESS.API || {
@@ -52,6 +52,7 @@
     if (method == "GET") delete options.body;
     // ======================================================== create uri
     let uri = __CRUDAPI__ + table;
+    console.warn(match_id);
     if (match_id) uri += "/" + match_id;
     if (uri_filter) uri += (uri_filter[0] == "?" ? "" : "?") + uri_filter; // ensure ? at the beginning of the filter
     //console.log(uri);

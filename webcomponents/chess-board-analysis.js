@@ -52,6 +52,11 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
           newPiece = false;
       }
       if (newPiece) $chessboard.addPiece(newPiece, lastMovedPiece.at);
+      if (lastMovedPiece.isWhite) {
+        $chessboard.capturedWhitePieces.push(lastMovedPiece.is);
+      } else {
+        $chessboard.capturedBlackPieces.push(lastMovedPiece.is);
+      }
       console.log("promotion");
     }
   }
@@ -123,19 +128,19 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   }
   // ======================================================== reduceCastlingArray
   function reduceCastlingArray(lastReduceMove) {
-    // TODO: refactor to one single .filter method using at location as first and a function as second parameter
+    const cleanCastlingArray = (castlingFEN) => (chessboard.castlingArray = $chessboard.castlingArray.filter((item) => item !== castlingFEN));
     if (lastReduceMove == CHESS.__SQUARE_BOTTOM_LEFT__) {
-      $chessboard.castlingArray = $chessboard.castlingArray.filter((item) => item !== CHESS.__FEN_WHITE_QUEEN__);
+      cleanCastlingArray(CHESS.__FEN_WHITE_QUEEN__);
     } else if (lastReduceMove == CHESS.__SQUARE_BOTTOM_RIGHT__) {
-      $chessboard.castlingArray = $chessboard.castlingArray.filter((item) => item !== CHESS.__FEN_WHITE_KING__);
+      cleanCastlingArray(CHESS.__FEN_WHITE_KING__);
     } else if (lastReduceMove == CHESS.__SQUARE_TOP_LEFT__) {
-      $chessboard.castlingArray = $chessboard.castlingArray.filter((item) => item !== CHESS.__FEN_BLACK_QUEEN__);
+      cleanCastlingArray(CHESS.__FEN_BLACK_QUEEN__);
     } else if (lastReduceMove == CHESS.__SQUARE_TOP_RIGHT__) {
-      $chessboard.castlingArray = $chessboard.castlingArray.filter((item) => item !== CHESS.__FEN_BLACK_KING__);
+      cleanCastlingArray(CHESS.__FEN_BLACK_KING__);
     } else if (lastReduceMove == CHESS.__SQUARE_WHITE_KING_START__) {
-      $chessboard.castlingArray = $chessboard.castlingArray.filter((item) => item !== CHESS.__FEN_WHITE_QUEEN__ && item !== CHESS.__FEN_WHITE_KING__);
+      cleanCastlingArray(CHESS.__FEN_WHITE_QUEEN__ && CHESS.__FEN_WHITE_KING__);
     } else if (lastReduceMove == CHESS.__SQUARE_BLACK_KING_START__) {
-      $chessboard.castlingArray = $chessboard.castlingArray.filter((item) => item !== CHESS.__FEN_BLACK_QUEEN__ && item !== CHESS.__FEN_BLACK_KING__);
+      cleanCastlingArray(CHESS.__FEN_BLACK_QUEEN__ && CHESS.__FEN_BLACK_KING__);
     }
   }
   // ======================================================== isValidGameBoard

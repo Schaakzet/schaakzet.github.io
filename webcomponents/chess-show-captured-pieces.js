@@ -4,26 +4,43 @@
     "chess-show-captured-pieces",
     class extends CHESS.ChessBaseElement {
       connectedCallback() {
+        this.render();
+
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.processMoves(evt.detail));
+        document.addEventListener("restartMatch", (evt) => {
+          this.clear();
+        });
       }
+
+      render() {
+        this.innerHTML = "<div id='showWhite'></div><br /><div id='showBlack'></div>";
+      }
+
+      clear() {
+        this.showWhite.innerHTML = "";
+        this.showBlack.innerHTML = "";
+      }
+
+      get showWhite() {
+        return this.querySelector("#showWhite");
+      }
+      get showBlack() {
+        return this.querySelector("#showBlack");
+      }
+
       processMoves(detail) {
         console.warn("processMoves", detail);
-        // Array capturedWhitePieces, for-loop(show-img)
-        const capturedWhitePieces = detail.chessboard.capturedWhitePieces;
-        const capturedBlackPieces = detail.chessboard.capturedBlackPieces;
+        let { capturedWhitePieces, capturedBlackPieces } = detail.chessboard;
+        this.clear();
 
-        this.innerHTML = "<div id='showWhite'></div><br /><div id='showBlack'></div>";
+        function listPieces(pieces, showDiv) {
+          pieces.forEach((piece) => {
+            showDiv.innerHTML += `<img src="https://schaakzet.github.io/img/${piece}.png">`;
+          });
+        }
 
-        showWhite.innerHTML = "";
-        showBlack.innerHTML = "";
-
-        capturedWhitePieces.forEach((piece) => {
-          showWhite.innerHTML += `<img src="https://schaakzet.github.io/img/${piece}.png">`;
-        });
-
-        capturedBlackPieces.forEach((piece) => {
-          showBlack.innerHTML += `<img src="https://schaakzet.github.io/img/${piece}.png">`;
-        });
+        listPieces(capturedWhitePieces, this.showWhite);
+        listPieces(capturedBlackPieces, this.showBlack);
       }
     }
   );

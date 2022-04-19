@@ -211,7 +211,15 @@
       // ======================================================== <chess-board>.restart
       restart() {
         this.clear();
+
+        this.capturedWhitePieces = [];
+        this.capturedBlackPieces = [];
+
+        localStorage.removeItem("fen");
         this.fen = undefined; // force start position
+
+        this.dispatch({ name: "restartMatch", detail: { chessboard: this.chessboard } });
+
         this.initPlayerTurn();
       }
       // ======================================================== <chess-board>.initPlayerTurn
