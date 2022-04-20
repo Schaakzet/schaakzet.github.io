@@ -53,19 +53,23 @@
       resizeCheck(e) {
         setTimeout(() => {
           if (this.disabled) return; // do not resize mini boards
-          let { left, top, bottom, right, height } = this.getBoundingClientRect();
+          let { top, bottom, height } = this.getBoundingClientRect();
           let bottomViewport = window.visualViewport.height;
           let heightAdded = bottomViewport - bottom;
           // console.todo("<chess-board>.resizeCheck, set board to fill container. bottom:", bottom, "vp:", bottomViewport, "height:", height, heightAdded);
           //if (bottom > window.visualViewport.height)  = window.visualViewport.height;
           let newHeight = ~~(height + heightAdded) + "px";
           let newWidth = newHeight;
+
+          top = top + 20;
+
           if (window.visualViewport.width < window.visualViewport.height) {
-            newWidth = window.visualViewport.width - top + "px";
+            newWidth = window.visualViewport.width - top;
           } else {
-            newWidth = window.visualViewport.height - top + "px";
+            newWidth = window.visualViewport.height - top;
           }
-          this.style.setProperty("--resizewidth", newWidth);
+
+          this.style.setProperty("--resizewidth", newWidth + "px");
         }, 100);
       }
       // ======================================================== <chess-board>.attributeChangedCallback

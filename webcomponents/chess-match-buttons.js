@@ -2,8 +2,8 @@ customElements.define(
   "chess-match-buttons",
   class extends CHESS.ChessBaseElement {
     connectedCallback() {
-      this.innerHTML = /*css*/ `<style>chess-match-buttons {padding: 8px;}</style>
-      <create-html>
+      this.style = "display: block; padding-bottom: 18px";
+      this.innerHTML = /*css*/ `<create-html>
 a|index.html|schaakzet
 |Play:
 button|chess-match:initGame|START
