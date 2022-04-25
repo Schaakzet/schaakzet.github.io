@@ -61,7 +61,7 @@
           let newHeight = ~~(height + heightAdded) + "px";
           let newWidth = newHeight;
 
-          top = top + 20;
+          top = top + 30;
 
           if (window.visualViewport.width < window.visualViewport.height) {
             newWidth = window.visualViewport.width - top;
@@ -224,7 +224,6 @@
         this.fen = undefined; // force start position
 
         this.dispatch({ name: "restartMatch", detail: { chessboard: this.chessboard } });
-
         this.initPlayerTurn();
       }
       // ======================================================== <chess-board>.initPlayerTurn

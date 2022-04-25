@@ -5,6 +5,9 @@
   function log(...args) {
     console.log("%c chess-match ", "background:green;color:yellow", ...args);
   }
+
+  // ********************************************************** CSS for Full Screen
+  const CSS_Match = /* css */ `:fullscreen {background-color: beige}`;
   // ********************************************************** define <chess-match>
   customElements.define(
     "chess-match",
@@ -28,6 +31,11 @@
       // ================================================== render
       render() {
         // todo render the HTML from match.html
+        const style = Object.assign(document.createElement("style"), {
+          innerHTML: CSS_Match,
+        });
+
+        this.append(style);
       }
       // ================================================== getPlayerName
       getPlayerName(idx = 0) {
@@ -48,7 +56,7 @@
       }
       // ================================================== createMatch
       createMatch() {
-        CHESS.CRUDAPI = true; // document.location.hostname.includes("127");
+        CHESS.CRUDAPI = false; // document.location.hostname.includes("127");
         if (CHESS.CRUDAPI) {
           // ------------------------------------------------- CHESS.API.matches.create
           CHESS.API.matches.create({
@@ -67,7 +75,6 @@
           //   player_white: "WIT",
           //   player_black: "ZWART",
           // });
-console.error(666);
           fetch(CHESS.__API_MATCHES__, {
             method: "POST",
             body: data,
@@ -153,7 +160,7 @@ console.error(666);
       // ================================================== restartGame
       restartGame(match_id) {
         log("RESTART GAME", match_id); //todo test
-        localStorage.removeItem("match_id");
+        // localStorage.removeItem("match_id");
         this.chessboard.restart();
         this.checkDatabase(match_id);
       }
@@ -167,6 +174,17 @@ console.error(666);
         if (confirm("Remise?")) {
           this.chessboard.setMessage("Game over. Gelijkspel.");
           this.chessboard.classList.add("game_over");
+        }
+      }
+      // ================================================== remise
+      fullScreen() {
+        var elem = this;
+
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+          /* Safari */
+          elem.webkitRequestFullscreen();
         }
       }
     } //class
