@@ -363,14 +363,15 @@
             // force a hidden board if user did not supply a DOM container to place all possible move/boards into
             /* if (showboardsIn == document.body) */ testboard.style.display = "none";
           }
-          setTimeout(() =>
+          setTimeout(() => {
             // not sure we need the setTimeout, but it seems to be needed to make sure the board is created before we try to move the piece
             testboard.trymove({
               from: this.at, //
               to, // all moves from this.moves
               matchboard,
-            })
-          );
+            });
+            testboard.remove();
+          });
         });
       }
     }

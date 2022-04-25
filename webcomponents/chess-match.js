@@ -108,21 +108,23 @@
         log("storeMove", move);
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
-
-        // ------------------------------------------------- store move in matches
-        this.updateMatch(this.match_id);
+        // ------------------------------------------------- FormData
+        let body = new FormData();
+        body.append("function", "insert");
+        body.append("id", this.match_id);
+        body.append("data[move]", move);
+        body.append("data[fromsquare]", fromsquare);
+        body.append("data[tosquare]", tosquare);
+        body.append("data[fen]", fen);
         // ------------------------------------------------- store move in matchmoves
-        fetch(CHESS.__API_RECORDS__ + CHESS.__API_TABLE_MATCHMOVES__, {
+        fetch("https://schaakzet.nl/api/rt/matchmoves.php", {
           method: "POST",
-          headers: CHESS.__API_HEADERS__,
-          body: JSON.stringify({
-            match_id: this.match_id,
-            move,
-            fromsquare,
-            tosquare,
-            fen,
-          }),
-        });
+          body,
+        })
+          .then((response) => response.json())
+          .then((res) => {
+            console.log(res);
+          });
         // ------------------------------------------------- store move in matchmoves
         this.checkDatabase(this.match_id);
       }
@@ -140,14 +142,6 @@
           },
         });
       }
-      // ================================================== initGame
-      initGame(match_id) {
-        log("initGame match_id:", match_id);
-        console.todo("verify FEN is correct in Database, localStorage");
-        this.match_id = match_id;
-        this.chessboard.fen = undefined; // set start FEN
-        // this.testGame();
-      }
       // ================================================== testGame
       testGame() {
         this.chessboard.play([
@@ -157,17 +151,42 @@
           ["b8", "c6"],
         ]);
       }
+      // ================================================== initGame
+      initGame(match_id) {
+        log("initGame match_id:", match_id);
+        console.todo("verify FEN is correct in Database, localStorage");
+        this.match_id = match_id;
+        this.chessboard.fen = undefined; // set start FEN
+        // this.testGame();
+      }
       // ================================================== restartGame
-      restartGame(match_id) {
-        log("RESTART GAME", match_id); //todo test
+      restartGame() {
+        log("RESTART GAME"); //todo test
         // localStorage.removeItem("match_id");
         this.chessboard.restart();
-        this.checkDatabase(match_id);
+        this.createMatch();
+      }
+      // ================================================== undoMoveDB
+      undoMoveDB() {
+        // ------------------------------------------------- FormData
+        let body = new FormData();
+        body.append("function", "delete"); // API decides it is last record of match_id.
+        body.append("id", this.match_id);
+        // ------------------------------------------------- store move in matchmoves
+        fetch("https://schaakzet.nl/api/rt/matchmoves.php", {
+          method: "POST",
+          body,
+        })
+          .then((response) => response.json())
+          .then((res) => {
+            console.log(res);
+          });
       }
       // ================================================== undoMove
       undoMove() {
         log("UNDO MOVE"); //todo test
         this.chessboard.undoMove();
+        this.undoMoveDB();
       }
       // ================================================== remise
       remise() {
