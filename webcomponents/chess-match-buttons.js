@@ -6,6 +6,7 @@ customElements.define(
       this.innerHTML = /*css*/ `<create-html>
 a|index.html|schaakzet
 |Play:
+button|chess-match:updateMatch|save players
 button|chess-match:restartGame|new game
 button|chess-match:undoMove|undo last move
 button|chess-match:remise|remise

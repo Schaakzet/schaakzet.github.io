@@ -26,6 +26,7 @@
       this.onclick = (evt) => showinput(true);
       input.onblur = (evt) => showinput(false);
     }
+
     get value() {
       return this.querySelector("input").value;
     }
@@ -37,7 +38,7 @@
     class extends CHESS.ChessBaseElement {
       connectedCallback() {
         this.innerHTML = `
-      <chess-player-white name="Laurent"></chess-player-white>
+      <chess-player-white name="Player White"></chess-player-white>
       versus
       <chess-player-black name="Player Black"></chess-player-black>`;
       }

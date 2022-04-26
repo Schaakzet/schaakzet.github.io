@@ -37,14 +37,6 @@
 
         this.append(style);
       }
-      // ================================================== getPlayerName
-      getPlayerName(idx = 0) {
-        // handle: 0,1,white,black
-        if (idx == "white") idx = 0;
-        if (idx == "black") idx = 1;
-        if (idx) return "player_black";
-        else return "Laurent";
-      }
       // ================================================== addListeners
       addListeners() {
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.storeMove(evt.detail));
@@ -67,8 +59,8 @@
           let data = new FormData();
           data.append("function", "insert");
           data.append("table", "matches");
-          data.append("data[player_white]", this.getPlayerName(0));
-          data.append("data[player_black]", this.getPlayerName(1));
+          data.append("data[player_white]", document.querySelector("chess-player-white").getAttribute("name"));
+          data.append("data[player_black]", document.querySelector("chess-player-black").getAttribute("name"));
 
           // body = JSON.stringify({
           //   function: "insert",
@@ -91,8 +83,8 @@
         const chessboard = this.chessboard;
         const fen = chessboard.fen;
         CHESS.API.matches.update({
-          player_white: this.getPlayerName(0),
-          player_black: this.getPlayerName(1),
+          player_white: document.querySelector("chess-player-black").getAttribute("name"),
+          player_black: document.querySelector("chess-player-black").getAttribute("name"),
           match_id,
           fen,
         });
