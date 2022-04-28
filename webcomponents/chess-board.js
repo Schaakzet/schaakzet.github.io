@@ -61,7 +61,7 @@
           let newHeight = ~~(height + heightAdded) + "px";
           let newWidth = newHeight;
 
-          top = top + 30;
+          top = top + 50;
 
           if (window.visualViewport.width < window.visualViewport.height) {
             newWidth = window.visualViewport.width - top;

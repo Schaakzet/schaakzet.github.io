@@ -59,14 +59,9 @@
           let data = new FormData();
           data.append("function", "insert");
           data.append("table", "matches");
-          data.append("data[player_white]", document.querySelector("chess-player-white").getAttribute("name"));
-          data.append("data[player_black]", document.querySelector("chess-player-black").getAttribute("name"));
+          data.append("data[player_white]", "Init Player 1");
+          data.append("data[player_black]", "Init Player 2");
 
-          // body = JSON.stringify({
-          //   function: "insert",
-          //   player_white: "WIT",
-          //   player_black: "ZWART",
-          // });
           fetch(CHESS.__API_MATCHES__, {
             method: "POST",
             body: data,
@@ -79,15 +74,23 @@
         }
       } //createMatch
       // ================================================== update matches
-      updateMatch(match_id) {
-        const chessboard = this.chessboard;
-        const fen = chessboard.fen;
-        CHESS.API.matches.update({
-          player_white: document.querySelector("chess-player-black").getAttribute("name"),
-          player_black: document.querySelector("chess-player-black").getAttribute("name"),
-          match_id,
-          fen,
-        });
+      updateMatch() {
+        const match_id = localStorage.getItem("match_id");
+        console.log("MATCH ID", match_id);
+        let data = new FormData();
+        data.append("function", "update");
+        data.append("id", match_id);
+        data.append("data[player_white]", document.querySelector("chess-player-white").querySelector("span").innerHTML);
+        data.append("data[player_black]", document.querySelector("chess-player-black").querySelector("span").innerHTML);
+
+        fetch(CHESS.__API_MATCHES__, {
+          method: "POST",
+          body: data,
+        })
+          .then((response) => response.text())
+          .then((match_id) => {
+            log("RT API success: ", match_id);
+          });
       }
       // ================================================== storeMove
       storeMove({
@@ -118,7 +121,7 @@
             console.log(res);
           });
         // ------------------------------------------------- store move in matchmoves
-        this.checkDatabase(this.match_id);
+        // this.checkDatabase(this.match_id);
       }
       // ================================================== checkDatabase
       checkDatabase(match_id) {
@@ -149,6 +152,8 @@
         console.todo("verify FEN is correct in Database, localStorage");
         this.match_id = match_id;
         this.chessboard.fen = undefined; // set start FEN
+        localStorage.setItem("match_id", this.match_id);
+
         // this.testGame();
       }
       // ================================================== restartGame
