@@ -350,12 +350,13 @@
       }) {
         this.moves.forEach((to) => {
           // loop all possible moves
-          let testboard = this.chessboard;
+          let testboard;
           if (showboardsIn) {
             // create a new board for every possible move
             testboard = showboardsIn.appendChild(
               CHESS.createBoardElement({
                 props: {
+                  id: "testboard",
                   fen: matchboard.fen,
                 },
               })

@@ -32,7 +32,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   }
   // ======================================================== promotion
   function promotion() {
-    if (lastMovedPiece.isPawnAtEnd) {
+    if (lastMovedPiece.isPawnAtEnd && $chessboard.id !== "testboard") {
       const chosenPiece = String(prompt("Kies een stuk (toets letter in): Q, N, R, B.")); // pass parameter
       let newPiece = lastMovedPiece.color + CHESS.__PIECE_SEPARATOR__;
       switch (chosenPiece.toLowerCase()) {
@@ -145,15 +145,15 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   }
   // ======================================================== isValidGameBoard
   function isValidGameBoard() {
-    const kingSquare = /* function */ (color) => kingSquare(color); // get king, but without warning
-    const whiteKing = kingSquare(CHESS.__PLAYER_WHITE__);
-    const blackKing = kingSquare(CHESS.__PLAYER_BLACK__);
+    const _kingSquare = /* function */ (color) => kingSquare(color); // get king, but without warning
+    const whiteKing = _kingSquare(CHESS.__PLAYER_WHITE__);
+    const blackKing = _kingSquare(CHESS.__PLAYER_BLACK__);
     return whiteKing && blackKing;
   }
 
   // ======================================================== isInCheck
   function isInCheck(color) {
-    if (isValidGameBoard) {
+    if (isValidGameBoard()) {
       // make sure there are pieces on the board
       const _kingSquare = kingSquare(color);
       if (_kingSquare && _kingSquare.isAttacked) {
@@ -229,7 +229,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   }
   // ======================================================== negatingCheck
   function negatingCheck(color) {
-    if (isValidGameBoard) {
+    if (isValidGameBoard()) {
       const horse = (color) => color + CHESS.__PIECE_SEPARATOR__ + CHESS.__PIECE_KNIGHT__;
       const _kingSquare = kingSquare(color);
       if (_kingSquare && _kingSquare.isAttacked) {
@@ -304,7 +304,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   }
   // ======================================================== staleMate
   function staleMate(color) {
-    if (isValidGameBoard) {
+    if (isValidGameBoard()) {
       const _kingSquare = kingSquare(color);
       if (_kingSquare) {
         const kingPiece = getPiece(_kingSquare);

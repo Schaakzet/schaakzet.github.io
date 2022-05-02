@@ -184,6 +184,14 @@
         log("UNDO MOVE"); //todo test
         this.chessboard.undoMove();
         this.undoMoveDB();
+        this.dispatch({
+          root: document,
+          name: "undoMove",
+          detail: {
+            chessboard: this.chessboard,
+            toSquare: this.chessboard.lastMove.toSquare,
+          },
+        });
       }
       // ================================================== remise
       remise() {

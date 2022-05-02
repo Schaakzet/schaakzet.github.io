@@ -6,10 +6,9 @@
       connectedCallback() {
         this.render();
 
+        document.addEventListener("restartMatch", (evt) => this.clear());
+        document.addEventListener("undoMove", (evt) => this.deleteMove(evt.detail));
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.processMoves(evt.detail));
-        document.addEventListener("restartMatch", (evt) => {
-          this.clear();
-        });
       }
 
       render() {
@@ -42,6 +41,22 @@
 
         listPieces(capturedWhitePieces, this.showWhite);
         listPieces(capturedBlackPieces, this.showBlack);
+      }
+
+      deleteMove(detail) {
+        console.log(detail.chessboard.getAttribute);
+        let lastSquare = detail.toSquare;
+        let color = detail.chessboard.getAttribute("player");
+        let { capturedWhitePieces, capturedBlackPieces } = detail.chessboard;
+        if (lastSquare.piece) {
+          if (color == "zwart") {
+            capturedWhitePieces.pop();
+          } else {
+            capturedBlackPieces.pop();
+          }
+        }
+        console.log(capturedWhitePieces, capturedBlackPieces);
+        this.processMoves(detail);
       }
     }
   );

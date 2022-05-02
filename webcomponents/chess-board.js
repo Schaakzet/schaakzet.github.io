@@ -41,6 +41,18 @@
             else this.fen = undefined; // use default all pieces start board
 
             window.addEventListener("resize", (e) => this.resizeCheck(e));
+            window.addEventListener(this.id, (evt) => {
+              let { match_id, fen, move } = evt.detail;
+
+              if (this.id == match_id) {
+                if (this.fen != fen) {
+                  // move
+                  let [from, to] = move.split("-");
+                  console.warn(evt.detail, from, to);
+                  this.play([[from, to]]);
+                }
+              }
+            });
 
             this.initPlayerTurn();
 
@@ -169,8 +181,10 @@
       }
       // ======================================================== <chess-board>.setMessage
       setMessage(msg) {
-        if (msg) console.warn("setMessage", msg);
-        document.getElementById("message").innerText = msg;
+        if (this.id !== "testboard") {
+          console.warn("setMessage", msg);
+          document.getElementById("message").innerText = msg;
+        }
       }
       // ======================================================== <chess-board>.getSquare
       getSquare(square) {
@@ -354,6 +368,7 @@
 
         if (animated) chessPiece.animateTo(square).then(movedPiece);
         else movedPiece();
+        console.log("setMessage from movePiece");
         this.setMessage("");
       }
       // ======================================================== <chess-board>.initAnalysis

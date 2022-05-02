@@ -36,7 +36,6 @@
           if (validMove) chessboard.movePiece(chessboard.pieceClicked, at);
           else {
             this.handleFirstClick();
-            //chessboard.initPlayerTurn(); niet nodig hier?
           }
         } else {
           console.warn("handleSecondClick : No piece clicked");
@@ -200,7 +199,6 @@
       rankDistance(toSquare) {
         return Math.abs(toSquare.rank - this.rank);
       }
-
       // ======================================================== <chess-square>.isMovesFrom
       isMovesFrom(color) {
         //CHESS.__PLAYER_WHITE__
