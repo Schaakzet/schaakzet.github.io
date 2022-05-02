@@ -49,43 +49,49 @@
           if (CHESS.API) {
             CHESS.API.matches.read({
               callback: (records) => {
-                let boardElements = records.map(
-                  ({
-                    match_id, // PRIMARY KEY   - set by database
-                    wp_user_white, // INT           - user id in the wp_user WordPress table
-                    wp_user_black, // INT           - user id in the wp_user WordPress table
-                    player_white, // VARCHAR(64)   - name of the player
-                    player_black, // VARCHAR(64)   - name of the player
-                    starttime, // TIMESTAMP     - when the match started - default set by database
-                    endtime, // TIMESTAMP     - when the match ended - default NULL set by database
-                    fen, // VARCHAR(64)   - FEN string of the chessboard, default set by database
-                    result, // VARCHAR(64)   - match result, default "" set by database
-                  }) => {
-                    return CHESS.createBoardElement({
-                      props: {
-                        fen,
-                        disabled: true,
-                        onmouseenter: (evt) => {
-                          document.querySelector(CHESS.__WC_CHESS_BOARD__).fen = fen;
+                let boardElements = records
+                  .filter((record) => record.guid !== null)
+                  .map(
+                    ({
+                      match_id, // PRIMARY KEY   - set by database
+                      guid,
+                      wp_user_white, // INT           - user id in the wp_user WordPress table
+                      wp_user_black, // INT           - user id in the wp_user WordPress table
+                      player_white, // VARCHAR(64)   - name of the player
+                      player_black, // VARCHAR(64)   - name of the player
+                      starttime, // TIMESTAMP     - when the match started - default set by database
+                      endtime, // TIMESTAMP     - when the match ended - default NULL set by database
+                      fen, // VARCHAR(64)   - FEN string of the chessboard, default set by database
+                      result, // VARCHAR(64)   - match result, default "" set by database
+                    }) => {
+                      return CHESS.createBoardElement({
+                        props: {
+                          id: guid,
+                          fen,
+                          disabled: true,
+                          onmouseenter: (evt) => {
+                            let chessboard = document.querySelector(CHESS.__WC_CHESS_BOARD__);
+                            chessboard.id = guid;
+                            chessboard.fen = fen;
+                          },
+                          onclick: (evt) => {
+                            if (evt.ctrlKey) {
+                              let chessboard = evt.target.closest("chess-board");
+                              fetch(CHESS.__API_SCHAAKZET__ + `delete&matchid=` + name, {
+                                method: "GET",
+                                headers: CHESS.__API_HEADERS__,
+                              });
+                              chessboard.remove();
+                            }
+                          }, // onclick
                         },
-                        onclick: (evt) => {
-                          if (evt.ctrlKey) {
-                            let chessboard = evt.target.closest("chess-board");
-                            fetch(CHESS.__API_SCHAAKZET__ + `delete&matchid=` + name, {
-                              method: "GET",
-                              headers: CHESS.__API_HEADERS__,
-                            });
-                            chessboard.remove();
-                          }
-                        }, // onclick
-                      },
-                      attrs: [
-                        ["player_white", player_white],
-                        ["player_black", player_black],
-                      ],
-                    });
-                  }
-                );
+                        attrs: [
+                          ["player_white", player_white],
+                          ["player_black", player_black],
+                        ],
+                      });
+                    }
+                  );
                 this.shadowRoot.querySelector("#boards").append(...boardElements); // Object.assign #boards
               },
             });
