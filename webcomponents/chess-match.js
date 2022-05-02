@@ -37,14 +37,6 @@
 
         this.append(style);
       }
-      // ================================================== getPlayerName
-      getPlayerName(idx = 0) {
-        // handle: 0,1,white,black
-        if (idx == "white") idx = 0;
-        if (idx == "black") idx = 1;
-        if (idx) return "player_black";
-        else return "Laurent";
-      }
       // ================================================== addListeners
       addListeners() {
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.storeMove(evt.detail));
@@ -67,14 +59,9 @@
           let data = new FormData();
           data.append("function", "insert");
           data.append("table", "matches");
-          data.append("data[player_white]", this.getPlayerName(0));
-          data.append("data[player_black]", this.getPlayerName(1));
+          data.append("data[player_white]", "Init Player 1");
+          data.append("data[player_black]", "Init Player 2");
 
-          // body = JSON.stringify({
-          //   function: "insert",
-          //   player_white: "WIT",
-          //   player_black: "ZWART",
-          // });
           fetch(CHESS.__API_MATCHES__, {
             method: "POST",
             body: data,
@@ -87,15 +74,23 @@
         }
       } //createMatch
       // ================================================== update matches
-      updateMatch(match_id) {
-        const chessboard = this.chessboard;
-        const fen = chessboard.fen;
-        CHESS.API.matches.update({
-          player_white: this.getPlayerName(0),
-          player_black: this.getPlayerName(1),
-          match_id,
-          fen,
-        });
+      updateMatch() {
+        const match_id = localStorage.getItem("match_id");
+        console.log("MATCH ID", match_id);
+        let data = new FormData();
+        data.append("function", "update");
+        data.append("id", match_id);
+        data.append("data[player_white]", document.querySelector("chess-player-white").querySelector("span").innerHTML);
+        data.append("data[player_black]", document.querySelector("chess-player-black").querySelector("span").innerHTML);
+
+        fetch(CHESS.__API_MATCHES__, {
+          method: "POST",
+          body: data,
+        })
+          .then((response) => response.text())
+          .then((match_id) => {
+            log("RT API success: ", match_id);
+          });
       }
       // ================================================== storeMove
       storeMove({
@@ -108,23 +103,25 @@
         log("storeMove", move);
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
-
-        // ------------------------------------------------- store move in matches
-        this.updateMatch(this.match_id);
+        // ------------------------------------------------- FormData
+        let body = new FormData();
+        body.append("function", "insert");
+        body.append("id", this.match_id);
+        body.append("data[move]", move);
+        body.append("data[fromsquare]", fromsquare);
+        body.append("data[tosquare]", tosquare);
+        body.append("data[fen]", fen);
         // ------------------------------------------------- store move in matchmoves
-        fetch(CHESS.__API_RECORDS__ + CHESS.__API_TABLE_MATCHMOVES__, {
+        fetch("https://schaakzet.nl/api/rt/matchmoves.php", {
           method: "POST",
-          headers: CHESS.__API_HEADERS__,
-          body: JSON.stringify({
-            match_id: this.match_id,
-            move,
-            fromsquare,
-            tosquare,
-            fen,
-          }),
-        });
+          body,
+        })
+          .then((response) => response.json())
+          .then((res) => {
+            console.log(res);
+          });
         // ------------------------------------------------- store move in matchmoves
-        this.checkDatabase(this.match_id);
+        // this.checkDatabase(this.match_id);
       }
       // ================================================== checkDatabase
       checkDatabase(match_id) {
@@ -140,14 +137,6 @@
           },
         });
       }
-      // ================================================== initGame
-      initGame(match_id) {
-        log("initGame match_id:", match_id);
-        console.todo("verify FEN is correct in Database, localStorage");
-        this.match_id = match_id;
-        this.chessboard.fen = undefined; // set start FEN
-        // this.testGame();
-      }
       // ================================================== testGame
       testGame() {
         this.chessboard.play([
@@ -157,17 +146,44 @@
           ["b8", "c6"],
         ]);
       }
+      // ================================================== initGame
+      initGame(match_id) {
+        log("initGame match_id:", match_id);
+        console.todo("verify FEN is correct in Database, localStorage");
+        this.match_id = match_id;
+        this.chessboard.fen = undefined; // set start FEN
+        localStorage.setItem("match_id", this.match_id);
+
+        // this.testGame();
+      }
       // ================================================== restartGame
-      restartGame(match_id) {
-        log("RESTART GAME", match_id); //todo test
+      restartGame() {
+        log("RESTART GAME"); //todo test
         // localStorage.removeItem("match_id");
         this.chessboard.restart();
-        this.checkDatabase(match_id);
+        this.createMatch();
+      }
+      // ================================================== undoMoveDB
+      undoMoveDB() {
+        // ------------------------------------------------- FormData
+        let body = new FormData();
+        body.append("function", "delete"); // API decides it is last record of match_id.
+        body.append("id", this.match_id);
+        // ------------------------------------------------- store move in matchmoves
+        fetch("https://schaakzet.nl/api/rt/matchmoves.php", {
+          method: "POST",
+          body,
+        })
+          .then((response) => response.json())
+          .then((res) => {
+            console.log(res);
+          });
       }
       // ================================================== undoMove
       undoMove() {
         log("UNDO MOVE"); //todo test
         this.chessboard.undoMove();
+        this.undoMoveDB();
       }
       // ================================================== remise
       remise() {

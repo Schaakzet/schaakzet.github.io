@@ -7,12 +7,12 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   const kingSquare = /* function */ (color) => $chessboard.kingSquare(color);
   const movePiece = /* function */ (piece, to) => $chessboard.movePiece(piece, to);
 
-  let lastMovedPiece;
   if (type == "checkcheck") {
     analyzeWholeBoard();
     return isInCheck(CHESS.otherPlayer($chessboard.player));
   }
 
+  let lastMovedPiece;
   if ($chessboard.lastMove) {
     lastMovedPiece = $chessboard.lastMove.toSquare.piece;
 

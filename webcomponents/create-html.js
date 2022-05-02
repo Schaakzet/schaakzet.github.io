@@ -33,6 +33,7 @@ customElements.define(
           .join(" - ");
       });
     }
+
     dispatch(button, eventName) {
       let [name, value] = eventName.split(":");
       console.log("dispatch", name, value, this);
