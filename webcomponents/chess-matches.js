@@ -3,7 +3,7 @@
   const DIV_Boards = /* html */ `<div id="boards"></div>`;
 
   // ********************************************************** createBoard
-  const createBoard = (name, records) => {
+  const createBoard = (guid, records) => {
     let fen = records.slice(-1)[0].fen;
     return CHESS.createBoardElement({
       props: {
@@ -15,7 +15,7 @@
         onclick: (evt) => {
           if (evt.ctrlKey) {
             let chessboard = evt.target.closest("chess-board");
-            fetch(CHESS.__API_SCHAAKZET__ + `delete&matchid=` + name, {
+            fetch(CHESS.__API_SCHAAKZET__ + `delete&matchid=` + guid, {
               method: "GET",
               headers: CHESS.__API_HEADERS__,
             });
@@ -34,12 +34,12 @@
       }
       connectedCallback() {
         this.render();
-        const evtSource = new EventSource("https://schaakzet.nl/api/rt/bp_test_2.php");
-        evtSource.onmessage = (evt) => {
-          const receivedData = JSON.parse(evt.data);
-          console.log(receivedData);
-          this.dispatch({ name: receivedData.match_id, detail: receivedData });
-        };
+        // const evtSource = new EventSource("https://schaakzet.nl/api/rt/bp_test_2.php");
+        // evtSource.onmessage = (evt) => {
+        //   const receivedData = JSON.parse(evt.data);
+        //   console.log(receivedData);
+        //   this.dispatch({ name: receivedData.match_id, detail: receivedData });
+        // };
       }
       // ======================================================== <chess-matches>.render
       render() {
@@ -55,8 +55,15 @@
           if (CHESS.API) {
             CHESS.API.matches.read({
               callback: (records) => {
+                const setMainBoard = (guid, fen) => {
+                  let chessboard = document.querySelector(CHESS.__WC_CHESS_BOARD__);
+                  chessboard.id = guid;
+                  chessboard.fen = fen;
+                };
                 let boardElements = records
-                  .filter((record) => record.guid !== null)
+                  .filter((record, idx, arr) => {
+                    return idx;
+                  }) // record.guid !== null)
                   .map(
                     ({
                       match_id, // PRIMARY KEY   - set by database
@@ -76,14 +83,12 @@
                           fen,
                           disabled: true,
                           onmouseenter: (evt) => {
-                            let chessboard = document.querySelector(CHESS.__WC_CHESS_BOARD__);
-                            chessboard.id = guid;
-                            chessboard.fen = fen;
+                            setMainBoard(guid, fen);
                           },
                           onclick: (evt) => {
                             if (evt.ctrlKey) {
                               let chessboard = evt.target.closest("chess-board");
-                              fetch(CHESS.__API_SCHAAKZET__ + `delete&matchid=` + name, {
+                              fetch(CHESS.__API_SCHAAKZET__ + `delete&matchid=` + guid, {
                                 method: "GET",
                                 headers: CHESS.__API_HEADERS__,
                               });
@@ -99,6 +104,11 @@
                     }
                   );
                 this.shadowRoot.querySelector("#boards").append(...boardElements); // Object.assign #boards
+                setTimeout(() => {
+                  let miniBoard = boardElements[0];
+                  console.error(miniBoard.fen, miniBoard.id);
+                  setMainBoard(miniBoard.id, miniBoard.fen);
+                }, 0);
               },
             });
           } else {

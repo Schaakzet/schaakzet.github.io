@@ -21,7 +21,6 @@ customElements.define(
     a|https://schaakzet.nl/api/crud/index.php/records/matchmoves|matchmoves
     a|https://treeql.org/|TreeQL
     a|https://github.com/mevdschee/php-crud-api#treeql-a-pragmatic-graphql|PHP-CRUD-API
-    |
     <hr>
 </create-html>`;
     }

@@ -41,18 +41,7 @@
             else this.fen = undefined; // use default all pieces start board
 
             window.addEventListener("resize", (e) => this.resizeCheck(e));
-            window.addEventListener(this.id, (evt) => {
-              let { match_id, fen, move } = evt.detail;
-
-              if (this.id == match_id) {
-                if (this.fen != fen) {
-                  // move
-                  let [from, to] = move.split("-");
-                  console.warn(evt.detail, from, to);
-                  this.play([[from, to]]);
-                }
-              }
-            });
+            this.listenOnMatchID();
 
             this.initPlayerTurn();
 
@@ -93,13 +82,61 @@
           // should work as well, because a getter "fen" exists on this
         }
       }
+      // ======================================================== <chess-board>.listenOnMatchID
+      listenOnMatchID() {
+        if (this.id) {
+          console.log("666", "listenOnMatchID", this.id);
+          const listenFunc = (evt) => {
+            // listen Functie definieren
+            let { match_id, fen, move } = evt.detail;
+            if (this.id == match_id) {
+              if (this.fen != fen) {
+                console.log("666", "listener", move);
+                let from, to;
+                // move
+                if (move[2] == "-") [from, to] = move.split("-");
+                else if (move[2] == "x") [from, to] = move.split("x");
+                else if (move == "O-O-O" && this.player == "wit") {
+                  from = "e1";
+                  to = "b1";
+                } else if ((move = "O-O" && this.player == "wit")) {
+                  from = "e1";
+                  to = "g1";
+                } else if (move == "O-O-O" && this.player == "zwart") {
+                  from = "e8";
+                  to = "b8";
+                } else if (move == "O-O" && this.player == "zwart") {
+                  from = "e8";
+                  to = "g8";
+                }
+                console.warn(evt.detail, from, to);
+                this.play([[from, to]]);
+              }
+            }
+          };
+          // als er al een listeners is, verwijderen
+          if (this._listening) {
+            document.removeEventListener(this._listening.id, this._listening.func);
+          }
+          // registreer deze nieuwe listener
+          this._listening = {
+            id: this.id,
+            func: listenFunc,
+          };
+          // listener toevoegen
+          document.addEventListener(this.id, listenFunc);
+        } // end if (this.id)
+      }
       // ======================================================== <chess-board>.id
       get id() {
         return this.getAttribute("id") || "";
       }
       set id(v) {
-        if (v) this.setAttribute("id", v);
-        else this.removeAttribute("id");
+        if (v) {
+          console.log("666", "set id", v);
+          this.setAttribute("id", v);
+          this.listenOnMatchID();
+        } else this.removeAttribute("id");
       }
       // ======================================================== <chess-board>.database_id
       get database_id() {
@@ -282,6 +319,7 @@
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
         if (isString(chessPiece)) chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
+        if (!chessPiece) console.error("Er is geen chesspiece op ", square);
         const /* function */ movedPiece = () => {
             let fromSquare = chessPiece.square;
             let toSquare = this.getSquare(square);
@@ -368,7 +406,6 @@
 
         if (animated) chessPiece.animateTo(square).then(movedPiece);
         else movedPiece();
-        console.log("setMessage from movePiece");
         this.setMessage("");
       }
       // ======================================================== <chess-board>.initAnalysis
