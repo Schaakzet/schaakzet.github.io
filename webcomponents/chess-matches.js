@@ -11,12 +11,12 @@
       }
       connectedCallback() {
         this.render();
-        // const evtSource = new EventSource("https://schaakzet.nl/api/rt/bp_test_2.php");
-        // evtSource.onmessage = (evt) => {
-        //   const receivedData = JSON.parse(evt.data);
-        //   console.log(receivedData);
-        //   this.dispatch({ name: receivedData.match_id, detail: receivedData });
-        // };
+        const evtSource = new EventSource("https://schaakzet.nl/api/rt/bp_test_2.php");
+        evtSource.onmessage = (evt) => {
+          const receivedData = JSON.parse(evt.data);
+          console.log(receivedData);
+          this.dispatch({ name: receivedData.match_id, detail: receivedData });
+        };
       }
       // ======================================================== <chess-matches>.render
       render() {
@@ -50,6 +50,7 @@
                       fen,
                       disabled: true,
                       onmouseenter: (evt) => {
+                        let chessboard = evt.target.closest("chess-board");
                         setMainBoard(guid, fen);
                       },
                       onclick: (evt) => {

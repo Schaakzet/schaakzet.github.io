@@ -93,6 +93,7 @@
               if (this.fen != fen) {
                 let from, to;
                 // move
+                console.warn("777", move);
                 if (move[2] == "-") [from, to] = move.split("-");
                 else if (move[2] == "x") [from, to] = move.split("x");
                 else if (move == "O-O-O" && this.player == "wit") {
@@ -310,9 +311,9 @@
             name: CHESS.__STORECHESSMOVE__,
             detail: {
               chessboard: this, // chessboard.record TRUE/FALSE if the move will be recorded
-              move,
               fromsquare: fromSquare.at,
               tosquare: toSquare.at,
+              move,
               fen: this.fen,
             },
           });
@@ -374,11 +375,11 @@
             }
             if (this.doingCastling) {
               if (chessPiece.isKing) {
-                this.recordMoveInDatabase({
-                  fromSquare,
-                  toSquare,
-                  move: this.doingCastling, //record castling type "O-O"  "O-O-O"
-                });
+                // this.recordMoveInDatabase({
+                //   fromSquare,
+                //   toSquare,
+                //   move: this.doingCastling, //record castling type "O-O"  "O-O-O"
+                // });
               } else {
                 // Rook in castling mode
                 this.chessMoves.pop(); // delete rook move
@@ -387,7 +388,11 @@
                 save2chessMoves(); // save castling move
                 this.lastMove.fen = savedFEN;
 
-                // fen corrigeren
+                this.recordMoveInDatabase({
+                  fromSquare,
+                  toSquare,
+                  move: this.doingCastling, //record castling type "O-O"  "O-O-O"
+                });
 
                 this.doingCastling = false;
                 this.changePlayer();

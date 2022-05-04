@@ -15,6 +15,7 @@
       // todo create shadowDOM?
       connectedCallback() {
         this.render();
+        // this.listenOnMatchID();
         setTimeout(() => {
           let match_id = localStorage.getItem("match_id");
           if (match_id) this.restartGame(match_id);
@@ -46,6 +47,52 @@
         });
         this.addListeners = () => {}; // attach listeners only once
       }
+      // ======================================================== listenOnMatchID
+      listenOnMatchID() {
+        if (this.id) {
+          console.log("666", "listenOnMatchID from match.js", this.id);
+          const listenFunc = (evt) => {
+            // listen Functie definieren
+            let { match_id, fen, move } = evt.detail;
+            if (this.id == match_id) {
+              if (this.fen != fen) {
+                let from, to;
+                // move
+                console.warn("777", move);
+                if (move[2] == "-") [from, to] = move.split("-");
+                else if (move[2] == "x") [from, to] = move.split("x");
+                else if (move == "O-O-O" && this.player == "wit") {
+                  from = "e1";
+                  to = "b1";
+                } else if ((move = "O-O" && this.player == "wit")) {
+                  from = "e1";
+                  to = "g1";
+                } else if (move == "O-O-O" && this.player == "zwart") {
+                  from = "e8";
+                  to = "b8";
+                } else if (move == "O-O" && this.player == "zwart") {
+                  from = "e8";
+                  to = "g8";
+                }
+                console.log("666", "listener", move, this.labels, from, to);
+                this.play([[from, to]]);
+              }
+            }
+          };
+          // als er al een listeners is, verwijderen
+          if (this._listening) {
+            document.removeEventListener(this._listening.id, this._listening.func);
+          }
+          // registreer deze nieuwe listener
+          this._listening = {
+            id: this.id,
+            func: listenFunc,
+          };
+          // listener toevoegen
+          document.addEventListener(this.id, listenFunc);
+        } // end if (this.id)
+      }
+
       // ================================================== createMatch
       createMatch() {
         CHESS.CRUDAPI = false; // document.location.hostname.includes("127");

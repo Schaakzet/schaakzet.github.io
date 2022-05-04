@@ -75,8 +75,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
         };
       if (fromSquare.at == CHESS.__SQUARE_WHITE_KING_START__) {
         if (toSquare.at == "c1") moveRook("a1", "d1", __LONGCASTLING__);
-        // long
-        else if (toSquare.at == "g1") moveRook("h1", "f1", __SHORTCASTLING__); //short
+        else if (toSquare.at == "g1") moveRook("h1", "f1", __SHORTCASTLING__);
       } else if (fromSquare.at == CHESS.__SQUARE_BLACK_KING_START__) {
         if (toSquare.at == "c8") moveRook("a8", "d8", __LONGCASTLING__);
         else if (toSquare.at == "g8") moveRook("h8", "f8", __SHORTCASTLING__);
