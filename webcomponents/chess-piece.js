@@ -274,7 +274,7 @@
 
           function checkCastlingInterrupt(offset, squareName) {
             if (!castlingInterrupt(playerColor, offset)) {
-              console.log("No castling interrupt", squareName);
+              // console.log("No castling interrupt", squareName);
               square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
               _potentialMovesArray.push(squareName);
             } else console.log("Castling interrupt", squareName);

@@ -91,7 +91,6 @@
             let { match_id, fen, move } = evt.detail;
             if (this.id == match_id) {
               if (this.fen != fen) {
-                console.log("666", "listener", move);
                 let from, to;
                 // move
                 if (move[2] == "-") [from, to] = move.split("-");
@@ -109,7 +108,7 @@
                   from = "e8";
                   to = "g8";
                 }
-                console.warn(evt.detail, from, to);
+                console.log("666", "listener", move, this.labels, from, to);
                 this.play([[from, to]]);
               }
             }
@@ -202,6 +201,9 @@
           //if (this.isConnected)
           this.querySelector("#squarelabels").disabled = !on;
         });
+      }
+      get labels() {
+        return this.hasAttribute("labels");
       }
       // ======================================================== <chess-board>.disabled
       // TODO use disabled to not calculate board
@@ -575,12 +577,15 @@
         return this.hasAttribute(CHESS.__WC_ATTRIBUTE_RECORD__);
       }
       // ======================================================== <chess-board>.play
-      play(moves = this._moves) {
+      play(moves = this._doingmoremoves) {
+        console.log("6661", moves);
         // chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
         // TODO: rewrite to ["e2-e4", "e7-e5", "g1-f3", "b8-c6"] so "x" take piece can be used
-        if (!this._moves) this._moves = moves;
-        if (this._moves && this._moves.length) {
-          let [from, to] = this._moves.shift();
+        if (!this._doingmoremoves) this._doingmoremoves = moves;
+        console.log("6662", moves);
+        if (this._doingmoremoves && this._doingmoremoves.length) {
+          console.log("6663", moves);
+          let [from, to] = this._doingmoremoves.shift();
           let simulateClicks = false; // TODO: make simulateClicks work
           if (simulateClicks) {
             this.getSquare(from).handleFirstClick();
@@ -591,10 +596,13 @@
           } else {
             this.movePiece(from, to);
           }
+        } else {
+          console.error(666, "No moves", this);
+          delete this._doingmoremoves;
         }
       }
       adddplaymove(from, to) {
-        this._moves.unshift([from, to]);
+        this._doingmoremoves.unshift([from, to]);
       }
       // ======================================================== <chess-board>.trymove
       trymove({
