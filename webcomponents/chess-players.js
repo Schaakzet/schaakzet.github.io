@@ -24,7 +24,10 @@
       showinput(!this.hasAttribute("name"));
       this.onkeyup = (evt) => evt.keyCode == 13 && showinput(false);
       this.onclick = (evt) => showinput(true);
-      input.onblur = (evt) => showinput(false);
+      input.onblur = (evt) => {
+        showinput(false);
+        this.dispatch({ name: "inputValue" });
+      };
     }
 
     get value() {
@@ -41,6 +44,11 @@
       <chess-player-white name="Player White"></chess-player-white>
       versus
       <chess-player-black name="Player Black"></chess-player-black>`;
+      }
+      attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue && name == CHESS.__WC_ATTRIBUTE_PLAYER__) {
+          this.name = newValue;
+        }
       }
     }
   );

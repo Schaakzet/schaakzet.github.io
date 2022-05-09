@@ -17,6 +17,9 @@
           console.log(receivedData);
           this.dispatch({ name: receivedData.match_id, detail: receivedData });
         };
+        document.addEventListener(this.localName, (e) => {
+          if (this[e.detail.value]) this[e.detail.value](e);
+        });
       }
       // ======================================================== <chess-matches>.render
       render() {
@@ -80,6 +83,20 @@
           },
         });
       } // render()
+      // ======================================================== <chess-matches>.deleteStartboards
+      deleteStartboards() {
+        let body = new FormData();
+        body.append("function", "deleteStartboards");
+        // ------------------------------------------------- store move in matchmoves
+        fetch("https://schaakzet.nl/api/rt/matches.php", {
+          method: "POST",
+          body,
+        })
+          .then((response) => response.json())
+          .then((res) => {
+            console.log(res);
+          });
+      }
       // ======================================================== <chess-matches>
     } // class
   ); // customElements.define

@@ -85,7 +85,7 @@
       // ======================================================== <chess-board>.listenOnMatchID
       listenOnMatchID() {
         if (this.id) {
-          console.log("666", "listenOnMatchID", this.id);
+          console.log("666", "listenOnMatchID <chess-board>", this.id);
           const listenFunc = (evt) => {
             // listen Functie definieren
             let { match_id, fen, move } = evt.detail;
@@ -98,13 +98,13 @@
                 else if (move[2] == "x") [from, to] = move.split("x");
                 else if (move == "O-O-O" && this.player == "wit") {
                   from = "e1";
-                  to = "b1";
+                  to = "c1";
                 } else if ((move = "O-O" && this.player == "wit")) {
                   from = "e1";
                   to = "g1";
                 } else if (move == "O-O-O" && this.player == "zwart") {
                   from = "e8";
-                  to = "b8";
+                  to = "c8";
                 } else if (move == "O-O" && this.player == "zwart") {
                   from = "e8";
                   to = "g8";
@@ -558,9 +558,9 @@
         // player
         let player = "-";
         if (this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__) == CHESS.__PLAYER_BLACK__) {
-          player = "b";
-        } else {
           player = "w";
+        } else {
+          player = "b";
         }
         fenParts.push(player);
         // castling
@@ -602,7 +602,7 @@
             this.movePiece(from, to);
           }
         } else {
-          console.error(666, "No moves", this);
+          console.error(666, "No play moves", this);
           delete this._doingmoremoves;
         }
       }
