@@ -11,10 +11,9 @@
       }
       connectedCallback() {
         this.render();
-        const evtSource = new EventSource("https://schaakzet.nl/api/rt/bp_test_2.php");
+        const evtSource = new EventSource("https://schaakzet.nl/api/rt/matchmoves_eventsource.php");
         evtSource.onmessage = (evt) => {
           const receivedData = JSON.parse(evt.data);
-          console.log(receivedData);
           this.dispatch({ name: receivedData.match_id, detail: receivedData });
         };
         document.addEventListener(this.localName, (e) => {
@@ -26,9 +25,11 @@
         CHESS.API.matches.read({
           callback: (all_matchmoves_records) => {
             const setMainBoard = (guid, fen) => {
+              console.warn("main:", guid);
               let chessboard = document.querySelector(CHESS.__WC_CHESS_BOARD__);
               chessboard.id = guid;
               chessboard.fen = fen;
+              chessboard.style.pointerEvents = "none";
             };
             let boardElements = all_matchmoves_records
               .filter((record, idx, arr) => {
@@ -74,6 +75,7 @@
                   });
                 }
               );
+            boardElements = boardElements.reverse();
             this.shadowRoot.querySelector("#boards").append(...boardElements); // Object.assign #boards
             setTimeout(() => {
               let miniBoard = boardElements[0];

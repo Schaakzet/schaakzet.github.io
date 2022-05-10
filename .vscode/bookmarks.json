@@ -99,6 +99,21 @@
 					"label": "capturePieceBy(chessPiece)"
 				}
 			]
+		},
+		{
+			"path": "webcomponents/chess-board.js",
+			"bookmarks": [
+				{
+					"line": 113,
+					"column": 20,
+					"label": "BEFORE PLAY"
+				},
+				{
+					"line": 584,
+					"column": 7,
+					"label": "PLAY"
+				}
+			]
 		}
 	]
 }

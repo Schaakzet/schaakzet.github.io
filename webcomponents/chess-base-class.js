@@ -40,7 +40,7 @@ CHESS.ChessBaseElement = class extends HTMLElement {
       cancelable,
     },
   }) {
-    console.warn("%c EventName:", "background:yellow", name, [detail]);
+    // console.warn("%c EventName:", "background:yellow", name, [detail]);
     root.dispatchEvent(
       new CustomEvent(name, {
         ...options, //

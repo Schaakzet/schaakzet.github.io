@@ -277,7 +277,7 @@
               // console.log("No castling interrupt", squareName);
               square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
               _potentialMovesArray.push(squareName);
-            } else console.log("Castling interrupt", squareName);
+            } // else console.log("Castling interrupt", squareName);
           }
 
           if (playerColor == CHESS.__PLAYER_WHITE__) {
@@ -339,7 +339,7 @@
           iterations: 1,
         }).finished; // finished promise later calls animateFinished, so we keep all animation logic within this class
       }
-      // ======================================================== <chess-piece>.animateTo
+      // ======================================================== <chess-piece>.animateFinished
       animateFinished() {
         this.style.position = this._savedposition;
       }

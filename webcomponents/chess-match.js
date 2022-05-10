@@ -64,7 +64,6 @@
         })
           .then((response) => response.text())
           .then((match_id) => {
-            log("RT API success: ", match_id);
             this.initGame(match_id);
           });
       } //createMatch
@@ -84,7 +83,7 @@
         })
           .then((response) => response.text())
           .then((match_id) => {
-            log("RT API success: ", match_id);
+            log("Update Match success: ", match_id);
           });
       }
       // ================================================== storeMove
@@ -143,20 +142,20 @@
       }
       // ================================================== initGame
       initGame(match_id) {
-        log("initGame match_id:", match_id);
-        console.todo("verify FEN is correct in Database, localStorage");
+        log(match_id);
         this.match_id = match_id;
         this.chessboard.fen = undefined; // set start FEN
         localStorage.setItem("match_id", this.match_id);
-
         // this.testGame();
       }
       // ================================================== restartGame
       restartGame() {
-        log("RESTART GAME"); //todo test
-        // localStorage.removeItem("match_id");
         this.chessboard.restart();
         this.createMatch();
+      }
+      // ================================================== myFEN
+      myFEN() {
+        this.chessboard.fen = "r3kbnr/ppp2ppp/2npbq2/4p3/4P3/2NPBQ2/PPP2PPP/R3KBNR w KQkq -";
       }
       // ================================================== undoMoveDB
       undoMoveDB() {

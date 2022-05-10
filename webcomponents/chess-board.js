@@ -41,7 +41,7 @@
             else this.fen = undefined; // use default all pieces start board
 
             window.addEventListener("resize", (e) => this.resizeCheck(e));
-            this.listenOnMatchID();
+            if (this.id !== "testboard") this.listenOnMatchID();
 
             this.initPlayerTurn();
 
@@ -85,32 +85,19 @@
       // ======================================================== <chess-board>.listenOnMatchID
       listenOnMatchID() {
         if (this.id) {
-          console.log("666", "listenOnMatchID <chess-board>", this.id);
+          // console.log("666", "listenOnMatchID <chess-board>", this.id);
           const listenFunc = (evt) => {
             // listen Functie definieren
             let { match_id, fen, move } = evt.detail;
             if (this.id == match_id) {
               if (this.fen != fen) {
-                let from, to;
-                // move
+                let movetype = move[2];
                 console.warn("777", move);
-                if (move[2] == "-") [from, to] = move.split("-");
-                else if (move[2] == "x") [from, to] = move.split("x");
-                else if (move == "O-O-O" && this.player == "wit") {
-                  from = "e1";
-                  to = "c1";
-                } else if ((move = "O-O" && this.player == "wit")) {
-                  from = "e1";
-                  to = "g1";
-                } else if (move == "O-O-O" && this.player == "zwart") {
-                  from = "e8";
-                  to = "c8";
-                } else if (move == "O-O" && this.player == "zwart") {
-                  from = "e8";
-                  to = "g8";
+                if (movetype == "-" || movetype == "x") {
+                  this.play([move.split(movetype)]);
+                } else {
+                  this.chessboard.fen = fen;
                 }
-                console.log("666", "listener", move, this.labels, from, to);
-                this.play([[from, to]]);
               }
             }
           };
@@ -133,7 +120,7 @@
       }
       set id(v) {
         if (v) {
-          console.log("666", "set id", v);
+          // console.log("666", "set id", v);
           this.setAttribute("id", v);
           this.listenOnMatchID();
         } else this.removeAttribute("id");
@@ -322,7 +309,7 @@
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
         if (isString(chessPiece)) chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
-        if (!chessPiece) console.error("Er is geen chesspiece op ", square);
+        if (!chessPiece) console.error("Er is geen chesspiece op ", square, this.match_id, this.fen);
         const /* function */ movedPiece = () => {
             let fromSquare = chessPiece.square;
             let toSquare = this.getSquare(square);
@@ -333,7 +320,6 @@
             if (this.lastMove && toSquare.at == this.enPassantPosition && chessPiece.isPawn) {
               this.lastMove.toSquare.capturePieceBy(chessPiece);
               moveType = CHESS.__MOVETYPE_CAPTURE__;
-
               console.log("We had En Passant. Clear piece.");
               this.lastMove.toSquare.clear();
             }
@@ -583,13 +569,10 @@
       }
       // ======================================================== <chess-board>.play
       play(moves = this._doingmoremoves) {
-        console.log("6661", moves);
         // chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
         // TODO: rewrite to ["e2-e4", "e7-e5", "g1-f3", "b8-c6"] so "x" take piece can be used
         if (!this._doingmoremoves) this._doingmoremoves = moves;
-        console.log("6662", moves);
         if (this._doingmoremoves && this._doingmoremoves.length) {
-          console.log("6663", moves);
           let [from, to] = this._doingmoremoves.shift();
           let simulateClicks = false; // TODO: make simulateClicks work
           if (simulateClicks) {
