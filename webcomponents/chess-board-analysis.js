@@ -63,6 +63,8 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
 
   // ======================================================== castling
   function castling() {
+    // const wasKingMove = $chessboard.lastMove.toSquare.piece.isKing;
+    console.log($chessboard.lastMove.fromSquare.at);
     reduceCastlingArray($chessboard.lastMove.fromSquare.at);
     $chessboard.doingCastling = false;
     if (lastMovedPiece.isKing) {
@@ -128,18 +130,21 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== reduceCastlingArray
   function reduceCastlingArray(lastReduceMove) {
     const cleanCastlingArray = (castlingFEN) => ($chessboard.castlingArray = $chessboard.castlingArray.filter((item) => item !== castlingFEN));
-    if (lastReduceMove == CHESS.__SQUARE_BOTTOM_LEFT__) {
-      cleanCastlingArray(CHESS.__FEN_WHITE_QUEEN__);
-    } else if (lastReduceMove == CHESS.__SQUARE_BOTTOM_RIGHT__) {
-      cleanCastlingArray(CHESS.__FEN_WHITE_KING__);
-    } else if (lastReduceMove == CHESS.__SQUARE_TOP_LEFT__) {
-      cleanCastlingArray(CHESS.__FEN_BLACK_QUEEN__);
-    } else if (lastReduceMove == CHESS.__SQUARE_TOP_RIGHT__) {
-      cleanCastlingArray(CHESS.__FEN_BLACK_KING__);
-    } else if (lastReduceMove == CHESS.__SQUARE_WHITE_KING_START__) {
-      cleanCastlingArray(CHESS.__FEN_WHITE_QUEEN__ && CHESS.__FEN_WHITE_KING__);
-    } else if (lastReduceMove == CHESS.__SQUARE_BLACK_KING_START__) {
-      cleanCastlingArray(CHESS.__FEN_BLACK_QUEEN__ && CHESS.__FEN_BLACK_KING__);
+
+    if (lastReduceMove == "e1") {
+      cleanCastlingArray("Q");
+      cleanCastlingArray("K");
+    } else if (lastReduceMove == "e8") {
+      cleanCastlingArray("q");
+      cleanCastlingArray("k");
+    } else if (lastReduceMove == "a1") {
+      cleanCastlingArray("Q");
+    } else if (lastReduceMove == "h1") {
+      cleanCastlingArray("K");
+    } else if (lastReduceMove == "a8") {
+      cleanCastlingArray("q");
+    } else if (lastReduceMove == "h8") {
+      cleanCastlingArray("k");
     }
   }
   // ======================================================== isValidGameBoard
