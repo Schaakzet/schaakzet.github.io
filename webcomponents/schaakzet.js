@@ -1,4 +1,7 @@
 !(function () {
+  let base_url = ".";
+  base_url = "https://schaakzet.github.io";
+
   let loaded = [];
   function log(...args) {
     //console.log("%c L ", "background:green;color:beige;", ...args);
@@ -6,7 +9,7 @@
   }
   const CSS_files = ["chessgame", "styles/chess-square", "styles/chess-board", "styles/chess-piece"].map((file) =>
     $createElement("link", {
-      href: `./${file}.css`,
+      href: base_url + `/${file}.css`,
       rel: "stylesheet",
     })
   );
@@ -38,7 +41,8 @@
   }) {
     let scriptElement = $createElement("script", {
       src:
-        `./webcomponents/${file}.js?` +
+        base_url +
+        `/webcomponents/${file}.js?` +
         String(new Date() / 1)
           .split("")
           .slice(-5)
