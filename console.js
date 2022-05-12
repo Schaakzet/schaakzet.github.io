@@ -1,3 +1,6 @@
+
+// TODO add linenr to output, now it lists the linenr inside console
+
 // Generic console.log overload, displaying <title> name in colors, linenumbers and everything passed to it
 console.logColor =
   ((console.LOG = console.log), // on first definition save console.log
