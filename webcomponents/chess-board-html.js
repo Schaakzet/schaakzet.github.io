@@ -58,6 +58,7 @@
     /*css*/ `chess-piece {display:inline-block}` +
     /*css*/ `chess-piece > * {width: 100%;position: relative}` +
     /*css*/ `.game_over {pointer-events: none;}` +
+    /*css*/ `.lastmove {background-color: lightblue}` +
     /*html*/ `</style>`;
 
   const styleHTML = /* function */ (id, css) => /*html*/ `<style id="${id}">${css}</style>`;

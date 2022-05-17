@@ -96,7 +96,7 @@
                 if (movetype == "-" || movetype == "x") {
                   this.play([move.split(movetype)]);
                 } else {
-                  this.chessboard.fen = fen;
+                  this.fen = fen;
                 }
               }
             }
@@ -394,11 +394,18 @@
             }
 
             this.play(); // play all moves left in the queue
+            console.log("lastMove:", this.lastMove);
+            this.chessMoves.slice(-2)[0].fromSquare.classList.remove("lastmove");
+            this.chessMoves.slice(-2)[0].toSquare.classList.remove("lastmove");
+            this.lastMove.fromSquare.classList.add("lastmove");
+            this.lastMove.toSquare.classList.add("lastmove");
+
             return chessPiece;
           }; // end movedPiece function
 
         if (animated) chessPiece.animateTo(square).then(movedPiece);
         else movedPiece();
+
         this.setMessage("");
       }
       // ======================================================== <chess-board>.initAnalysis

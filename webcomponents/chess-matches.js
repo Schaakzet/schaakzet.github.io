@@ -65,6 +65,9 @@
                             headers: CHESS.__API_HEADERS__,
                           });
                           chessboard.remove();
+                        } else if (evt.shiftKey) {
+                          localStorage.setItem("match_id", guid);
+                          window.location.href = "match.html";
                         }
                       }, // onclick
                     },

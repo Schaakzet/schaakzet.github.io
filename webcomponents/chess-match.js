@@ -17,8 +17,9 @@
         this.render();
         setTimeout(() => {
           let match_id = localStorage.getItem("match_id");
-          if (match_id) this.restartGame(match_id);
-          else this.createMatch(); // call back-end for match_id, then this.initGame(match_id)
+          if (match_id) {
+            this.restartGame(match_id);
+          } else this.createMatch(); // call back-end for match_id, then this.initGame(match_id)
           this.addListeners();
         });
       }
@@ -67,6 +68,7 @@
             this.initGame(match_id);
           });
       } //createMatch
+
       // ================================================== update matches
       updateMatch() {
         const match_id = localStorage.getItem("match_id");
@@ -86,6 +88,33 @@
             log("Update Match success: ", match_id);
           });
       }
+      // ================================================== resumeMatch
+      // Gets match_id, FEN, players and their name & color
+      resumeMatch() {
+        const match_id = localStorage.getItem("match_id");
+        console.log("MATCH ID", match_id);
+
+        let data = new FormData();
+        data.append("function", "fetch");
+        data.append("id", match_id);
+
+        fetch(CHESS.__API_MATCHES__, {
+          method: "POST",
+          body: data,
+        })
+          .then((response) => response.text())
+          .then((str) => {
+            console.log("resumeMatch with ID:", str);
+            let temp = str.split(",");
+            let fen = temp[2].replace("fen :", "").trim().replaceAll("\\", "");
+            this.chessboard.fen = fen;
+            // this.player_white = player_white;
+            // this.player_black = player_black;
+            // this.player_white_color = player_white_color;
+            // this.player_black_color = player_black_color;
+          });
+      }
+
       // ================================================== storeMove
       storeMove({
         chessboard = this.chessboard, //
@@ -151,7 +180,7 @@
       // ================================================== restartGame
       restartGame() {
         this.chessboard.restart();
-        this.createMatch();
+        this.resumeMatch();
       }
       // ================================================== myFEN
       myFEN() {
