@@ -46,14 +46,13 @@
                   fen, // VARCHAR(64)   - FEN string of the chessboard, default set by database
                   result, // VARCHAR(64)   - match result, default "" set by database
                 }) => {
-                  return CHESS.createBoardElement({
+                  let miniboard = CHESS.createBoardElement({
                     props: {
                       id: guid,
                       fen,
                       disabled: true,
                       onmouseenter: (evt) => {
-                        let chessboard = evt.target.closest("chess-board");
-                        setMainBoard(guid, fen);
+                        setMainBoard(guid, miniboard.fen);
                       },
                       onclick: (evt) => {
                         if (evt.ctrlKey) {
@@ -66,7 +65,6 @@
                         } else if (evt.shiftKey) {
                           localStorage.setItem("match_id", guid);
                           window.open("match.html", "_blank");
-                          // window.location.href = "match.html";
                         }
                       }, // onclick
                     },
@@ -75,6 +73,7 @@
                       ["player_black", player_black],
                     ],
                   });
+                  return miniboard;
                 }
               );
             boardElements = boardElements.reverse();
