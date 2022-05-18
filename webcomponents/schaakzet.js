@@ -1,6 +1,6 @@
 !(function () {
   let base_url = ".";
-  if (location.hostname.includes("github")) base_url = "https://schaakzet.github.io";
+  if (location.hostname.includes("github") || location.hostname.includes("schaakzet")) base_url = "https://schaakzet.github.io";
 
   let loaded = [];
   function log(...args) {

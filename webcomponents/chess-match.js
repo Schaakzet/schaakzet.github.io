@@ -124,13 +124,13 @@
         tosquare = "e4",
         fen = chessboard.fen,
       }) {
-        log("storeMove", move);
+        log("storeMove", move, chessboard.id);
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
         // ------------------------------------------------- FormData
         let body = new FormData();
         body.append("function", "insert");
-        body.append("id", this.match_id);
+        body.append("id", chessboard.id);
         body.append("data[move]", move);
         body.append("data[fromsquare]", fromsquare);
         body.append("data[tosquare]", tosquare);
@@ -173,6 +173,7 @@
       // ================================================== initGame
       initGame(match_id) {
         log(match_id);
+        this.match_id = match_id;
         this.chessboard.id = match_id;
         this.chessboard.fen = undefined; // set start FEN
         localStorage.setItem("match_id", this.match_id);

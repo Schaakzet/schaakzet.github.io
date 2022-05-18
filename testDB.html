@@ -1,38 +1,36 @@
 <html>
+  <head>
+    <script src="./webcomponents/schaakzet.js"></script>
+  </head>
 
-<head>
-  <script src="./webcomponents/schaakzet.js"></script>
-</head>
-
-<body>
-  <chess-match></chess-match>
-  <header>
-    <h1-chess></h1-chess>
-    <p>Play chessmoves and record each move in database table "matchmoves"</p>
-    <p>CTRL+click to delete a mini board from the database</p>
-  </header>
-  <main>
-    <chess-game>
-      <chess-board id="matchboard" record fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white" labels>
-      </chess-board>
+  <body>
+    <chess-match></chess-match>
+    <header>
+      <h1-chess></h1-chess>
+      <p>Play chessmoves and record each move in database table "matchmoves"</p>
+      <p>CTRL+click to delete a mini board from the database</p>
+    </header>
+    <main>
+      <chess-board id="matchboard" record fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" player="white" labels> </chess-board>
       <div>
         <b>Games in database:</b>
-        <hr>
+        <hr />
         <chess-matches></chess-matches>
       </div>
-    </chess-game>
-    <div id="message"></div>
-  </main>
-  <footer>
-
-  </footer>
-  <script>
-    // make sure our dev code executes after all chess boards are 100% created
-    window.addEventListener("load", () => {
-      let chessboard = document.querySelector("chess-board");
-      chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
-    });
-  </script>
-</body>
-
+      <div id="message"></div>
+    </main>
+    <footer></footer>
+    <script>
+      // make sure our dev code executes after all chess boards are 100% created
+      window.addEventListener("load", () => {
+        let chessboard = document.querySelector("chess-board");
+        chessboard.play([
+          ["e2", "e4"],
+          ["e7", "e5"],
+          ["g1", "f3"],
+          ["b8", "c6"],
+        ]);
+      });
+    </script>
+  </body>
 </html>
