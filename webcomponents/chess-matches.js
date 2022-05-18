@@ -14,11 +14,9 @@
         const evtSource = new EventSource("https://schaakzet.nl/api/rt/matchmoves_eventsource.php");
         evtSource.onmessage = (evt) => {
           const receivedData = JSON.parse(evt.data);
+          console.error("RECEIVED", receivedData);
           this.dispatch({ name: receivedData.match_id, detail: receivedData });
         };
-        document.addEventListener(this.localName, (e) => {
-          if (this[e.detail.value]) this[e.detail.value](e);
-        });
       }
       // ======================================================== <chess-matches>.render
       render() {
@@ -67,7 +65,8 @@
                           chessboard.remove();
                         } else if (evt.shiftKey) {
                           localStorage.setItem("match_id", guid);
-                          window.location.href = "match.html";
+                          window.open("match.html", "_blank");
+                          // window.location.href = "match.html";
                         }
                       }, // onclick
                     },

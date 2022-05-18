@@ -7,7 +7,7 @@ customElements.define(
 a|index.html|schaakzet
 |Play:
 button|chess-match:updateMatch|save players
-button|chess-match:restartGame|new game
+button|chess-match:resumeMatch|new game
 button|chess-match:myFEN|My FEN
 button|chess-match:undoMove|undo last move
 button|chess-match:remise|remise

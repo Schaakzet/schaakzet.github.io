@@ -209,7 +209,6 @@
       // ======================================================== <chess-board>.setMessage
       setMessage(msg) {
         if (this.id !== "testboard") {
-          console.warn("setMessage", msg);
           document.getElementById("message").innerText = msg;
         }
       }
@@ -394,7 +393,6 @@
             }
 
             this.play(); // play all moves left in the queue
-            console.log("lastMove:", this.lastMove);
             this.chessMoves.slice(-2)[0].fromSquare.classList.remove("lastmove");
             this.chessMoves.slice(-2)[0].toSquare.classList.remove("lastmove");
             this.lastMove.fromSquare.classList.add("lastmove");
@@ -592,7 +590,7 @@
             this.movePiece(from, to);
           }
         } else {
-          console.error(666, "No play moves", this);
+          // console.error(666, "No play moves", this);
           delete this._doingmoremoves;
         }
       }
@@ -626,7 +624,7 @@
         if (fenElement) fenElement.value = this.fen;
       }
       saveFENinLocalStorage() {
-        console.log("localStorage", this.fen);
+        // console.log("localStorage", this.fen);
         localStorage.setItem(this.localStorageGameID, this.fen);
       }
     } // class ChessBoard

@@ -25,7 +25,7 @@
           this.piece.disableCheckMakingMoves({
             showboardsIn: document.getElementById("TEST4CHECKBOARDS") || document.body, //! REQUIRED FOR NOW
           });
-          console.log("Zetten: ", this.piece.pieceName, this.chessboard.pieceClicked.moves);
+          // console.log("Zetten: ", this.piece.pieceName, this.chessboard.pieceClicked.moves);
         }
       }
       // ======================================================== <chess-square>.handleSecondClick

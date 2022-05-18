@@ -15,7 +15,6 @@
         this.style = `display:grid;grid:1fr/1fr 1fr;gap:1em`;
       }
       processMoves(detail) {
-        console.log("processMoves", detail);
         let nr = detail.chessboard.chessMoves.length;
         this.append(
           Object.assign(document.createElement("div"), {

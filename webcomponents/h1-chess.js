@@ -17,7 +17,6 @@ customElements.define(
     a|https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation|FEN wiki
     |Database:
     button|chess-matches:deleteStartboards|Delete Startboards
-    a|https://schaakzet.nl/api/crud/index.php/records/matchmoves|matchmoves
     <hr>
 </create-html>`;
     }

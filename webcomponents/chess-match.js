@@ -18,7 +18,7 @@
         setTimeout(() => {
           let match_id = localStorage.getItem("match_id");
           if (match_id) {
-            this.restartGame(match_id);
+            this.resumeMatch(match_id);
           } else this.createMatch(); // call back-end for match_id, then this.initGame(match_id)
           this.addListeners();
         });
@@ -59,11 +59,10 @@
         data.append("data[player_black]", "Init Player 2");
 
         fetch(CHESS.__API_MATCHES__, {
-          // Old. Naar Bart. https://schaakzet.nl/api/rt/matches.php
           method: "POST",
           body: data,
         })
-          .then((response) => response.text())
+          .then((response) => response.json())
           .then((match_id) => {
             this.initGame(match_id);
           });
@@ -90,24 +89,26 @@
       }
       // ================================================== resumeMatch
       // Gets match_id, FEN, players and their name & color
-      resumeMatch() {
-        const match_id = localStorage.getItem("match_id");
-        console.log("MATCH ID", match_id);
+      resumeMatch(match_id = localStorage.getItem("match_id")) {
+        this.chessboard.restart();
+        this.chessboard.id = match_id;
 
         let data = new FormData();
-        data.append("function", "fetch");
         data.append("id", match_id);
+        data.append("function", "fetch");
+
+        console.error("resumeMatch MATCH ID", match_id);
 
         fetch(CHESS.__API_MATCHES__, {
           method: "POST",
           body: data,
         })
-          .then((response) => response.text())
-          .then((str) => {
-            console.log("resumeMatch with ID:", str);
-            let temp = str.split(",");
-            let fen = temp[2].replace("fen :", "").trim().replaceAll("\\", "");
-            this.chessboard.fen = fen;
+          .then((response) => response.json())
+          .then((obj) => {
+            console.log("resumeMatch with FEN:", obj.fen);
+            // let temp = str.split(",");
+            // let fen = temp[2].replace("fen :", "").trim().replaceAll("\\", "");
+            this.chessboard.fen = obj.fen;
             // this.player_white = player_white;
             // this.player_black = player_black;
             // this.player_white_color = player_white_color;
@@ -172,15 +173,10 @@
       // ================================================== initGame
       initGame(match_id) {
         log(match_id);
-        this.match_id = match_id;
+        this.chessboard.id = match_id;
         this.chessboard.fen = undefined; // set start FEN
         localStorage.setItem("match_id", this.match_id);
         // this.testGame();
-      }
-      // ================================================== restartGame
-      restartGame() {
-        this.chessboard.restart();
-        this.resumeMatch();
       }
       // ================================================== myFEN
       myFEN() {
