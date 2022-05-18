@@ -31,12 +31,22 @@
       }
       // ================================================== render
       render() {
-        // todo render the HTML from match.html
-        const style = Object.assign(document.createElement("style"), {
-          innerHTML: CSS_Match,
-        });
-
-        this.append(style);
+        this.append(
+          Object.assign(document.createElement("style"), {
+            innerHTML: CSS_Match,
+          }),
+          Object.assign(document.createElement("div"), {
+            innerHTML:
+              `<h2>Match <chess-players></chess-players></h2>` +
+              `<chess-match-buttons></chess-match-buttons>` +
+              `<chess-board id="matchboard" fen="" record labels></chess-board>` +
+              `<div>` +
+              `<div id="message"></div>` +
+              `<chess-show-captured-pieces></chess-show-captured-pieces>` +
+              `<chess-game-progress></chess-game-progress>` +
+              `</div>`,
+          })
+        );
       }
       // ================================================== addListeners
       addListeners() {
