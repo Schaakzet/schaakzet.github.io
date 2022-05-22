@@ -144,14 +144,16 @@
       // ======================================================== <chess-square>.highlight
       highlight(state = false) {
         if (state) {
+          const undefined_state = "2px dashed hotpink"; 
           this.setAttribute("state", state);
+          // pick a state string from definedstates "x" , "p" , "-"
           this.style.border =
             {
               [CHESS.__ATTACK_PIECE__]: "5px solid red",
               [CHESS.__EMPTY_SQUARE__]: "5px solid green",
-              // [CHESS.__PROTECT_PIECE__]: "5px solid orange",
+              [CHESS.__PROTECT_PIECE__]: "5px solid orange", // todo: implement
               [CHESS.__MOVETYPE_ILLEGAL__]: "2px dashed red",
-            }[state] || "2px dashed hotpink";
+            }[state] || undefined_state;
         } else {
           this.style.border = "";
           this.removeAttribute("state");
@@ -185,10 +187,10 @@
         if (piece) {
           if (piece.isWhite) {
             chessboard.capturedWhitePieces.push(pieceName);
-            console.log("Captured White Pieces:", chessboard.capturedWhitePieces);
+            if (chessboard.record) console.log("Captured White Pieces:", chessboard.capturedWhitePieces);
           } else {
             chessboard.capturedBlackPieces.push(pieceName);
-            console.log("Captured Black Pieces:", chessboard.capturedBlackPieces);
+            if (chessboard.record) console.log("Captured Black Pieces:", chessboard.capturedBlackPieces);
           }
           // this.clear();
           // this.append(chessPiece); // put piece in new location

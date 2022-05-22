@@ -75,7 +75,7 @@
           } else {
             // landscape screen
             newWidth = bottomViewport - marginForTextMessage;
-            console.warn("resize", top, bottom, newHeight, bottomViewport);
+            //console.warn("resize", top, bottom, newHeight, bottomViewport);
           }
           // make sure board doesn't drop below bottom of the screen
           newHeight = newWidth;

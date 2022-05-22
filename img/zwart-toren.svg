@@ -1,11 +1,11 @@
-<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900'>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='900' height='900' viewBox="0 0 900 900">
     <defs>
         <linearGradient id='a'>
-            <stop offset='50%' stop-color='%23111' />
-            <stop offset='100%' stop-color='%23888' />
+            <stop offset='50%' stop-color='#111' />
+            <stop offset='100%' stop-color='#888' />
         </linearGradient>
     </defs>
-    <g stroke='%23666' stroke-width='16' stroke-linecap='round' stroke-linejoin='round' fill='url(%23a)'
+    <g stroke='#666' stroke-width='16' stroke-linecap='round' stroke-linejoin='round' fill='url(#a)'
         transform='translate(20,0)'>
         <path
             d='M200 323s4-117 18-156c30-6 89-9 126-4 1 24-5 74-1 97 33-2 101 2 144-2 1-28-7-68 1-99 27-2 89-4 118 8-4 40 0 95 0 95l76 2-11 60c-95 36-412 30-471-1z' />
@@ -14,7 +14,7 @@
         <path d='M253 311c-4 45-5 357-4 394 55-4 312-5 368 0-3-70-2-393-2-393' />
         <path
             d='M291 635c40-3 124-6 216-3m-217-62c51-5 100-6 171-6m-170-59c72-5 74-5 152-6m-152-58c36-3 58-5 102-4m-58 21v24m55 39l1 25m-56 40v24m117-26v26m-62 42l1 27m-99-296c28-3 42-4 66-3'
-            stroke='%23888' />
+            stroke='#888' />
         <path
             d='M132 161l14 96c32 22 50 30 53 67 97-17 387-13 475 0 6-34 16-39 63-68 6-44 11-66 11-92-14-3-115-34-128-29-4 26 2 49-4 73-38 2-71 1-111-9 0-34 0-52 2-77-17-6-115-7-134-1-3 32 1 49-2 78-33 9-65 7-105 9-4-34 2-46 2-70-17-4-121 18-136 23z' />
         <path d='M189 262c148-14 368-15 496 4' fill='none' />

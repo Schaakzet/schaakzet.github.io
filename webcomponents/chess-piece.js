@@ -1,6 +1,7 @@
 // IIFE - Immediatly Invoked Function Expression, save from creating Global variables
 !(function () {
-  const HTML_ImageChessPiece = (name) => `<img src="https://schaakzet.github.io/img/${name}.svg">`;
+  // const HTML_ImageChessPiece = (name) => `<img src="https://schaakzet.github.io/img/${name}.svg">`;
+  const HTML_ImageChessPiece = (name) => `<img src="./img/${name}.svg">`;
 
   // ********************************************************** <chess-piece is="wit-paard" at="D5"> Web Component
   customElements.define(
@@ -13,7 +14,11 @@
       // ======================================================== <chess-piece>.attributeChangedCallback
       attributeChangedCallback(name, oldValue, newValue) {
         // if is attribute changed, render new image
-        this.innerHTML = HTML_ImageChessPiece(newValue);
+        //! use setTimeout to make sure chess-board has rendered, because attributeChangedCallback is called before render
+        setTimeout(() => {
+          this.innerHTML = HTML_ImageChessPiece(newValue);
+          //console.log(this.chessboard)
+        }, 0);
       }
       // ======================================================== <chess-piece>.movePiece
       movePieceTo(at, animated = true) {

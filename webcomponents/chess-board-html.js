@@ -67,9 +67,11 @@
     /*html*/ `</style>` +
     //! attack and defend shadows on pieces:
     /*html*/ `<style id="config_showattackdefend">` +
-    /*css*/ `chess-square img{opacity:.8}` +
-    /*css*/ `chess-square[defendedby] img{filter: drop-shadow(-10px 0px 0px forestgreen);}` +
-    /*css*/ `chess-square[attackedby] img{filter: drop-shadow(10px 0px 0px red);}` +
+    /*css*/ `chess-square img{opacity:.9}` +
+    //! we could change -10 and 10 to indicate how MANY attackers/defenders there are
+    /*css*/ `chess-square[defendedby] {--defendshadow: drop-shadow(-10px 0px 0px rgba(0,128,0,.5));}` +
+    /*css*/ `chess-square[attackedby] {--attackshadow: drop-shadow(10px 0px 0px rgba(255,0,0,.5));}` +
+    /*css*/ `chess-square img{filter: var(--defendshadow) var(--attackshadow)}` +
     /*html*/ `</style>`;
 
   const styleHTML = /* function */ (id, css) => /*html*/ `<style id="${id}">${css}</style>`;

@@ -160,7 +160,8 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       // make sure there are pieces on the board
       const _kingSquare = kingSquare(color);
       if (_kingSquare && _kingSquare.isAttacked) {
-        log(color, "koning staat schaak door", _kingSquare.attackers);
+        //! don't display message for miniboard
+        if ($chessboard.record) log(color, "koning staat schaak door", _kingSquare.attackers);
         $chessboard.setMessage("Je staat schaak.");
         return true;
       }
