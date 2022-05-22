@@ -46,7 +46,10 @@
             this.initPlayerTurn();
 
             CHESS.analysis(this, "start");
+
+            //! chess-board is display:none, after resize make it display:block
             this.resizeCheck();
+            setTimeout(() => (this.style.display = "block"), 100);
           });
         });
       }
@@ -54,23 +57,44 @@
       resizeCheck(e) {
         setTimeout(() => {
           if (this.disabled) return; // do not resize mini boards
+
           let { top, bottom, height } = this.getBoundingClientRect();
           let bottomViewport = window.visualViewport.height;
+          let widthViewport = window.visualViewport.width;
           let heightAdded = bottomViewport - bottom;
           // console.todo("<chess-board>.resizeCheck, set board to fill container. bottom:", bottom, "vp:", bottomViewport, "height:", height, heightAdded);
           //if (bottom > window.visualViewport.height)  = window.visualViewport.height;
-          let newHeight = ~~(height + heightAdded) + "px";
-          let newWidth = newHeight;
+          let newWidth = ~~(height + heightAdded);
+          let newHeight = newWidth;
 
-          top = top + 50;
+          let marginForTextMessage = 50;
 
-          if (window.visualViewport.width < window.visualViewport.height) {
-            newWidth = window.visualViewport.width - top;
+          if (widthViewport < bottomViewport) {
+            // portrait screen
+            newWidth = widthViewport - marginForTextMessage;
           } else {
-            newWidth = window.visualViewport.height - top;
+            // landscape screen
+            newWidth = bottomViewport - marginForTextMessage;
+            console.warn("resize", top, bottom, newHeight, bottomViewport);
+          }
+          // make sure board doesn't drop below bottom of the screen
+          newHeight = newWidth;
+          while (top + newHeight > bottomViewport) {
+            newWidth--;
+            newHeight--;
           }
 
-          this.style.setProperty("--resizewidth", newWidth + "px");
+          this.style.setProperty("--chess_board_resized_width", newWidth + "px");
+          this.style.setProperty("--chess_piece_resized_width", newWidth / 8 + "px");
+
+          //! logic error here
+          // the header of the page is loaded AFTER the board is resized,
+          // so the board tries to take full width/height of the page.
+          // and after that the header is displayed
+          setTimeout(() => {
+            // scroll chess-board into view, bottom at the bottom of the screen
+            (this.parentNode || this).scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+          }, 500);
         }, 100);
       }
       // ======================================================== <chess-board>.attributeChangedCallback
