@@ -20,7 +20,7 @@
     squareStateCSS(CHESS.__PLAYER_WHITE__) +
     squareStateCSS(CHESS.__PLAYER_BLACK__) +
     /*css*/ `chess-board {
-      --width: var(--resizewidth, 100%);
+      --width: var(--chess_board_resized_width, 100%);
       aspect-ratio: 1 / 1;
       width: var(--width);
       height: var(--width);
@@ -28,6 +28,7 @@
       position: relative;
       xborder: calc(var(--width) / 40) solid gray;
     }` +
+    /*css*/ `chess-board{display:none}` +
     /*css*/ `chess-board:after{content:"";display:block;padding-bottom:100%}` + // make sure chessboard displays as a square
     /* position multiple layers on top of eachother */
     /* width/height is 100% of <chess-board> */
@@ -51,14 +52,24 @@
     /*html*/ `</style>` +
     /*html*/ `<style>` +
     /*css*/ `#chessboard_pieces{pointer-events:none}` +
-    // /*css*/ `.chessboard_layer:empty {display: none}` + //hide empty layers
+    /*css*/ `.chessboard_layer:empty {display: none}` + //hide empty layers
     /*css*/ `chess-square {overflow:hidden;max-height:100%}` /* keep the square square no matter what is put inside it */ +
     /*css*/ `.black_square {background-color: darkgray}` +
     /*css*/ `.white_square {background-color: white}` +
-    /*css*/ `chess-piece {display:inline-block}` +
-    /*css*/ `chess-piece > * {width: 100%;position: relative}` +
+    //! chesspiece width size is calculated in board.resizeCheck
+    /*css*/ `chess-piece {display:contents;width:var(--chess_piece_resized_width,100%)}` +
+    /*css*/ `chess-piece > * {width:100%;position: relative}` +
+    //! rotate board to black perspective
+    /*css*/ `chess-board[rotated],chess-board[rotated] chess-square {transform:rotate(180deg)}` +
+    // game results
     /*css*/ `.game_over {pointer-events: none;}` +
     /*css*/ `.lastmove {background-color: lightblue}` +
+    /*html*/ `</style>` +
+    //! attack and defend shadows on pieces:
+    /*html*/ `<style id="config_showattackdefend">` +
+    /*css*/ `chess-square img{opacity:.8}` +
+    /*css*/ `chess-square[defendedby] img{filter: drop-shadow(-10px 0px 0px forestgreen);}` +
+    /*css*/ `chess-square[attackedby] img{filter: drop-shadow(10px 0px 0px red);}` +
     /*html*/ `</style>`;
 
   const styleHTML = /* function */ (id, css) => /*html*/ `<style id="${id}">${css}</style>`;
