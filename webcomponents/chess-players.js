@@ -1,6 +1,12 @@
 !(function () {
   class ChessPlayer extends CHESS.ChessBaseElement {
     // Has properties player_id, player_nickname and player_color.
+    constructor(id, name) {
+      super();
+      this.player_id = id;
+      this.player_nickname = name;
+    }
+
     connectedCallback() {
       let placeholder = this.localName;
       this.innerHTML = /*html*/ `<label>${this.getAttribute("label") || ""}<input type="text" placeholder="${placeholder}" value="${
