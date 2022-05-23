@@ -1,7 +1,7 @@
 // IIFE - Immediatly Invoked Function Expression, save from creating Global variables
 !(function () {
   // const HTML_ImageChessPiece = (name) => `<img src="https://schaakzet.github.io/img/${name}.png">`;
-  const HTML_ImageChessPiece = (name) => `<img src="./img/${name}.svg">`;
+  const HTML_ImageChessPiece = (name) => `<img src="https://schaakzet.github.io/img/${name}.svg">`;
 
   // ********************************************************** <chess-piece is="wit-paard" at="D5"> Web Component
   customElements.define(
