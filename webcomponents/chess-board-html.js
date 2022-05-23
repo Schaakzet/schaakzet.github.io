@@ -66,7 +66,7 @@
     /*css*/ `.lastmove {background-color: lightblue}` +
     /*html*/ `</style>` +
     //! attack and defend shadows on pieces:
-    /*html*/ `<style id="config_showattackdefend">` +
+    /*html*/ `<style id="config_showattackdefend" onload="this.disabled = true">` +
     /*css*/ `chess-square img{opacity:.9}` +
     //! we could change -10 and 10 to indicate how MANY attackers/defenders there are
     /*css*/ `chess-square[defendedby] {--defendshadow: drop-shadow(-10px 0px 0px rgba(0,128,0,.5));}` +

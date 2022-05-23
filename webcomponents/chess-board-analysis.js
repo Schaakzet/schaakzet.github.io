@@ -9,7 +9,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
 
   if (type == "checkcheck") {
     analyzeWholeBoard();
-    return isInCheck(CHESS.otherPlayer($chessboard.player));
+    return isInCheck($chessboard.player);
   }
 
   let lastMovedPiece;
@@ -161,7 +161,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       const _kingSquare = kingSquare(color);
       if (_kingSquare && _kingSquare.isAttacked) {
         //! don't display message for miniboard
-        if ($chessboard.record) log(color, "koning staat schaak door", _kingSquare.attackers);
+        log(color, "koning staat schaak door", _kingSquare.attackers);
         $chessboard.setMessage("Je staat schaak.");
         return true;
       }

@@ -29,7 +29,6 @@
       }
 
       processMoves(detail) {
-        console.warn("processMoves", detail);
         let { capturedWhitePieces, capturedBlackPieces } = detail.chessboard;
         this.clear();
 

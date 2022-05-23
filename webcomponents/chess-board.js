@@ -628,7 +628,10 @@
         matchboard = this, // the <chess-board> the user is playing
       }) {
         this.getPiece(from).movePieceTo(to, false); // move piece without animation
-        if (CHESS.analysis(this, "checkcheck")) matchboard.markIllegalMove(to);
+        if (from == "d2") console.warn("trymove happens", from, to, this);
+        if (CHESS.analysis(this, "checkcheck")) {
+          matchboard.markIllegalMove(to);
+        }
         //this.fen = savedfen;
       }
       // ======================================================== <chess-board>.markIllegalMove

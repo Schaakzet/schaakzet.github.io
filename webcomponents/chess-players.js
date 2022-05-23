@@ -45,6 +45,7 @@
       versus
       <chess-player-black name="Player Black"></chess-player-black>`;
       }
+
       attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue && name == CHESS.__WC_ATTRIBUTE_PLAYER__) {
           this.name = newValue;
