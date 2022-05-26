@@ -28,7 +28,7 @@
       position: relative;
       xborder: calc(var(--width) / 40) solid gray;
     }` +
-    /*css*/ `chess-board{display:none}` +
+    /*css*/ `chess-board{display:none;position:relative}` +
     /*css*/ `chess-board:after{content:"";display:block;padding-bottom:100%}` + // make sure chessboard displays as a square
     /* position multiple layers on top of eachother */
     /* width/height is 100% of <chess-board> */
@@ -65,8 +65,16 @@
     /*css*/ `.game_over {pointer-events: none;}` +
     /*css*/ `.lastmove {background-color: lightblue}` +
     /*html*/ `</style>` +
+    //
+    //display GUID on every marked <chess-board debug>
+    /*html*/ `<style id="config_debuginformation" onload="this.disabled=false">` +
+    /*css*/ `chess-board[debug]::before{content:attr(id); position:absolute; top:0; left:0; z-index:9999; color:red; font-size:12px;}` +
+    /*css*/ `chess-board[setfen*=" b "]::after{content:attr(player); position:absolute; top:50px; left:0; z-index:9999; color:red; font-size:12px;}` +
+    /*css*/ `chess-board[setfen*=" w "]::after{content:attr(player); position:absolute; bottom:50px; left:0; z-index:9999; color:red; font-size:12px;}` +
+    /*html*/ `</style>` +
+    //
     //! attack and defend shadows on pieces:
-    /*html*/ `<style id="config_showattackdefend" onload="this.disabled = true">` +
+    /*html*/ `<style id="config_showattackdefend" onload="this.disabled=true">` +
     /*css*/ `chess-square img{opacity:.9}` +
     //! we could change -10 and 10 to indicate how MANY attackers/defenders there are
     /*css*/ `chess-square[defendedby] {--defendshadow: drop-shadow(-10px 0px 0px rgba(0,128,0,.5));}` +

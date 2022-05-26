@@ -7,7 +7,7 @@
     //console.log("%c L ", "background:green;color:beige;", ...args);
     loaded.push([...args]);
   }
-  const CSS_files = ["chessgame", "styles/chess-square", "styles/chess-board", "styles/chess-piece"].map((file) =>
+  const CSS_files = ["styles/chess-dashboard", "styles/chess-square", "styles/chess-board", "styles/chess-piece"].map((file) =>
     $createElement("link", {
       href: base_url + `/${file}.css`,
       rel: "stylesheet",
@@ -16,6 +16,7 @@
   loadScriptsWithDependencyOrder([
     "app-base-functions", // generic functions
     "chess-base-constants", // required
+    "chess-base-api", // required for database API
     "chess-base-class", // required baseclass
     "chess-base-class-components", // required baseclass for <piece> <square> <board>
     "chess-board-analysis", // optional analysis
@@ -74,7 +75,7 @@
         ["chess-api-matches"],
         ["h1-chess"],
         ["chess-game-progress", "chess-show-captured-pieces"],
-        ["chess-match-board", "chess-match", "chess-match-buttons", "chess-matches", "chess-players"], // Chess Components
+        ["chess-match", "chess-match-buttons", "chess-matches", "chess-players"], // Chess Components
       ]);
 
       console.groupCollapsed(`%c Loaded ${loaded.length} scripts `, "background:green;color:gold");

@@ -1,19 +1,22 @@
 <html>
-  <head>
-    <script src="./webcomponents/schaakzet.js"></script>
-  </head>
 
-  <body>
-    <header>
-      <h1-chess></h1-chess>
-      <h2>Games in the database table "matchmoves"</h2>
-      <p>Hover over the boards to show current FEN. <b>CTRL+click</b> a mini-board to PERMANENTLY delete it</p>
-    </header>
-    <main>
-      <chess-board labels></chess-board>
+<head>
+  <script src="./webcomponents/schaakzet.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1-chess></h1-chess>
+    <h2>Games in the database table "matchmoves"</h2>
+    <p>Hover over the boards to show current FEN. <b>CTRL+click</b> a mini-board to PERMANENTLY delete it</p>
+  </header>
+  <main>
+    <chess-dashboard>
+      <chess-board labels debug></chess-board>
       <chess-matches></chess-matches>
-      <div id="message"></div>
-    </main>
-    <footer></footer>
-  </body>
+    </chess-dashboard>
+  </main>
+  <footer></footer>
+</body>
+
 </html>

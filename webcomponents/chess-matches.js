@@ -11,25 +11,27 @@
       }
       connectedCallback() {
         this.render();
-        const evtSource = new EventSource("https://schaakzet.nl/api/rt/matchmoves_eventsource.php");
-        evtSource.onmessage = (evt) => {
-          const receivedData = JSON.parse(evt.data);
-          console.error("RECEIVED", receivedData);
-          this.dispatch({ name: receivedData.match_id, detail: receivedData });
-        };
+        this.listen2matchmoves();
       }
       // ======================================================== <chess-matches>.render
       render() {
+        setTimeout(() => {
+          this.read_matches();
+        });
+      }
+      // ======================================================== <chess-matches>.read_matches
+      read_matches() {
         CHESS.API.matches.read({
-          callback: (all_matchmoves_records) => {
+          callback: (matches) => {
             const setMainBoard = (guid, fen) => {
-              console.warn("main:", guid);
               let chessboard = document.querySelector(CHESS.__WC_CHESS_BOARD__);
               chessboard.id = guid;
               chessboard.fen = fen;
               chessboard.style.pointerEvents = "none";
             };
-            let boardElements = all_matchmoves_records
+            // ------------------------------------------------- process all database boards
+            console.log(matches.length, "matches read");
+            let boardElements = matches
               .filter((record, idx, arr) => {
                 return idx;
               }) // record.guid !== null)
@@ -46,22 +48,21 @@
                   fen, // VARCHAR(64)   - FEN string of the chessboard, default set by database
                   result, // VARCHAR(64)   - match result, default "" set by database
                 }) => {
+                  // ------------------------------------------------- create miniboard
+                  // set miniboard variable, so it can be use inside its code
                   let miniboard = CHESS.createBoardElement({
                     props: {
                       id: guid,
                       fen,
                       disabled: true,
                       onmouseenter: (evt) => {
+                        console.log(miniboard.fen);
                         setMainBoard(guid, miniboard.fen);
                       },
                       onclick: (evt) => {
                         if (evt.ctrlKey) {
-                          let chessboard = evt.target.closest("chess-board");
-                          fetch(CHESS.__API_SCHAAKZET__ + `delete&matchid=` + guid, {
-                            method: "GET",
-                            headers: CHESS.__API_HEADERS__,
-                          });
-                          chessboard.remove();
+                          miniboard.remove();
+                          window.CHESS.deleteMatchByGUID(guid);
                         } else if (evt.shiftKey) {
                           localStorage.setItem("match_id", guid);
                           window.open("match.html", "_blank");
@@ -73,32 +74,30 @@
                       ["player_black", player_black],
                     ],
                   });
-                  return miniboard;
+                  return miniboard; // to boardElements Array
                 }
               );
+            // ------------------------------------------------- display all miniboards
             boardElements = boardElements.reverse();
-            this.shadowRoot.querySelector("#boards").append(...boardElements); // Object.assign #boards
-            setTimeout(() => {
-              let miniBoard = boardElements[0];
-              console.error(miniBoard.fen, miniBoard.id);
-              setMainBoard(miniBoard.id, miniBoard.fen);
-            }, 0);
+            this.shadowRoot.querySelector("#boards").replaceChildren(...boardElements);
+
+            // ------------------------------------------------- display newest miniboard on mainboard
+            if (boardElements.length) {
+              setTimeout(() => {
+                let { id, fen } = boardElements[0];
+                if (id) setMainBoard(id, fen);
+              }, 100);
+            }
           },
         });
       } // render()
       // ======================================================== <chess-matches>.deleteStartboards
       deleteStartboards() {
-        let body = new FormData();
-        body.append("function", "deleteStartboards");
-        // ------------------------------------------------- store move in matchmoves
-        fetch("https://schaakzet.nl/api/rt/matches.php", {
-          method: "POST",
-          body,
-        })
-          .then((response) => response.json())
-          .then((res) => {
-            console.log(res);
-          });
+        CHESS.deleteStartboards({
+          callback: (result) => {
+            console.log("All startposition boards removed", result);
+          },
+        });
       }
       // ======================================================== <chess-matches>
     } // class

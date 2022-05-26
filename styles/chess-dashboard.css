@@ -3,10 +3,16 @@ body {
   font: 16px Arial;
 }
 
-chess-game {
+chess-dashboard {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
   gap: 1em;
+}
+chess-matches{
+  background:pink;
+  overflow: scroll;
+  max-height:90vh;
 }
 
 schaakzet-teams > div {

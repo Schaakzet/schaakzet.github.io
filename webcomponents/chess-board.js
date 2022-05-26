@@ -528,6 +528,7 @@
           // when the constructor runs on document.createElement, the squares are not set yet.
           this._savedfen = fenString;
         }
+        this.setAttribute("setfen", fenString); // not fen because attributeChangedCallback runs again and again and aigan
         this.classList.remove("game_over");
 
         // only analyze the board when there are squares on the board.

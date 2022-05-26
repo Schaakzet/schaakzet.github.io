@@ -153,17 +153,7 @@ Object.assign(CHESS, {
   __PIECE_NAMES__: [CHESS.__PIECE_ROOK__, CHESS.__PIECE_KNIGHT__, CHESS.__PIECE_BISHOP__, CHESS.__PIECE_QUEEN__, CHESS.__PIECE_KING__, CHESS.__PIECE_PAWN__],
   __QUEENMOVES__: [...CHESS.__BISHOPMOVES__, ...CHESS.__ROOKMOVES__],
 });
-Object.assign(CHESS, {
-  __API_RECORDS__: "https://schaakzet.nl/api/crud/index.php/records/",
-  __API_SCHAAKZET__: "https://schaakzet.nl/api/rt/index.php/?action=",
-  __API_MATCHES__: "https://schaakzet.nl/api/rt/matches.php",
-  __API_MATCHMOVES__: "https://schaakzet.nl/api/rt/matchmoves.php",
-  __API_TABLE_MATCHMOVES__: "matchmoves",
-  __API_HEADERS__: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-});
+
 // ********************************************************** Helper functions
 Object.assign(CHESS, {
   otherPlayer: (color) => (color == CHESS.__PLAYER_WHITE__ ? CHESS.__PLAYER_BLACK__ : CHESS.__PLAYER_WHITE__),

@@ -1,3 +1,5 @@
+// ********************************************************** ChessBaseElement
+// one BaseClass for all to be created Custom Elements/Web Components
 CHESS.ChessBaseElement = class extends HTMLElement {
   constructor() {
     super();
@@ -24,7 +26,7 @@ CHESS.ChessBaseElement = class extends HTMLElement {
       log("properties", props);
     }
   }
-
+  // ======================================================== BaseElement.dispatch
   dispatch({
     root = this, // default dispatch from current this element or use something like root:document
     name, // EventName
@@ -48,5 +50,31 @@ CHESS.ChessBaseElement = class extends HTMLElement {
       })
     );
   }
+  // ======================================================== BaseElement.listen
   listen() {}
-};
+  // ======================================================== BaseElement.listen2matchmoves
+  listen2matchmoves(
+    root = this // disppatch matchid name event from this root (this = default)
+    ) {
+      // subscribe to a server Event Source,
+      // it sends an update for every made matchmove recorded in the database
+      const API = CHESS.__API_MATCMOVES_EVENTSOURCE__;
+      try {
+        const evtSource = new EventSource(API);
+        evtSource.onmessage = (evt) => {
+          // respond to the Event
+          const receivedData = JSON.parse(evt.data); //! TODO this can be data for multiple matches!
+          root.dispatch({
+            name: receivedData.match_id, // event name is the match_id
+            detail: receivedData,
+          });
+        };
+      } catch (e) {
+        console.error("Event Source error", API);
+      }
+    }
+    // ======================================================== BaseElement.deleteMatch
+    // end ChessBaseElement
+  };
+  // ********************************************************** ChessBaseElement
+  

@@ -62,70 +62,50 @@
       // ================================================== createMatch
       createMatch() {
         // ------------------------------------------------- RT API
-        let data = new FormData();
-        data.append("function", "insert");
-        data.append("table", "matches");
-        data.append("data[player_white]", "Init Player 1");
-        data.append("data[player_black]", "Init Player 2");
-
-        fetch(CHESS.__API_MATCHES__, {
-          method: "POST",
-          body: data,
-        })
-          .then((response) => response.json())
-          .then((match_id) => {
-            this.initGame(match_id);
-          });
+        CHESS.createMatch({
+          player_white: "Player White",
+          player_black: "Player Black",
+          callback: (matchid) => {
+            this.initGame(matchid);
+          },
+        });
       } //createMatch
 
       // ================================================== update matches
       updateMatch() {
         const match_id = localStorage.getItem("match_id");
         console.log("MATCH ID", match_id);
-        let data = new FormData();
-        data.append("function", "update");
-        data.append("id", match_id);
-        data.append("data[player_white]", document.querySelector("chess-player-white").querySelector("span").innerHTML);
-        data.append("data[player_black]", document.querySelector("chess-player-black").querySelector("span").innerHTML);
 
-        fetch(CHESS.__API_MATCHES__, {
-          method: "POST",
-          body: data,
-        })
-          .then((response) => response.text())
-          .then((match_id) => {
-            log("Update Match success: ", match_id);
-          });
+        const playerName = (color) => document.querySelector("chess-player-" + color).querySelector("span").innerHTML;
+
+        CHESS.updateMatch({
+          player_white: playerName("white"),
+          player_black: playerName("black"),
+          callback: (matchid) => {
+            log("updateMatch", matchid);
+          },
+        });
       }
       // ================================================== resumeMatch
       // Gets match_id, FEN, players and their name & color
-      resumeMatch(match_id = localStorage.getItem("match_id")) {
+      resumeMatch(id = localStorage.getItem("match_id")) {
         this.chessboard.restart();
-        this.chessboard.id = match_id;
+        this.chessboard.id = id;
 
-        let data = new FormData();
-        data.append("id", match_id);
-        data.append("function", "fetch");
-
-        console.error("resumeMatch MATCH ID", match_id);
-
-        fetch(CHESS.__API_MATCHES__, {
-          method: "POST",
-          body: data,
-        })
-          .then((response) => response.json())
-          .then((obj) => {
-            console.log("resumeMatch with FEN:", obj.fen);
+        CHESS.resumeMatch({
+          id, // match GUID
+          callback: (match) => {
+            console.log("resumeMatch with FEN:", id, match.fen);
             // let temp = str.split(",");
             // let fen = temp[2].replace("fen :", "").trim().replaceAll("\\", "");
-            this.chessboard.fen = obj.fen;
+            this.chessboard.fen = match.fen;
             // this.player_white = player_white;
             // this.player_black = player_black;
             // this.player_white_color = player_white_color;
             // this.player_black_color = player_black_color;
-          });
+          },
+        });
       }
-
       // ================================================== storeMove
       storeMove({
         chessboard = this.chessboard, //
@@ -137,25 +117,17 @@
         log("storeMove", move, chessboard.id);
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
-        // ------------------------------------------------- FormData
-        let body = new FormData();
-        body.append("function", "insert");
-        body.append("id", chessboard.id);
-        body.append("data[move]", move);
-        body.append("data[fromsquare]", fromsquare);
-        body.append("data[tosquare]", tosquare);
-        body.append("data[fen]", fen);
-        // ------------------------------------------------- store move in matchmoves
-        fetch("https://schaakzet.nl/api/rt/matchmoves.php", {
-          method: "POST",
-          body,
-        })
-          .then((response) => response.json())
-          .then((res) => {
-            console.log(res);
-          });
-        // ------------------------------------------------- store move in matchmoves
-        // this.checkDatabase(this.match_id);
+        CHESS.storeChessMove({
+          id: chessboard.id, // GUID
+          move,
+          fromsquare,
+          tosquare,
+          fen,
+
+          callback: (movesaved) => {
+            console.log("move saved");
+          },
+        });
       }
       // ================================================== checkDatabase
       checkDatabase(match_id) {
@@ -195,19 +167,12 @@
       }
       // ================================================== undoMoveDB
       undoMoveDB() {
-        // ------------------------------------------------- FormData
-        let body = new FormData();
-        body.append("function", "delete"); // API decides it is last record of match_id.
-        body.append("id", this.match_id);
-        // ------------------------------------------------- store move in matchmoves
-        fetch("https://schaakzet.nl/api/rt/matchmoves.php", {
-          method: "POST",
-          body,
-        })
-          .then((response) => response.json())
-          .then((res) => {
-            console.log(res);
-          });
+        CHESS.undoMove({
+          id: this.match_id,
+          callback: () => {
+            console.log("undoMoveDB");
+          },
+        });
       }
       // ================================================== undoMove
       undoMove() {
