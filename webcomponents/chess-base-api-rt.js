@@ -34,6 +34,7 @@ Object.assign(CHESS.APIRT, {
     log(operation, body);
     fetch(CHESS.APIRT.__API_MATCHES__, {
       method: "POST",
+      mode: "no-cors",
       headers: CHESS.APIRT.__API_HEADERS__,
       body: JSON.stringify(body),
     })
