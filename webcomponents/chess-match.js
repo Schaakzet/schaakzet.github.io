@@ -62,7 +62,7 @@
       // ================================================== createMatch
       createMatch() {
         // ------------------------------------------------- RT API
-        CHESS.createMatch({
+        CHESS.APIRT.createMatch({
           player_white: "Player White",
           player_black: "Player Black",
           callback: (matchid) => {
@@ -78,7 +78,7 @@
 
         const playerName = (color) => document.querySelector("chess-player-" + color).querySelector("span").innerHTML;
 
-        CHESS.updateMatch({
+        CHESS.APIRT.updateMatch({
           player_white: playerName("white"),
           player_black: playerName("black"),
           callback: (matchid) => {
@@ -92,7 +92,7 @@
         this.chessboard.restart();
         this.chessboard.id = id;
 
-        CHESS.resumeMatch({
+        CHESS.APIRT.resumeMatch({
           id, // match GUID
           callback: (match) => {
             console.log("resumeMatch with FEN:", id, match.fen);
@@ -117,7 +117,7 @@
         log("storeMove", move, chessboard.id);
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
-        CHESS.storeChessMove({
+        CHESS.APIRT.storeChessMove({
           id: chessboard.id, // GUID
           move,
           fromsquare,
@@ -126,20 +126,6 @@
 
           callback: (movesaved) => {
             console.log("move saved");
-          },
-        });
-      }
-      // ================================================== checkDatabase
-      checkDatabase(match_id) {
-        this.match_id = match_id;
-        localStorage.setItem("match_id", this.match_id);
-        CHESS.API.matches.read({
-          match_id: this.match_id,
-          callback: (match) => {
-            log("checkDatabase FEN:", { match });
-            // todo set match values
-            // set chessboard.fen
-            // set playernames
           },
         });
       }
@@ -167,7 +153,7 @@
       }
       // ================================================== undoMoveDB
       undoMoveDB() {
-        CHESS.undoMove({
+        CHESS.APIRT.undoMove({
           id: this.match_id,
           callback: () => {
             console.log("undoMoveDB");

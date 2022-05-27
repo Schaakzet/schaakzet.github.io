@@ -16,7 +16,7 @@
   loadScriptsWithDependencyOrder([
     "app-base-functions", // generic functions
     "chess-base-constants", // required
-    "chess-base-api", // required for database API
+    "chess-base-api-rt", // required for database API
     "chess-base-class", // required baseclass
     "chess-base-class-components", // required baseclass for <piece> <square> <board>
     "chess-board-analysis", // optional analysis

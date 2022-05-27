@@ -1,4 +1,7 @@
-Object.assign(CHESS, {
+CHESS.APIRT = CHESS.APIRT || {};
+
+// add constants
+Object.assign(CHESS.APIRT, {
   __API_RECORDS__: "https://schaakzet.nl/api/crud/index.php/records/",
   __API_SCHAAKZET__: "https://schaakzet.nl/api/rt/index.php/?action=",
   __API_MATCHES__: "https://schaakzet.nl/api/rt/matches.php",
@@ -14,7 +17,7 @@ Object.assign(CHESS, {
   deleteMatchByGUID: (guid) => {
     fetch(CHESS.__API_SCHAAKZET__ + `delete&matchid=` + guid, {
       method: "GET",
-      headers: CHESS.__API_HEADERS__,
+      headers: CHESS.APIRT.__API_HEADERS__,
     });
   },
   // ================================================== callAPI
@@ -26,22 +29,17 @@ Object.assign(CHESS, {
     function log(...args) {
       console.log(`%c DB ${args.shift()}`, "background:gold", ...args);
     }
-    body.function = operation;
+    body.operation = operation;
     body.table = "matches";
     log(operation, body);
-    fetch(CHESS.__API_MATCHES__, {
+    fetch(CHESS.APIRT.__API_MATCHES__, {
       method: "POST",
-      body,
+      body: JSON.stringify(body),
     })
-      .then((response) => {
-        log("response", response);
-        if (response.json) response = response.json();
-        else response = response.text();
-        return response;
-      })
-      .then((match_id) => {
-        log("match_id", match_id);
-        callback(match_id);
+      .then((response) => response.json())
+      .then((json_response) => {
+        log("json response", json_response.dev);
+        callback(json_response);
       })
       .catch((e, r) => {
         console.error("%c No JSON response!", "background:red;color:white", e);
@@ -53,7 +51,7 @@ Object.assign(CHESS, {
     player_black = "", // player black name
     callback,
   }) {
-    CHESS.callAPI(
+    CHESS.APIRT.callAPI(
       "insert",
       {
         "data[player_white]": player_white,
@@ -69,7 +67,7 @@ Object.assign(CHESS, {
     player_black = "", // player black name
     callback,
   }) {
-    CHESS.callAPI(
+    CHESS.APIRT.callAPI(
       "update",
       {
         id,
@@ -84,7 +82,7 @@ Object.assign(CHESS, {
     id, // match GUID
     callback,
   }) {
-    CHESS.callAPI("fetch", { id }, callback);
+    CHESS.APIRT.callAPI("fetch", { id }, callback);
   },
   // ================================================== storeChessMove
   storeChessMove({
@@ -101,17 +99,17 @@ Object.assign(CHESS, {
     body.append("data[fromsquare]", fromsquare);
     body.append("data[tosquare]", tosquare);
     body.append("data[fen]", fen);
-    CHESS.callAPI("insert", body, callback);
+    CHESS.APIRT.callAPI("insert", body, callback);
   },
   // ================================================== undoChessMove
   undoChessMove({ id, callback }) {
     let body = new FormData(); // todo
     body.append("id", this.match_id);
-    CHESS.callAPI("delete", body, callback);
+    CHESS.APIRT.callAPI("delete", body, callback);
   },
 
   // ================================================== deleteStartboard
   deleteStartboards({ callback }) {
-    CHESS.callAPI("deleteStartboards", {}, callback);
+    CHESS.APIRT.callAPI("deleteStartboards", {}, callback);
   },
 });
