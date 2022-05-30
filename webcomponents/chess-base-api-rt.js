@@ -21,26 +21,35 @@ Object.assign(CHESS.APIRT, {
     });
   },
   // ================================================== callAPI
-  callAPI(
+  callAPI({
     operation,
     body, // FormData
-    callback = () => console.error("No callback function")
-  ) {
+    method = "POST",
+    callback = () => console.error("No callback function"),
+  }) {
     function log(...args) {
       console.log(`%c DB ${args.shift()}`, "background:gold", ...args);
     }
     body.operation = operation;
     body.table = "matches";
-    log(operation, body);
-    fetch(CHESS.APIRT.__API_MATCHES__, {
-      method: "POST",
-      mode: "no-cors",
+    let uri = CHESS.APIRT.__API_MATCHES__;
+    let options = {
+      method,
+      //mode: "no-cors",
       headers: CHESS.APIRT.__API_HEADERS__,
       body: JSON.stringify(body),
-    })
+    };
+    method = "GET";
+    if (method == "GET") {
+      uri += "?operation=" + body.operation;
+      uri += "&guid=" + body.id;
+      delete options.body;
+    }
+    log(operation, uri, body);
+    fetch(uri, options)
       .then((response) => response.json())
       .then((json_response) => {
-        log("json response", json_response.dev);
+        log("json response", json_response.rows.length, "rows:", { rows: json_response.rows }, "\nDEV:", json_response.dev);
         callback(json_response);
       })
       .catch((e, r) => {
@@ -53,14 +62,14 @@ Object.assign(CHESS.APIRT, {
     player_black = "", // player black name
     callback,
   }) {
-    CHESS.APIRT.callAPI(
-      "insert",
-      {
-        "data[player_white]": player_white,
-        "data[player_black]": player_black,
+    CHESS.APIRT.callAPI({
+      operation: "CREATE",
+      body: {
+        player_white: player_white,
+        player_black: player_black,
       },
-      callback
-    );
+      callback,
+    });
   },
   // ================================================== updateMatch
   updateMatch({
@@ -69,22 +78,15 @@ Object.assign(CHESS.APIRT, {
     player_black = "", // player black name
     callback,
   }) {
-    CHESS.APIRT.callAPI(
-      "update",
-      {
+    CHESS.APIRT.callAPI({
+      operation: "UPDATE",
+      body: {
         id,
         "data[player_white]": player_white,
         "data[player_black]": player_black,
       },
-      callback
-    );
-  },
-  // ================================================== resumeMatch
-  resumeMatch({
-    id, // match GUID
-    callback,
-  }) {
-    CHESS.APIRT.callAPI("fetch", { id }, callback);
+      callback,
+    });
   },
   // ================================================== storeChessMove
   storeChessMove({
@@ -95,13 +97,17 @@ Object.assign(CHESS.APIRT, {
     fen,
     callback,
   }) {
-    let body = new FormData(); // todo
-    body.append("id", id);
-    body.append("data[move]", move);
-    body.append("data[fromsquare]", fromsquare);
-    body.append("data[tosquare]", tosquare);
-    body.append("data[fen]", fen);
-    CHESS.APIRT.callAPI("insert", body, callback);
+    CHESS.APIRT.callAPI(
+      "RECORDCHESSMOVE",
+      {
+        match_id:id,
+        move,
+        fromsquare,
+        tosquare,
+        fen,
+      },
+      callback
+    );
   },
   // ================================================== undoChessMove
   undoChessMove({ id, callback }) {
