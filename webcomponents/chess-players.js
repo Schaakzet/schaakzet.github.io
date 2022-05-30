@@ -12,6 +12,7 @@
       this.innerHTML = /*html*/ `<label>${this.getAttribute("label") || ""}<input type="text" placeholder="${placeholder}" value="${
         this.getAttribute("name") || ""
       }"></label><span style="background:lightgrey"></span>`;
+
       let input = this.querySelector("input");
       const showinput = (state) => {
         let name = "";
