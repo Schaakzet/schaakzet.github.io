@@ -65,8 +65,22 @@
         CHESS.APIRT.createMatch({
           player_white: "Player White",
           player_black: "Player Black",
-          callback: (matchid) => {
-            this.initGame(matchid);
+          callback: ({rowcount,rows}) => {
+            let {
+              match_id, // match_id record id in matches table
+              tournament_id,
+              wp_user_white,
+              wp_user_black,
+              player_white,
+              player_black,
+              starttime,
+              endtime,
+              fen,
+              result,
+              guid,
+            } = rows[0];
+
+            this.initGame(match_id);
           },
         });
       } //createMatch
@@ -74,15 +88,16 @@
       // ================================================== update matches
       updateMatch() {
         const match_id = localStorage.getItem("match_id");
-        console.log("MATCH ID", match_id);
+        log("MATCH ID", match_id);
 
         const playerName = (color) => document.querySelector("chess-player-" + color).querySelector("span").innerHTML;
 
         CHESS.APIRT.updateMatch({
           player_white: playerName("white"),
           player_black: playerName("black"),
-          callback: (matchid) => {
-            log("updateMatch", matchid);
+          callback: ({rowcount,rows}) => {
+            if (rowcount) log("updateMatch", rows[0]);
+            else console.error("Geen match_id gevonden in de database");
           },
         });
       }
@@ -92,17 +107,17 @@
         this.chessboard.restart();
         this.chessboard.id = id;
 
-        CHESS.APIRT.resumeMatch({
-          id, // match GUID
-          callback: (match) => {
-            console.log("resumeMatch with FEN:", id, match.fen);
-            // let temp = str.split(",");
-            // let fen = temp[2].replace("fen :", "").trim().replaceAll("\\", "");
-            this.chessboard.fen = match.fen;
-            // this.player_white = player_white;
-            // this.player_black = player_black;
-            // this.player_white_color = player_white_color;
-            // this.player_black_color = player_black_color;
+        CHESS.APIRT.callAPI({
+          operation: "READ",
+          body: { id },
+          callback: ({rows}) => {
+            if (rows.length) {
+              let { fen } = rows[0];
+              this.chessboard.fen = fen;
+              log("resumeMatch", fen);
+            } else {
+              console.error("Geen match_id gevonden in de database");
+            }
           },
         });
       }
