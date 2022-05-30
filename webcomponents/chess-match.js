@@ -44,6 +44,7 @@
               `<div id="message"></div>` +
               `<chess-show-captured-pieces></chess-show-captured-pieces>` +
               `<chess-game-progress></chess-game-progress>` +
+              `<chess-availablegames></chess-availablegames>`+
               `</div>`,
           })
         );
@@ -63,9 +64,10 @@
       createMatch() {
         // ------------------------------------------------- RT API
         CHESS.APIRT.createMatch({
-          player_white: "Player White",
-          player_black: "Player Black",
-          callback: ({rowcount,rows}) => {
+          player_white: "WP:displayname",
+          wp_user_white: 666,
+          callback: ({ rowcount, rows }) => {
+            log("createMatch", rows[0]);
             let {
               match_id, // match_id record id in matches table
               tournament_id,
@@ -77,10 +79,10 @@
               endtime,
               fen,
               result,
-              guid,
+              match_guid,
             } = rows[0];
 
-            this.initGame(match_id);
+            this.initGame(match_guid);
           },
         });
       } //createMatch
@@ -95,7 +97,7 @@
         CHESS.APIRT.updateMatch({
           player_white: playerName("white"),
           player_black: playerName("black"),
-          callback: ({rowcount,rows}) => {
+          callback: ({ rowcount, rows }) => {
             if (rowcount) log("updateMatch", rows[0]);
             else console.error("Geen match_id gevonden in de database");
           },
@@ -108,9 +110,9 @@
         this.chessboard.id = id;
 
         CHESS.APIRT.callAPI({
-          operation: "READ",
+          action: "READ",
           body: { id },
-          callback: ({rows}) => {
+          callback: ({ rows }) => {
             if (rows.length) {
               let { fen } = rows[0];
               this.chessboard.fen = fen;
@@ -133,12 +135,14 @@
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
         CHESS.APIRT.storeChessMove({
+          body:{
           id: chessboard.id, // GUID
           move,
           fromsquare,
           tosquare,
           fen,
 
+          }
           callback: (movesaved) => {
             console.log("move saved");
           },
@@ -154,12 +158,11 @@
         ]);
       }
       // ================================================== initGame
-      initGame(match_id) {
-        log(match_id);
-        this.match_id = match_id;
-        this.chessboard.id = match_id;
+      initGame(match_guid) {
+        log("initGame", match_guid);
+        this.chessboard.id = match_guid;
         this.chessboard.fen = undefined; // set start FEN
-        localStorage.setItem("match_id", this.match_id);
+        localStorage.setItem("match_guid", match_guid);
         // this.testGame();
       }
       // ================================================== myFEN

@@ -61,7 +61,7 @@
     if (scripts.length) {
       let file = scripts.shift();
       document.head.append(
-        script({
+        script({  
           file,
           onload: () => {
             log("script dependency loaded", file);
@@ -76,6 +76,7 @@
         ["h1-chess"],
         ["chess-game-progress", "chess-show-captured-pieces"],
         ["chess-match", "chess-match-buttons", "chess-matches", "chess-players"], // Chess Components
+        ["chess-availablegames"],
       ]);
 
       console.groupCollapsed(`%c Loaded ${loaded.length} scripts `, "background:green;color:gold");
