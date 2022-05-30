@@ -44,7 +44,7 @@
               `<div id="message"></div>` +
               `<chess-show-captured-pieces></chess-show-captured-pieces>` +
               `<chess-game-progress></chess-game-progress>` +
-              `<chess-availablegames></chess-availablegames>`+
+              `<chess-availablegames></chess-availablegames>` +
               `</div>`,
           })
         );
@@ -113,6 +113,7 @@
           action: "READ",
           body: { id },
           callback: ({ rows }) => {
+            console.warn(rows);
             if (rows.length) {
               let { fen } = rows[0];
               this.chessboard.fen = fen;
@@ -135,14 +136,14 @@
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
         CHESS.APIRT.storeChessMove({
-          body:{
-          id: chessboard.id, // GUID
-          move,
-          fromsquare,
-          tosquare,
-          fen,
+          body: {
+            id: chessboard.id, // GUID
+            move,
+            fromsquare,
+            tosquare,
+            fen,
+          },
 
-          }
           callback: (movesaved) => {
             console.log("move saved");
           },

@@ -43,9 +43,9 @@ Object.assign(CHESS.APIRT, {
     let uri = CHESS.APIRT.__API_MATCHES__ + "?c=" + new Date() / 1;
     if (method == "GET") {
       uri += "&action=" + body.action;
-      
+
       //! chessboard.id == match_guid in database
-      if (body.match_guid) uri += "&match_guid=" + body.match_guid; 
+      if (body.match_guid) uri += "&match_guid=" + body.match_guid;
       else if (body.id) uri += "&match_guid=" + body.id;
 
       if (body.where) uri += "&where=" + body.where;
@@ -59,7 +59,7 @@ Object.assign(CHESS.APIRT, {
     fetch(uri, options)
       .then((response) => response.json())
       .then((json_response) => {
-        log("json response", json_response.rows.length, "rows:", { rows: json_response.rows }, "\nDEV:", json_response.dev);
+        log("json response", json_response.rows.length, "rows:", { rows: json_response.rows }, "\nDEV:", json_response.development_info);
         callback(json_response);
       })
       .catch((e, r) => {
