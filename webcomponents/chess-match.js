@@ -16,7 +16,7 @@
       connectedCallback() {
         this.render();
         setTimeout(() => {
-          let match_id = localStorage.getItem("match_id");
+          let match_id = localStorage.getItem("match_guid");
           if (match_id) {
             this.resumeMatch(match_id);
           } else this.createMatch(); // call back-end for match_id, then this.initGame(match_id)
@@ -89,7 +89,7 @@
 
       // ================================================== update matches
       updateMatch() {
-        const match_id = localStorage.getItem("match_id");
+        const match_id = localStorage.getItem("match_guid");
         log("MATCH ID", match_id);
 
         const playerName = (color) => document.querySelector("chess-player-" + color).querySelector("span").innerHTML;
@@ -104,8 +104,8 @@
         });
       }
       // ================================================== resumeMatch
-      // Gets match_id, FEN, players and their name & color
-      resumeMatch(id = localStorage.getItem("match_id")) {
+      // Gets match_guid, FEN, players and their name & (color)
+      resumeMatch(id = localStorage.getItem("match_guid")) {
         this.chessboard.restart();
         this.chessboard.id = id;
 
@@ -113,9 +113,12 @@
           action: "READ",
           body: { id },
           callback: ({ rows }) => {
-            console.warn(rows);
             if (rows.length) {
-              let { fen } = rows[0];
+              let { fen, player_white, player_black, match_guid } = rows[0];
+              console.warn("Row 1 returning from DB:", rows[0]);
+              if (player_black == "") {
+                player_black = "Bart";
+              }
               this.chessboard.fen = fen;
               log("resumeMatch", fen);
             } else {
@@ -128,27 +131,25 @@
       storeMove({
         chessboard = this.chessboard, //
         move = "e2-e4",
-        fromsquare = "e2",
-        tosquare = "e4",
         fen = chessboard.fen,
       }) {
         log("storeMove", move, chessboard.id);
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
-        CHESS.APIRT.storeChessMove({
+        CHESS.APIRT.callAPI({
+          action: "CHESSMOVE",
           body: {
             id: chessboard.id, // GUID
             move,
-            fromsquare,
-            tosquare,
             fen,
           },
 
-          callback: (movesaved) => {
-            console.log("move saved");
+          callback: ({ rows }) => {
+            console.log("move saved", rows);
           },
         });
       }
+
       // ================================================== testGame
       testGame() {
         this.chessboard.play([

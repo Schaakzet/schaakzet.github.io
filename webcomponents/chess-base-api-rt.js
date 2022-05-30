@@ -51,6 +51,8 @@ Object.assign(CHESS.APIRT, {
       if (body.where) uri += "&where=" + body.where;
       if (body.wp_user_white) uri += "&wp_user_white=" + body.wp_user_white;
       if (body.player_white) uri += "&player_white=" + body.player_white;
+      if (body.move) uri += "&move=" + body.move;
+      if (body.fen) uri += "&fen=" + body.fen;
 
       delete options.body;
     }
@@ -99,27 +101,7 @@ Object.assign(CHESS.APIRT, {
       callback,
     });
   },
-  // ================================================== storeChessMove
-  storeChessMove({
-    id, // GUID
-    move,
-    fromsquare,
-    tosquare,
-    fen,
-    callback,
-  }) {
-    CHESS.APIRT.callAPI(
-      "RECORDCHESSMOVE",
-      {
-        match_id: id,
-        move,
-        fromsquare,
-        tosquare,
-        fen,
-      },
-      callback
-    );
-  },
+
   // ================================================== undoChessMove
   undoChessMove({ id, callback }) {
     let body = new FormData(); // todo

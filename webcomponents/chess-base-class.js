@@ -55,34 +55,33 @@ CHESS.ChessBaseElement = class extends HTMLElement {
   // ======================================================== BaseElement.listen2matchmoves
   listen2matchmoves(
     root = this // disppatch matchid name event from this root (this = default)
-    ) {
-      // subscribe to a server Event Source,
-      // it sends an update for every made matchmove recorded in the database
-      const API = CHESS.__API_MATCHMOVES_EVENTSOURCE__;
-      try {
-        const evtSource = new EventSource(API);
-        evtSource.onmessage = (evt) => {
-          // respond to the Event
-          const receivedData = JSON.parse(evt.data); //! TODO this can be data for multiple matches!
-          root.dispatch({
-            name: receivedData.match_id, // event name is the match_id
-            detail: receivedData,
-          });
-        };
-      } catch (e) {
-        console.error("Event Source error", API);
-      }
+  ) {
+    // subscribe to a server Event Source,
+    // it sends an update for every made matchmove recorded in the database
+    const API = CHESS.__API_MATCHMOVES_EVENTSOURCE__;
+    try {
+      const evtSource = new EventSource(API);
+      evtSource.onmessage = (evt) => {
+        // respond to the Event
+        const receivedData = JSON.parse(evt.data); //! TODO this can be data for multiple matches!
+        root.dispatch({
+          name: receivedData.match_id, // event name is the match_id
+          detail: receivedData,
+        });
+      };
+    } catch (e) {
+      console.error("Event Source error", API);
     }
-    // ======================================================== BaseElement.$createElement
-    $createElement({tag="div", props = {}}) {
-      return Object.assign(document.createElement(tag), props);
-    }
-    // ======================================================== BaseElement.resumeChessGame
-    resumeChessGame(match_guid) {
-      localStorage.setItem("match_id", match_guid);
-      window.open("match.html", "_blank");
-    }
-    // end ChessBaseElement
-  };
-  // ********************************************************** ChessBaseElement
-  
+  }
+  // ======================================================== BaseElement.$createElement
+  $createElement({ tag = "div", props = {} }) {
+    return Object.assign(document.createElement(tag), props);
+  }
+  // ======================================================== BaseElement.resumeChessGame
+  resumeChessGame(match_guid) {
+    localStorage.setItem("match_guid", match_guid);
+    window.open("match.html", "_blank");
+  }
+  // end ChessBaseElement
+};
+// ********************************************************** ChessBaseElement
