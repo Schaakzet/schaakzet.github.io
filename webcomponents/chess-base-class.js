@@ -58,7 +58,7 @@ CHESS.ChessBaseElement = class extends HTMLElement {
     ) {
       // subscribe to a server Event Source,
       // it sends an update for every made matchmove recorded in the database
-      const API = CHESS.__API_MATCMOVES_EVENTSOURCE__;
+      const API = CHESS.__API_MATCHMOVES_EVENTSOURCE__;
       try {
         const evtSource = new EventSource(API);
         evtSource.onmessage = (evt) => {
@@ -73,7 +73,15 @@ CHESS.ChessBaseElement = class extends HTMLElement {
         console.error("Event Source error", API);
       }
     }
-    // ======================================================== BaseElement.deleteMatch
+    // ======================================================== BaseElement.$createElement
+    $createElement({tag="div", props = {}}) {
+      return Object.assign(document.createElement(tag), props);
+    }
+    // ======================================================== BaseElement.resumeChessGame
+    resumeChessGame(match_guid) {
+      localStorage.setItem("match_id", match_guid);
+      window.open("match.html", "_blank");
+    }
     // end ChessBaseElement
   };
   // ********************************************************** ChessBaseElement

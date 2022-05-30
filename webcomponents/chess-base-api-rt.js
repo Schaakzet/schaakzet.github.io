@@ -4,9 +4,9 @@ CHESS.APIRT = CHESS.APIRT || {};
 Object.assign(CHESS.APIRT, {
   __API_RECORDS__: "//schaakzet.nl/api/crud/index.php/records/",
   __API_SCHAAKZET__: "//schaakzet.nl/api/rt/index.php/?action=",
-  __API_MATCHES__: "//schaakzet.nl/api/rt/matches.php",
+  __API_MATCHES__: "//schaakzet.nl/api/chessgame.php",
   __API_MATCHMOVES__: "//schaakzet.nl/api/rt/matchmoves.php", // CHESS.__API_MATCHMOVES__
-  __API_MATCMOVES_EVENTSOURCE__: "//schaakzet.nl/api/rt/matchmoves_eventsource.php",
+  __API_MATCHMOVES_EVENTSOURCE__: "//schaakzet.nl/api/rt/matchmoves_eventsource.php",
   __API_TABLE_MATCHMOVES__: "matchmoves",
   __API_HEADERS__: {
     Accept: "application/json",
@@ -22,30 +22,40 @@ Object.assign(CHESS.APIRT, {
   },
   // ================================================== callAPI
   callAPI({
-    operation,
-    body, // FormData
-    method = "POST",
+    action,
+    body = {}, // FormData
+    method = "GET",
     callback = () => console.error("No callback function"),
   }) {
+    log("make GET URI", body);
     function log(...args) {
       console.log(`%c DB ${args.shift()}`, "background:gold", ...args);
     }
-    body.operation = operation;
-    body.table = "matches";
-    let uri = CHESS.APIRT.__API_MATCHES__;
+    body.action = action;
+    // -------------------------------------------------- build options
     let options = {
       method,
       //mode: "no-cors",
       headers: CHESS.APIRT.__API_HEADERS__,
       body: JSON.stringify(body),
     };
-    method = "GET";
+    // -------------------------------------------------- build URI
+    let uri = CHESS.APIRT.__API_MATCHES__ + "?c=" + new Date() / 1;
     if (method == "GET") {
-      uri += "?operation=" + body.operation;
-      uri += "&guid=" + body.id;
+      uri += "&action=" + body.action;
+      
+      //! chessboard.id == match_guid in database
+      if (body.match_guid) uri += "&match_guid=" + body.match_guid; 
+      else if (body.id) uri += "&match_guid=" + body.id;
+
+      if (body.where) uri += "&where=" + body.where;
+      if (body.wp_user_white) uri += "&wp_user_white=" + body.wp_user_white;
+      if (body.player_white) uri += "&player_white=" + body.player_white;
+
       delete options.body;
     }
-    log(operation, uri, body);
+    log(action, uri, body);
+    // -------------------------------------------------- fetch
     fetch(uri, options)
       .then((response) => response.json())
       .then((json_response) => {
@@ -56,6 +66,7 @@ Object.assign(CHESS.APIRT, {
         console.error("%c No JSON response!", "background:red;color:white", e);
       });
   },
+
   // ================================================== createMatch
   createMatch({
     player_white = "", // player white name
@@ -63,7 +74,7 @@ Object.assign(CHESS.APIRT, {
     callback,
   }) {
     CHESS.APIRT.callAPI({
-      operation: "CREATE",
+      action: "CREATE",
       body: {
         player_white: player_white,
         player_black: player_black,
@@ -79,7 +90,7 @@ Object.assign(CHESS.APIRT, {
     callback,
   }) {
     CHESS.APIRT.callAPI({
-      operation: "UPDATE",
+      action: "UPDATE",
       body: {
         id,
         "data[player_white]": player_white,
@@ -100,7 +111,7 @@ Object.assign(CHESS.APIRT, {
     CHESS.APIRT.callAPI(
       "RECORDCHESSMOVE",
       {
-        match_id:id,
+        match_id: id,
         move,
         fromsquare,
         tosquare,

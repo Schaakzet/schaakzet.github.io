@@ -1,6 +1,6 @@
 // Here users get a WP_user_id and enter their screenname. Then a new ChessPlayer is created with these arguments.
 let body = new FormData();
-body.append("operation", "selectAll");
+body.append("action", "selectAll");
 body.append("table", "users");
 
 fetch("https://schaakzet.nl/api/rt/index.php", {

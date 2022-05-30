@@ -64,8 +64,7 @@
                           miniboard.remove();
                           window.CHESS.deleteMatchByGUID(guid);
                         } else if (evt.shiftKey) {
-                          localStorage.setItem("match_id", guid);
-                          window.open("match.html", "_blank");
+                          this.resumeChessGame(guid);
                         }
                       }, // onclick
                     },
