@@ -16,11 +16,12 @@
       connectedCallback() {
         this.render();
         setTimeout(() => {
-          let match_id = localStorage.getItem("match_guid");
-          if (match_id) {
-            this.resumeMatch(match_id);
-          } else this.createMatch(); // call back-end for match_id, then this.initGame(match_id)
+          let match_guid = localStorage.getItem("match_guid");
+          if (match_guid) {
+            this.resumeMatch(match_guid);
+          } else this.createMatch(); // call back-end for match_guid, then this.initGame(match_guid)
           this.addListeners();
+          this.listen2matchmoves();
         });
       }
       // ================================================== get chessboard
@@ -68,41 +69,13 @@
           wp_user_white: 666,
           callback: ({ rowcount, rows }) => {
             log("createMatch", rows[0]);
-            let {
-              match_id, // match_id record id in matches table
-              tournament_id,
-              wp_user_white,
-              wp_user_black,
-              player_white,
-              player_black,
-              starttime,
-              endtime,
-              fen,
-              result,
-              match_guid,
-            } = rows[0];
+            let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = rows[0];
 
             this.initGame(match_guid);
           },
         });
       } //createMatch
 
-      // ================================================== update matches
-      updateMatch() {
-        const match_id = localStorage.getItem("match_guid");
-        log("MATCH ID", match_id);
-
-        const playerName = (color) => document.querySelector("chess-player-" + color).querySelector("span").innerHTML;
-
-        CHESS.APIRT.updateMatch({
-          player_white: playerName("white"),
-          player_black: playerName("black"),
-          callback: ({ rowcount, rows }) => {
-            if (rowcount) log("updateMatch", rows[0]);
-            else console.error("Geen match_id gevonden in de database");
-          },
-        });
-      }
       // ================================================== resumeMatch
       // Gets match_guid, FEN, players and their name & (color)
       resumeMatch(id = localStorage.getItem("match_guid")) {
@@ -118,15 +91,32 @@
               console.warn("Row 1 returning from DB:", rows[0]);
               if (player_black == "") {
                 player_black = "Bart";
+                console.warn("Player Black substituted...", player_black);
+                this.assignPlayerBlack(match_guid, player_white, player_black);
               }
               this.chessboard.fen = fen;
               log("resumeMatch", fen);
             } else {
-              console.error("Geen match_id gevonden in de database");
+              console.error("Geen match_guid gevonden in de database");
             }
           },
         });
       }
+      // ================================================== assignPlayerBlack
+      assignPlayerBlack(match_guid, player_white, player_black) {
+        CHESS.APIRT.callAPI({
+          action: "UPDATE",
+          body: {
+            match_guid, // GUID
+            player_white,
+            player_black,
+          },
+          callback: ({ rows }) => {
+            console.log("Updated Player Display Names", rows);
+          },
+        });
+      }
+
       // ================================================== storeMove
       storeMove({
         chessboard = this.chessboard, //
@@ -174,7 +164,7 @@
       // ================================================== undoMoveDB
       undoMoveDB() {
         CHESS.APIRT.undoMove({
-          id: this.match_id,
+          id: this.match_guid,
           callback: () => {
             console.log("undoMoveDB");
           },

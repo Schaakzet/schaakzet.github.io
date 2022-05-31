@@ -37,8 +37,7 @@
               }) // record.guid !== null)
               .map(
                 ({
-                  match_id, // PRIMARY KEY   - set by database
-                  guid,
+                  match_guid,
                   wp_user_white, // INT           - user id in the wp_user WordPress table
                   wp_user_black, // INT           - user id in the wp_user WordPress table
                   player_white, // VARCHAR(64)   - name of the player
@@ -52,19 +51,19 @@
                   // set miniboard variable, so it can be use inside its code
                   let miniboard = CHESS.createBoardElement({
                     props: {
-                      id: guid,
+                      id: match_guid,
                       fen,
                       disabled: true,
                       onmouseenter: (evt) => {
                         console.log(miniboard.fen);
-                        setMainBoard(guid, miniboard.fen);
+                        setMainBoard(match_guid, miniboard.fen);
                       },
                       onclick: (evt) => {
                         if (evt.ctrlKey) {
                           miniboard.remove();
-                          window.CHESS.deleteMatchByGUID(guid);
+                          window.CHESS.deleteMatchByGUID(match_guid);
                         } else if (evt.shiftKey) {
-                          this.resumeChessGame(guid);
+                          this.resumeChessGame(match_guid);
                         }
                       }, // onclick
                     },

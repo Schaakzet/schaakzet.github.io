@@ -58,14 +58,16 @@ CHESS.ChessBaseElement = class extends HTMLElement {
   ) {
     // subscribe to a server Event Source,
     // it sends an update for every made matchmove recorded in the database
-    const API = CHESS.__API_MATCHMOVES_EVENTSOURCE__;
+    const API = CHESS.APIRT.__API_MATCHMOVES_EVENTSOURCE__;
+    console.log("Init EventSource:", API);
     try {
       const evtSource = new EventSource(API);
       evtSource.onmessage = (evt) => {
         // respond to the Event
+        console.warn("Received from EventSource", evt.data);
         const receivedData = JSON.parse(evt.data); //! TODO this can be data for multiple matches!
         root.dispatch({
-          name: receivedData.match_id, // event name is the match_id
+          name: receivedData.match_guid, // event name is the match_guid
           detail: receivedData,
         });
       };

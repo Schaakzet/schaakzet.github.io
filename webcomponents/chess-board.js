@@ -112,8 +112,9 @@
           // console.log("666", "listenOnMatchID <chess-board>", this.id);
           const listenFunc = (evt) => {
             // listen Functie definieren
-            let { match_id, fen, move } = evt.detail;
-            if (this.id == match_id) {
+            console.error("new FEN");
+            let { match_guid, fen, move } = evt.detail;
+            if (this.id == match_guid) {
               if (this.fen != fen) {
                 let movetype = move[2];
                 console.warn("777", move);
@@ -332,7 +333,7 @@
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
         if (isString(chessPiece)) chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
-        if (!chessPiece) console.error("Er is geen chesspiece op ", square, this.match_id, this.fen);
+        if (!chessPiece) console.error("Er is geen chesspiece op ", square);
         const /* function */ movedPiece = () => {
             let fromSquare = chessPiece.square;
             let toSquare = this.getSquare(square);
