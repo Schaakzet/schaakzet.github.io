@@ -23,11 +23,10 @@ Object.assign(CHESS.APIRT, {
   // ================================================== callAPI
   callAPI({
     action,
-    body = {}, // FormData
+    body = {}, // JSON
     method = "GET",
     callback = () => console.error("No callback function"),
   }) {
-    log("make GET URI", body);
     function log(...args) {
       console.log(`%c DB ${args.shift()}`, "background:gold", ...args);
     }
@@ -51,12 +50,14 @@ Object.assign(CHESS.APIRT, {
       if (body.where) uri += "&where=" + body.where;
       if (body.wp_user_white) uri += "&wp_user_white=" + body.wp_user_white;
       if (body.player_white) uri += "&player_white=" + body.player_white;
+      if (body.wp_user_black) uri += "&wp_user_black=" + body.wp_user_black;
+      if (body.player_black) uri += "&player_black=" + body.player_black;
       if (body.move) uri += "&move=" + body.move;
       if (body.fen) uri += "&fen=" + body.fen;
 
       delete options.body;
     }
-    log(action, uri, body);
+    log("callAPI", { action, uri, body });
     // -------------------------------------------------- fetch
     fetch(uri, options)
       .then((response) => response.json())
@@ -84,28 +85,10 @@ Object.assign(CHESS.APIRT, {
       callback,
     });
   },
-  // ================================================== updateMatch
-  updateMatch({
-    id, // match GUID
-    player_white = "", // player white name
-    player_black = "", // player black name
-    callback,
-  }) {
-    CHESS.APIRT.callAPI({
-      action: "UPDATE",
-      body: {
-        id,
-        "data[player_white]": player_white,
-        "data[player_black]": player_black,
-      },
-      callback,
-    });
-  },
 
   // ================================================== undoChessMove
   undoChessMove({ id, callback }) {
-    let body = new FormData(); // todo
-    body.append("id", this.match_id);
+    let body = { id: this.match_guid };
     CHESS.APIRT.callAPI("delete", body, callback);
   },
 
