@@ -17,42 +17,40 @@
       }
       // ================================================== render
       render() {
+        let where = this.getAttribute("where") || "AVAILABLEGAMES";
         this.append(
           Object.assign(document.createElement("style"), {
             innerHTML: CSS_Match,
           }),
           Object.assign(document.createElement("div"), {
-            innerHTML: `<h2>Available games</h2>`,
+            innerHTML: `<h2>${where} games</h2>`,
           })
         );
 
-        this.get_availableGames();
+        this.get_availableGames(where);
       }
       // ================================================== get_availableGames
-      get_availableGames() {
-        log("get_availableGames");
+      get_availableGames(where) {
         CHESS.APIRT.callAPI({
           action: "READ",
           body: {
-            where: "AVAILABLEGAMES",
+            where,
           },
           callback: ({ rows }) => {
-            log(rows.length, rows);
             if (rows.length) {
               let matches = rows.map((match) => {
-                let { match_guid } = match;
+                let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = match;
                 return this.$createElement({
                   tag: "div",
                   props: {
-                    innerHTML: match_guid,
+                    innerHTML: `white:<b>${player_white}</b> (wp:${wp_user_white}) ${match_guid}`,
                     onclick: (evt) => this.resumeChessGame(match_guid),
                   },
                 });
               });
-              log(matches);
               this.append(...matches);
             } else {
-              console.error("Geen matches gevonden in de database");
+              log("Geen matches gevonden in de database");
             }
           },
         });

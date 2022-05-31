@@ -68,9 +68,8 @@
     //
     //display GUID on every marked <chess-board debug>
     /*html*/ `<style id="config_debuginformation" onload="this.disabled=false">` +
-    /*css*/ `chess-board[debug]::before{content:attr(id); position:absolute; top:0; left:0; z-index:9999; color:red; font-size:12px;}` +
-    /*css*/ `chess-board[setfen*=" b "]::after{content:attr(player); position:absolute; top:50px; left:0; z-index:9999; color:red; font-size:12px;}` +
-    /*css*/ `chess-board[setfen*=" w "]::after{content:attr(player); position:absolute; bottom:50px; left:0; z-index:9999; color:red; font-size:12px;}` +
+      // display debuginfo as chess board layer; but not as grid
+    /*css*/ `#chessboard_debuginfo {background-color: rgba(150,250,150,0.5);height:auto;width:100%;white-space: normal;display:block }` +
     /*html*/ `</style>` +
     //
     //! attack and defend shadows on pieces:
@@ -109,6 +108,7 @@
     disabledBoardSTYLE +
     /*html*/ `<style id="chessboard_gridareas"></style>` + // inject 64 gridarea definitions here
     /*html*/ `<div id="chessboard_squares" class="chessboard_layer"></div>` + // squares layer
+    /*html*/ `<div id="chessboard_debuginfo" class="chessboard_layer">21</div>` + // squares layer
     /*html*/ `<div id="chessboard_pieces" class="chessboard_layer"></div>`;
 
   //`<style>chess-square:before{content:"d:" attr(defendedby) " a:" attr(attackedby)}</style>`

@@ -1,5 +1,8 @@
 // IIFE - Immediatly Invoked Function Expression, save from creating Global variables
 !(function () {
+  function log(...args) {
+    console.log("%c chess-match ", "background:purple;color:yellow", ...args);
+  }
   /*************************************************************************
    <chess-square defendedby="Qf5" attackedby="nc5"> Web Component
    */
@@ -44,6 +47,7 @@
       // ======================================================== <chess-square>.connectedCallback
       connectedCallback() {
         this.addEventListener("click", () => {
+          log("`click` event on", this.at);
           if (this.chessboard.pieceClicked) {
             this.handleSecondClick();
           } else {
@@ -187,10 +191,10 @@
         if (piece) {
           if (piece.isWhite) {
             chessboard.capturedWhitePieces.push(pieceName);
-            if (chessboard.record) console.log("Captured White Pieces:", chessboard.capturedWhitePieces);
+            if (chessboard.record) log("Captured White Pieces:", chessboard.capturedWhitePieces);
           } else {
             chessboard.capturedBlackPieces.push(pieceName);
-            if (chessboard.record) console.log("Captured Black Pieces:", chessboard.capturedBlackPieces);
+            if (chessboard.record) log("Captured Black Pieces:", chessboard.capturedBlackPieces);
           }
           // this.clear();
           // this.append(chessPiece); // put piece in new location

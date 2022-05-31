@@ -149,6 +149,7 @@
           this.setAttribute("id", v);
           this.listenOnMatchID();
         } else this.removeAttribute("id");
+        this.debuginfo();
       }
       // ======================================================== <chess-board>.database_id
       get database_id() {
@@ -536,6 +537,7 @@
         setTimeout(() => {
           if (this._savedfen) this.fen = this._savedfen;
           if (this.getSquare("e3")) CHESS.analysis(this, "start");
+          this.debuginfo();
         });
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
@@ -580,10 +582,16 @@
           player = "b";
         }
         fenParts.push(player);
+
         // castling
         let castling = "";
-        if (this.castlingArray.length) castling = this.castlingArray.join("");
-        else castling = "-";
+        if (this.castlingArray) {
+          if (this.castlingArray.length) castling = this.castlingArray.join("");
+          else castling = "-";
+        } else {
+          //! waarom is die castlingArray er niet?
+          console.error("No this.castlingArray - What happened");
+        }
         fenParts.push(castling);
         // enpassant
         //todo fix enpassant to remove after 1 turn.
@@ -630,7 +638,6 @@
         matchboard = this, // the <chess-board> the user is playing
       }) {
         this.getPiece(from).movePieceTo(to, false); // move piece without animation
-        if (from == "d2") console.warn("trymove happens", from, to, this);
         if (CHESS.analysis(this, "checkcheck")) {
           matchboard.markIllegalMove(to);
         }
@@ -655,6 +662,10 @@
       saveFENinLocalStorage() {
         // console.log("localStorage", this.fen);
         localStorage.setItem(this.localStorageGameID, this.fen);
+      }
+      debuginfo() {
+        let debuginfo = document.getElementById("chessboard_debuginfo");
+        if (debuginfo) debuginfo.innerHTML = `${this.id}<br>${this.fen.replaceAll(" ", "  ")}`;
       }
     } // class ChessBoard
   ); // end of class definition
