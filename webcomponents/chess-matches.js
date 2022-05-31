@@ -21,17 +21,20 @@
       }
       // ======================================================== <chess-matches>.read_matches
       read_matches() {
-        CHESS.API.matches.read({
-          callback: (matches) => {
-            const setMainBoard = (guid, fen) => {
+        CHESS.APIRT.callAPI({
+          action: "READ",
+          body: { where: "ALLGAMES" },
+          callback: ({ rows }) => {
+            console.error("Returned matches", rows);
+            const setMainBoard = (match_guid, fen) => {
               let chessboard = document.querySelector(CHESS.__WC_CHESS_BOARD__);
-              chessboard.id = guid;
+              chessboard.id = match_guid;
               chessboard.fen = fen;
               chessboard.style.pointerEvents = "none";
             };
             // ------------------------------------------------- process all database boards
-            console.log(matches.length, "matches read");
-            let boardElements = matches
+            console.log(rows.length, "matches read");
+            let boardElements = rows
               .filter((record, idx, arr) => {
                 return idx;
               }) // record.guid !== null)
@@ -63,7 +66,7 @@
                           miniboard.remove();
                           window.CHESS.deleteMatchByGUID(match_guid);
                         } else if (evt.shiftKey) {
-                          this.resumeChessGame(match_guid);
+                          this.resumeChessGame(match_guid, miniboard.fen);
                         }
                       }, // onclick
                     },

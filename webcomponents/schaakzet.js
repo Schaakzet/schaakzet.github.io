@@ -61,7 +61,7 @@
     if (scripts.length) {
       let file = scripts.shift();
       document.head.append(
-        script({  
+        script({
           file,
           onload: () => {
             log("script dependency loaded", file);
