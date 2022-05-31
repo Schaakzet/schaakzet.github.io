@@ -61,7 +61,7 @@
     if (scripts.length) {
       let file = scripts.shift();
       document.head.append(
-        script({  
+        script({
           file,
           onload: () => {
             log("script dependency loaded", file);
@@ -72,7 +72,6 @@
     } else {
       loadScriptsAsynchronous([
         ["create-html", "todo-list"], // HTML components
-        ["chess-api-matches"],
         ["h1-chess"],
         ["chess-game-progress", "chess-show-captured-pieces"],
         ["chess-match", "chess-match-buttons", "chess-matches", "chess-players"], // Chess Components

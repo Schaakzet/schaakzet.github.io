@@ -80,9 +80,10 @@ CHESS.ChessBaseElement = class extends HTMLElement {
     return Object.assign(document.createElement(tag), props);
   }
   // ======================================================== BaseElement.resumeChessGame
-  resumeChessGame(match_guid) {
-    localStorage.setItem("match_guid", match_guid);
+  resumeChessGame(match_guid, fen) {
     window.open("match.html", "_blank");
+    localStorage.setItem("match_guid", match_guid);
+    this.chessboard.fen = fen;
   }
   // end ChessBaseElement
 };
