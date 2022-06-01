@@ -26,7 +26,7 @@
       height: var(--width);
       display: inline-block;
       position: relative;
-      xborder: calc(var(--width) / 40) solid gray;
+     
     }` +
     /*css*/ `chess-board{display:none;position:relative}` +
     /*css*/ `chess-board:after{content:"";display:block;padding-bottom:100%}` + // make sure chessboard displays as a square
@@ -37,6 +37,7 @@
       position: absolute;
       width: 100%;
       height: 100%;
+      border: calc(var(--width) / 40) solid gray;
       display: grid;
       grid-template-columns: repeat(8, 1fr);
       grid-template-rows: repeat(8, 1fr);
@@ -69,7 +70,7 @@
     //display GUID on every marked <chess-board debug>
     /*html*/ `<style id="config_debuginformation" onload="this.disabled=false">` +
       // display debuginfo as chess board layer; but not as grid
-    /*css*/ `#chessboard_debuginfo {background-color: rgba(150,250,150,0.5);height:auto;width:100%;white-space: normal;display:block }` +
+    /*css*/ `#chessboard_debuginfo {background-color: rgba(150,250,150,0.5);height:auto;width:100%;white-space: normal;display:block;border:0; }` +
     /*html*/ `</style>` +
     //
     //! attack and defend shadows on pieces:
