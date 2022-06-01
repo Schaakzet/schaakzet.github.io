@@ -91,11 +91,7 @@
             if (rows.length) {
               let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = rows[0];
               console.warn("Row 1 returning from DB:", rows[0]);
-              if (player_black == "") {
-                player_black = "Bart"; // = wp_user_displayname;
-                console.warn("Player Black substituted...", player_black);
-                this.assignPlayerBlack(match_guid, player_white, player_black);
-              }
+              this.assignPlayerBlack(match_guid, player_white, player_black);
               this.chessboard.fen = fen;
               log("resumeMatch", fen);
             } else {
@@ -106,7 +102,13 @@
       }
       // ================================================== assignPlayerBlack
       assignPlayerBlack(match_guid, player_white, player_black) {
+        if (player_black == "") {
+          player_black = "Bart"; // = wp_user_displayname;
+          console.warn("Player Black substituted...", player_black);
+        }
+
         CHESS.APIRT.callAPI({
+          // if (joinGame) {
           action: "UPDATE",
           body: {
             match_guid, // GUID

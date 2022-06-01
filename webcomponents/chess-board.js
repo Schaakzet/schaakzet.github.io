@@ -407,6 +407,7 @@
                 this.lastMove.fen = savedFEN;
 
                 this.recordMoveInDatabase({
+                  // if (moveSequence === "directMove")
                   fromSquare,
                   toSquare,
                   move: this.doingCastling, //record castling type "O-O"  "O-O-O"
@@ -418,6 +419,7 @@
             } else {
               // regular move
               this.recordMoveInDatabase({
+                // if (moveSequence === "directMove")
                 fromSquare,
                 toSquare,
                 move: fromSquare.at + moveType + toSquare.at, // O-O-O

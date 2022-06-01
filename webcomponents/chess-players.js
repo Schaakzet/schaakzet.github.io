@@ -9,6 +9,7 @@
       super();
       this.player_id = id;
       this.player_nickname = name;
+      // this.player_color = color;
     }
 
     connectedCallback() {
