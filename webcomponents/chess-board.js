@@ -673,7 +673,7 @@
       }
       debuginfo() {
         let debuginfo = document.getElementById("chessboard_debuginfo");
-        if (debuginfo) debuginfo.innerHTML = `${this.id}<br>${this.fen.replaceAll(" ", "  ")}`;
+        if (debuginfo) debuginfo.innerHTML = `GUID: ${this.id}   __ FEN: ${this.fen.replaceAll(" ", "  ")}`;
       }
     } // class ChessBoard
   ); // end of class definition
