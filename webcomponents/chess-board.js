@@ -85,7 +85,7 @@
           }
 
           this.style.setProperty("--chess_board_resized_width", newWidth + "px");
-          this.style.setProperty("--chess_piece_resized_width", Math.floor(newWidth) / 8 + "px");
+          this.style.setProperty("--chess_piece_resized_width", newWidth / 8 + "px");
 
           //! logic error here
           // the header of the page is loaded AFTER the board is resized,
