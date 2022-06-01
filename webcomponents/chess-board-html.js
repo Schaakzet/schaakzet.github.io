@@ -39,6 +39,7 @@
       height: 100%;
       border: calc(var(--width) / 40) solid gray;
       display: grid;
+      background-color: gray;
       grid-template-columns: repeat(8, 1fr);
       grid-template-rows: repeat(8, 1fr);
       grid-template-areas:
