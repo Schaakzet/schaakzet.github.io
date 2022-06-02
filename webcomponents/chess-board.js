@@ -112,17 +112,20 @@
           // console.log("666", "listenOnMatchID <chess-board>", this.id);
           const listenFunc = (evt) => {
             // listen Functie definieren
-            console.error("new FEN");
             let { match_guid, fen, move } = evt.detail;
             if (this.id == match_guid) {
               if (this.fen != fen) {
                 let movetype = move[2];
-                console.warn("777", move);
                 if (movetype == "-" || movetype == "x") {
-                  this.play([move.split(movetype)]);
+                  console.warn("play", fen);
+                  let [from, to] = move.split(movetype);
+                  this.movePiece(from, to);
+                  // this.play([move.split(movetype)]);
                 } else {
                   this.fen = fen;
                 }
+              } else {
+                console.error("same FEN");
               }
             }
           };
@@ -333,8 +336,12 @@
       }
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
+        console.error("movePiece", chessPiece, square);
         if (isString(chessPiece)) chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
-        if (!chessPiece) console.error("Er is geen chesspiece op ", square);
+        if (!chessPiece) {
+          console.error("Er is geen chesspiece", chessPiece);
+          return;
+        }
         const /* function */ movedPiece = () => {
             let fromSquare = chessPiece.square;
             let toSquare = this.getSquare(square);
@@ -400,6 +407,7 @@
                 this.lastMove.fen = savedFEN;
 
                 this.recordMoveInDatabase({
+                  // if (moveSequence === "directMove")
                   fromSquare,
                   toSquare,
                   move: this.doingCastling, //record castling type "O-O"  "O-O-O"
@@ -411,6 +419,7 @@
             } else {
               // regular move
               this.recordMoveInDatabase({
+                // if (moveSequence === "directMove")
                 fromSquare,
                 toSquare,
                 move: fromSquare.at + moveType + toSquare.at, // O-O-O
@@ -610,6 +619,7 @@
       play(moves = this._doingmoremoves) {
         // chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
         // TODO: rewrite to ["e2-e4", "e7-e5", "g1-f3", "b8-c6"] so "x" take piece can be used
+        console.error("Play", moves);
         if (!this._doingmoremoves) this._doingmoremoves = moves;
         if (this._doingmoremoves && this._doingmoremoves.length) {
           let [from, to] = this._doingmoremoves.shift();
@@ -624,8 +634,8 @@
             this.movePiece(from, to);
           }
         } else {
-          // console.error(666, "No play moves", this);
-          delete this._doingmoremoves;
+          console.error(666, "No play moves", this);
+          // delete this._doingmoremoves;
         }
       }
       adddplaymove(from, to) {

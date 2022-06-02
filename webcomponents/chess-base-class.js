@@ -67,12 +67,15 @@ CHESS.ChessBaseElement = class extends HTMLElement {
       const evtSource = new EventSource(API);
       evtSource.onmessage = (evt) => {
         // respond to the Event
-        log("Received", evt.data);
-        const receivedData = JSON.parse(evt.data); //! TODO this can be data for multiple matches!
-        root.dispatch({
-          name: receivedData.match_guid, // event name is the match_guid
-          detail: receivedData,
-        });
+        if (evt.data) {
+          console.clear();
+          log("Received", evt.data);
+          const receivedData = JSON.parse(evt.data); //! TODO this can be data for multiple matches!
+          root.dispatch({
+            name: receivedData.match_guid, // event name is the match_guid
+            detail: receivedData,
+          });
+        }
       };
     } catch (e) {
       console.error("Event Source error", API);

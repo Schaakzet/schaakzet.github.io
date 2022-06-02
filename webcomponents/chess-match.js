@@ -38,7 +38,7 @@
           }),
           Object.assign(document.createElement("div"), {
             innerHTML:
-              `<h2>Match <chess-players></chess-players></h2>` +
+              `<h2>Match</h2>` +
               `<chess-match-buttons></chess-match-buttons>` +
               `<chess-board id="matchboard" fen="" record labels></chess-board>` +
               `<div>` +
@@ -58,7 +58,6 @@
         document.addEventListener(this.localName, (e) => {
           if (this[e.detail.value]) this[e.detail.value](e);
         });
-        document.addEventListener("inputValue", (evt) => this.updateMatch());
         this.addListeners = () => {}; // attach listeners only once
       }
 
@@ -92,11 +91,7 @@
             if (rows.length) {
               let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = rows[0];
               console.warn("Row 1 returning from DB:", rows[0]);
-              if (player_black == "") {
-                player_black = "Bart";
-                console.warn("Player Black substituted...", player_black);
-                this.assignPlayerBlack(match_guid, player_white, player_black);
-              }
+              this.assignPlayerBlack(match_guid, player_white, player_black);
               this.chessboard.fen = fen;
               log("resumeMatch", fen);
             } else {
@@ -107,7 +102,13 @@
       }
       // ================================================== assignPlayerBlack
       assignPlayerBlack(match_guid, player_white, player_black) {
+        if (player_black == "") {
+          player_black = "Bart"; // = wp_user_displayname;
+          console.warn("Player Black substituted...", player_black);
+        }
+
         CHESS.APIRT.callAPI({
+          // if (joinGame) {
           action: "UPDATE",
           body: {
             match_guid, // GUID
@@ -115,6 +116,7 @@
             player_black,
           },
           callback: ({ rows }) => {
+            this.querySelector("h2").innerHTML = `Match ${player_white} ${player_black}`;
             log("Updated Player Display Names", rows);
           },
         });
@@ -126,6 +128,7 @@
         move = "e2-e4",
         fen = chessboard.fen,
       }) {
+        console.error("FEN", fen);
         log("storeMove", move, chessboard.id);
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
