@@ -319,7 +319,7 @@
         toSquare, // <chess-square> to which piece was moved
         move, // e2-e4  d7xh8  O-O-O
       }) {
-        if (this.record) {
+        if (this.record && this.id !== "testboard") {
           // emit Event to <chess-match> which records all moves in database
           this.dispatch({
             root: document,
@@ -336,10 +336,10 @@
       }
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
-        console.error("movePiece", chessPiece, square);
+        // console.error("movePiece", chessPiece, square);
         if (isString(chessPiece)) chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
         if (!chessPiece) {
-          console.error("Er is geen chesspiece", chessPiece);
+          console.error("Er is geen chesspiece. Chesspiece = ", chessPiece);
           return;
         }
         const /* function */ movedPiece = () => {
@@ -384,6 +384,7 @@
                   fen: lastFEN,
                 });
               };
+
             save2chessMoves(); // save every move, including castling king AND rook
 
             if (CHESS.analysis && !this.doingCastling) {
@@ -407,7 +408,6 @@
                 this.lastMove.fen = savedFEN;
 
                 this.recordMoveInDatabase({
-                  // if (moveSequence === "directMove")
                   fromSquare,
                   toSquare,
                   move: this.doingCastling, //record castling type "O-O"  "O-O-O"
@@ -419,7 +419,6 @@
             } else {
               // regular move
               this.recordMoveInDatabase({
-                // if (moveSequence === "directMove")
                 fromSquare,
                 toSquare,
                 move: fromSquare.at + moveType + toSquare.at, // O-O-O
@@ -594,6 +593,7 @@
 
         // castling
         let castling = "";
+        console.warn("Castling Array", this.castlingArray);
         if (this.castlingArray) {
           if (this.castlingArray.length) castling = this.castlingArray.join("");
           else castling = "-";
@@ -619,7 +619,7 @@
       play(moves = this._doingmoremoves) {
         // chessboard.play([["e2", "e4"], ["e7", "e5"], ["g1", "f3"], ["b8", "c6"]]);
         // TODO: rewrite to ["e2-e4", "e7-e5", "g1-f3", "b8-c6"] so "x" take piece can be used
-        console.error("Play", moves);
+        // console.error("Play", moves);
         if (!this._doingmoremoves) this._doingmoremoves = moves;
         if (this._doingmoremoves && this._doingmoremoves.length) {
           let [from, to] = this._doingmoremoves.shift();

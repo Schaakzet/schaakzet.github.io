@@ -68,7 +68,7 @@ CHESS.ChessBaseElement = class extends HTMLElement {
       evtSource.onmessage = (evt) => {
         // respond to the Event
         if (evt.data) {
-          console.clear();
+          // console.clear();
           log("Received", evt.data);
           const receivedData = JSON.parse(evt.data); //! TODO this can be data for multiple matches!
           root.dispatch({

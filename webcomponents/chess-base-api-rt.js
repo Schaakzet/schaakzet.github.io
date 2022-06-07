@@ -3,7 +3,7 @@ CHESS.APIRT = CHESS.APIRT || {};
 // add constants
 Object.assign(CHESS.APIRT, {
   __API_RECORDS__: "//schaakzet.nl/api/crud/index.php/records/",
-  __API_SCHAAKZET__: "//schaakzet.nl/api/rt/index.php/?action=",
+  __API_SCHAAKZET__: "//schaakzet.nl/api/chessgame.php/?action=",
   __API_MATCHES__: "//schaakzet.nl/api/chessgame.php",
   __API_MATCHMOVES__: "//schaakzet.nl/api/rt/matchmoves.php", // CHESS.__API_MATCHMOVES__
   __API_MATCHMOVES_EVENTSOURCE__: "//schaakzet.nl/api/rt/matchmoves_eventsource.php",
@@ -15,7 +15,7 @@ Object.assign(CHESS.APIRT, {
 
   // ================================================== deleteMatchByGUID
   deleteMatchByGUID: (guid) => {
-    fetch(CHESS.__API_SCHAAKZET__ + `delete&matchid=` + guid, {
+    fetch(CHESS.APIRT.__API_SCHAAKZET__ + "DELETEMATCH" + "&match_guid=" + guid, {
       method: "GET",
       headers: CHESS.APIRT.__API_HEADERS__,
     });

@@ -335,9 +335,17 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
     if (mate == "Checkmate") {
       $chessboard.setMessage(`Game over. ${CHESS.otherPlayer(color)} heeft gewonnen.`);
       $chessboard.classList.add("game_over");
+      setTimeout(endOfGame, 3000);
     } else if (mate == "Stalemate") {
       $chessboard.setMessage("Game over. Gelijkspel.");
       $chessboard.classList.add("game_over");
+      setTimeout(endOfGame, 3000);
     }
+  }
+
+  // ======================================================== endOfGame
+  function endOfGame() {
+    let answer = prompt("Do you want to play another game? (y/n)");
+    if (answer === "y") document.dispatchEvent(new Event("createMatch"));
   }
 };

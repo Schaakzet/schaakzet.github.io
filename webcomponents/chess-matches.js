@@ -64,7 +64,7 @@
                       onclick: (evt) => {
                         if (evt.ctrlKey) {
                           miniboard.remove();
-                          window.CHESS.deleteMatchByGUID(match_guid);
+                          window.CHESS.APIRT.deleteMatchByGUID(match_guid);
                         } else if (evt.shiftKey) {
                           this.resumeChessGame(match_guid, miniboard.fen);
                         }

@@ -54,6 +54,7 @@
       // ================================================== addListeners
       addListeners() {
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.storeMove(evt.detail));
+        document.addEventListener("createMatch", (evt) => this.createMatch(evt.detail));
         // handle game buttons
         document.addEventListener(this.localName, (e) => {
           if (this[e.detail.value]) this[e.detail.value](e);
@@ -63,19 +64,17 @@
 
       // ================================================== createMatch
       createMatch() {
-        if (confirm("Wil je een nieuwe match starten?")) {
-          // ------------------------------------------------- RT API
-          CHESS.APIRT.createMatch({
-            player_white: "WP:displayname",
-            wp_user_white: 666,
-            callback: ({ rowcount, rows }) => {
-              log("createMatch", rows[0]);
-              let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = rows[0];
+        // ------------------------------------------------- RT API
+        CHESS.APIRT.createMatch({
+          player_white: ROADSTECHNOLOGY.CHESS.displayname,
+          wp_user_white: ROADSTECHNOLOGY.CHESS.id,
+          callback: ({ rows }) => {
+            log("createMatch", rows[0]);
+            let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = rows[0];
 
-              this.initGame(match_guid);
-            },
-          });
-        }
+            this.initGame(match_guid);
+          },
+        });
       }
 
       // ================================================== resumeMatch
@@ -91,7 +90,7 @@
             if (rows.length) {
               let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = rows[0];
               console.warn("Row 1 returning from DB:", rows[0]);
-              this.assignPlayerBlack(match_guid, player_white, player_black);
+              this.assignPlayers(match_guid, wp_user_white, wp_user_black, player_white, player_black);
               this.chessboard.fen = fen;
               log("resumeMatch", fen);
             } else {
@@ -100,23 +99,24 @@
           },
         });
       }
-      // ================================================== assignPlayerBlack
-      assignPlayerBlack(match_guid, player_white, player_black) {
-        if (player_black == "") {
-          player_black = "Bart"; // = wp_user_displayname;
-          console.warn("Player Black substituted...", player_black);
-        }
+      // ================================================== assignPlayers
+      assignPlayers(match_guid, wp_user_white, wp_user_black, player_white, player_black) {
+        player_black = ROADSTECHNOLOGY.CHESS.displayname;
+        wp_user_black = ROADSTECHNOLOGY.CHESS.id;
+        console.warn("Player Black substituted...", player_black);
 
         CHESS.APIRT.callAPI({
           // if (joinGame) {
           action: "UPDATE",
           body: {
             match_guid, // GUID
+            wp_user_white,
+            wp_user_black,
             player_white,
             player_black,
           },
           callback: ({ rows }) => {
-            this.querySelector("h2").innerHTML = `Match ${player_white} ${player_black}`;
+            this.querySelector("h2").innerHTML = `Match ${player_white} VS ${player_black}`;
             log("Updated Player Display Names", rows);
           },
         });
@@ -132,6 +132,7 @@
         log("storeMove", move, chessboard.id);
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
+
         CHESS.APIRT.callAPI({
           action: "CHESSMOVE",
           body: {

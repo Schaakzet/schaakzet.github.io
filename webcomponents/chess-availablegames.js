@@ -44,7 +44,7 @@
                   tag: "div",
                   props: {
                     innerHTML: `white:<b>${player_white}</b> (wp:${wp_user_white}) ${match_guid}`,
-                    onclick: (evt) => this.resumeChessGame(match_guid),
+                    onclick: (evt) => this.resumeChessGame(match_guid, fen),
                   },
                 });
               });
