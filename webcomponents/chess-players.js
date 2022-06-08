@@ -1,28 +1,36 @@
 !(function () {
-  class ChessPlayer extends CHESS.ChessBaseElement {
-    // ======================================================== <chess-board>.observedAttributes
-    static get observedAttributes() {
-      return ["name"];
+  class ChessPlayer extends HTMLElement {
+    // Has properties player_id, player_displayname and color.
+
+    set wp_id(value) {
+      this.setAttribute("id", value);
     }
-    // Has properties player_id and player_nickname.
-    constructor(id, name) {
-      super();
-      this.player_id = id;
-      this.player_nickname = name;
+
+    get wp_id() {
+      return this.getAttribute("id");
+    }
+
+    set wp_displayname(value) {
+      this.setAttribute("name", value);
+      this.connectedCallback();
+    }
+
+    get wp_displayname() {
+      return this.getAttribute("name");
+    }
+
+    set player_color(value) {
+      this.setAttribute("color", value);
+    }
+
+    get player_color() {
+      return this.getAttribute("color");
     }
 
     connectedCallback() {
-      let placeholder = this.localName;
-      this.innerHTML = /*html*/ `<label>${this.getAttribute("label") || ""}<span>${this.getAttribute("name") || placeholder}</span></label>`;
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-      console.warn("##888##", CHESS.__WC_ATTRIBUTE_PLAYER__);
-      if (oldValue && name == CHESS.__WC_ATTRIBUTE_PLAYER__) {
-        this.name = newValue;
-      }
+      this.innerHTML = /*html*/ this.getAttribute("name") + `666`;
     }
   }
-  customElements.define("chess-player-white", class extends ChessPlayer {});
-  customElements.define("chess-player-black", class extends ChessPlayer {});
+
+  customElements.define("chess-player", ChessPlayer);
 })();

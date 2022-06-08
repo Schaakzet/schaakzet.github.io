@@ -63,14 +63,16 @@
     /*css*/ `chess-piece > * {width:100%;position: relative}` +
     //! rotate board to black perspective
     /*css*/ `chess-board[rotated],chess-board[rotated] chess-square {transform:rotate(180deg)}` +
+    // Turn-based
+    /*CSS*/ `.noMoves {pointer-events: none;}` +
     // game results
     /*css*/ `.game_over {pointer-events: none;}` +
-    /*css*/ `.lastmove {background-color: lightblue}` +
+    /*css*/ `.lastmove {background-color: lightblue;}` +
     /*html*/ `</style>` +
     //
     //display GUID on every marked <chess-board debug>
     /*html*/ `<style id="config_debuginformation" onload="this.disabled=false">` +
-      // display debuginfo as chess board layer; but not as grid
+    // display debuginfo as chess board layer; but not as grid
     /*css*/ `#chessboard_debuginfo {background-color: rgba(150,250,150,0.5);height:auto;width:100%;white-space: normal;display:block;border:0;padding:0; }` +
     /*html*/ `</style>` +
     //

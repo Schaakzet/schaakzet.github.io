@@ -65,12 +65,14 @@
       // ================================================== createMatch
       createMatch() {
         // ------------------------------------------------- RT API
-        CHESS.APIRT.createMatch({
-          player_white: ROADSTECHNOLOGY.CHESS.displayname,
-          wp_user_white: ROADSTECHNOLOGY.CHESS.id,
+        CHESS.APIRT.callAPI({
+          action: "CREATE",
+          body: { player_white: ROADSTECHNOLOGY.CHESS.displayname, wp_user_white: ROADSTECHNOLOGY.CHESS.id },
           callback: ({ rows }) => {
             log("createMatch", rows[0]);
             let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = rows[0];
+
+            this.player1 = wp_user_white;
 
             this.initGame(match_guid);
           },
@@ -89,8 +91,11 @@
           callback: ({ rows }) => {
             if (rows.length) {
               let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = rows[0];
-              console.warn("Row 1 returning from DB:", rows[0]);
-              this.assignPlayers(match_guid, wp_user_white, wp_user_black, player_white, player_black);
+              console.warn("Row 1 returning from DB:", rows[0], wp_user_white, wp_user_black);
+              //this.assignPlayers(match_guid, wp_user_white, wp_user_black, player_white, player_black);
+              if (wp_user_black == "0") {
+                confirm("Ben jij speler wit?");
+              }
               this.chessboard.fen = fen;
               log("resumeMatch", fen);
             } else {
@@ -101,6 +106,12 @@
       }
       // ================================================== assignPlayers
       assignPlayers(match_guid, wp_user_white, wp_user_black, player_white, player_black) {
+        /*
+USER STORIES:
+
+Als dit chess-board in de database wp_user_white DEZELDE id heeft als ROADSTECHNOLOGY.CHESS.id
+dan ben ik player WHITE
+*/
         player_black = ROADSTECHNOLOGY.CHESS.displayname;
         wp_user_black = ROADSTECHNOLOGY.CHESS.id;
         console.warn("Player Black substituted...", player_black);
@@ -116,7 +127,7 @@
             player_black,
           },
           callback: ({ rows }) => {
-            this.querySelector("h2").innerHTML = `Match ${player_white} VS ${player_black}`;
+            this.querySelector("h2").innerHTML = `Match ${player_white} vs ${player_black}`;
             log("Updated Player Display Names", rows);
           },
         });

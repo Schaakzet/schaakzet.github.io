@@ -300,6 +300,9 @@
         delete this.pieceClicked;
         this.initAnalysis();
         this.highlightOff();
+
+        // player1.player_color !== (this.player ? this.classsList.add("noMoves") : this.classsList.remove("noMoves"));
+        // player2.player_color !== (this.player ? this.classsList.add("noMoves") : this.classsList.remove("noMoves"));
       }
       // ======================================================== <chess-board>.highlightOff
       highlightOff() {
@@ -659,11 +662,12 @@
         this.pieceClicked.moves = this.pieceClicked.moves.filter((move) => move !== this.getSquare(at).at);
       }
       // ======================================================== <chess-board>.player = current player
+      // wie er aan zet is
       get player() {
         return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__);
       }
       set player(v) {
-        return this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__, v);
+        this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__, v);
       }
       updateFENonScreen() {
         let fenElement = document.getElementById("fen");
