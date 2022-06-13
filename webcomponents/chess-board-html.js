@@ -6,7 +6,7 @@
     const otherPlayer = CHESS.otherPlayer(playerColor);
     const attackedState = CHESS.__ATTACK_PIECE__;
     const selector =
-      `chess-board[player="${playerColor}"] ` + // if playerColor
+      `chess-board[playerturn="${playerColor}"] ` + // if playerColor
       `chess-square[piece*="${otherPlayer}"]:not([state="${attackedState}"])`; // if piece is not captured
     // disable oponent player squares
     return /*css*/ `${selector} {

@@ -101,10 +101,11 @@
               } else {
                 matchesRow.wp_user_black = this.player.id;
                 matchesRow.player_black = this.player.displayname;
-                this.player.color = "black";
-                console.warn("Player Black:", this.player.matchesRow);
+                this.player.color = CHESS.__PLAYER_BLACK__;
+                console.warn("Player Black:", this.player);
                 this.updatePlayers(matchesRow);
               }
+              this.chessboard.setAttribute("player", this.player.color);
               this.chessboard.fen = fen;
               log("resumeMatch", fen);
             } else {

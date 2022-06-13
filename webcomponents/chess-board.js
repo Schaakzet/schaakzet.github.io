@@ -1,7 +1,5 @@
 !(function () {
-  /*************************************************************************
-   <chess-board fen="" player="wit"> Web Component
-   */
+  /***********************************************************************/
   customElements.define(
     CHESS.__WC_CHESS_BOARD__,
     class extends CHESS.ChessBaseSquarePieceElement {
@@ -41,7 +39,7 @@
             else this.fen = undefined; // use default all pieces start board
 
             window.addEventListener("resize", (e) => this.resizeCheck(e));
-            if (this.id !== "testboard") this.listenOnMatchID();
+            if (this.id !== CHESS.__TESTBOARD_FOR_MOVES__) this.listenOnMatchID();
 
             this.initPlayerTurn();
 
@@ -237,7 +235,7 @@
       }
       // ======================================================== <chess-board>.setMessage
       setMessage(msg) {
-        if (this.id !== "testboard") {
+        if (this.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
           document.getElementById("message").innerText = msg;
         }
       }
@@ -300,9 +298,6 @@
         delete this.pieceClicked;
         this.initAnalysis();
         this.highlightOff();
-
-        // player1.player_color !== (this.player ? this.classsList.add("noMoves") : this.classsList.remove("noMoves"));
-        // player2.player_color !== (this.player ? this.classsList.add("noMoves") : this.classsList.remove("noMoves"));
       }
       // ======================================================== <chess-board>.highlightOff
       highlightOff() {
@@ -313,7 +308,7 @@
       }
       // ======================================================== <chess-board>.changePlayer
       changePlayer() {
-        this.player = CHESS.otherPlayer(this.player); // todo Naar FEN
+        this.playerturn = CHESS.otherPlayer(this.player); // todo Naar FEN
         this.initPlayerTurn();
       }
       // ======================================================== <chess-board>.recordMoveInDatabase
@@ -322,7 +317,7 @@
         toSquare, // <chess-square> to which piece was moved
         move, // e2-e4  d7xh8  O-O-O
       }) {
-        if (this.record && this.id !== "testboard") {
+        if (this.record && this.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
           // emit Event to <chess-match> which records all moves in database
           this.dispatch({
             root: document,
@@ -476,12 +471,10 @@
       }
       // ======================================================== <chess-board>.kingSquare
       kingSquare(
-        color = this.getAttribute(__WC_ATTRIBUTE_PLAYER__), // get default color from <chess-board player="..."
+        color = this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__), // get default color from <chess-board player="..."
         showwarning = false,
         warning = /* function */ () => console.warn("No king on the board!") // optional warning function
       ) {
-        if (color == "wit") color = CHESS.__PLAYER_WHITE__;
-        if (color == "zwart") color = CHESS.__PLAYER_BLACK__;
         const king = color + CHESS.__PIECE_SEPARATOR__ + CHESS.__PIECE_KING__;
         const square = this.findPieceSquare(king);
         return square || (showwarning && warning());
@@ -525,9 +518,9 @@
             // player
             if (player) {
               if (player == "b") {
-                this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__, "zwart");
+                this.playerturn = CHESS.__PLAYER_BLACK__;
               } else {
-                this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__, "wit");
+                this.playerturn = CHESS.__PLAYER_WHITE__;
               }
             }
             // castling "KQkq" becomes this.castlingArray = ["K", "Q", "k", "q"]
@@ -587,7 +580,7 @@
         fenParts.push(fen);
         // player
         let player = "-";
-        if (this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__) == CHESS.__PLAYER_BLACK__) {
+        if (this.playerturn == CHESS.__PLAYER_WHITE__) {
           player = "w";
         } else {
           player = "b";
@@ -663,11 +656,11 @@
       }
       // ======================================================== <chess-board>.player = current player
       // wie er aan zet is
-      get player() {
-        return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__);
+      get playerturn() {
+        return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__);
       }
-      set player(v) {
-        this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__, v);
+      set playerturn(v) {
+        this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__, v);
       }
       updateFENonScreen() {
         let fenElement = document.getElementById("fen");
@@ -679,7 +672,7 @@
       }
       debuginfo() {
         let debuginfo = document.getElementById("chessboard_debuginfo");
-        if (debuginfo) debuginfo.innerHTML = `GUID: ${this.id}   __ FEN: ${this.fen.replaceAll(" ", "  ")}`;
+        if (debuginfo && this.id != CHESS.__TESTBOARD_FOR_MOVES__) debuginfo.innerHTML = `GUID: ${this.id}   __ FEN: ${this.fen.replaceAll(" ", "  ")}`;
       }
     } // class ChessBoard
   ); // end of class definition

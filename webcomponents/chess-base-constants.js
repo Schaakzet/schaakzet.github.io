@@ -18,7 +18,7 @@ window.CHESS = Object.assign(
     __WC_ATTRIBUTE_IS__: "is", // <chess-piece is="wit-koning">
     __WC_ATTRIBUTE_FEN__: "fen", // FEN notation
     __WC_ATTRIBUTE_RECORD__: "record", // <chess-board record> triggers saving moves to database
-    __WC_ATTRIBUTE_PLAYER__: "player", // <chess-board player=" __PLAYER_WHITE__ / __PLAYER_BLACK__ ">
+    __WC_ATTRIBUTE_PLAYERTURN__: "playerturn", // <chess-board player=" __PLAYER_WHITE__ / __PLAYER_BLACK__ ">
     __WC_ATTRIBUTE_ATTACKEDBY__: "attackedby", // <chess-square attackedby="Ne3,Qe8">
     __WC_ATTRIBUTE_DEFENDEDBY__: "defendedby", // <chess-square defendedby="Ne3,Qe8">
     __WC_ATTRIBUTE_MOVESFROM__: "movesfrom", // <chess-square movesfrom="Pg2, qh4">
@@ -55,6 +55,7 @@ window.CHESS = Object.assign(
     __PIECE_KNIGHT__: "paard",
     __PIECE_BISHOP__: "loper",
 
+    __TESTBOARD_FOR_MOVES__: "testboard",
     __MOVEPIECE_ANIMATION_DURATION__: 500,
     // ********************************************************** FEN
     __FEN_WHITE_KING__: "K",

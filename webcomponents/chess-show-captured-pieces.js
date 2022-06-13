@@ -45,10 +45,10 @@
       deleteMove(detail) {
         console.log(detail.chessboard.getAttribute);
         let lastSquare = detail.toSquare;
-        let color = detail.chessboard.getAttribute("player");
+        let color = detail.chessboard.getAttribute("playerturn");
         let { capturedWhitePieces, capturedBlackPieces } = detail.chessboard;
         if (lastSquare.piece) {
-          if (color == "zwart") {
+          if (color == CHESS.__PLAYER_BLACK__) {
             capturedWhitePieces.pop();
           } else {
             capturedBlackPieces.pop();

@@ -361,7 +361,7 @@
             testboard = showboardsIn.appendChild(
               CHESS.createBoardElement({
                 props: {
-                  id: "testboard",
+                  id: CHESS.__TESTBOARD_FOR_MOVES__,
                   fen: matchboard.fen,
                 },
               })

@@ -32,7 +32,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   }
   // ======================================================== promotion
   function promotion() {
-    if (lastMovedPiece.isPawnAtEnd && $chessboard.id !== "testboard") {
+    if (lastMovedPiece.isPawnAtEnd && $chessboard.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
       const chosenPiece = String(prompt("Kies een stuk (toets letter in): Q, N, R, B.")); // pass parameter
       let newPiece = lastMovedPiece.color + CHESS.__PIECE_SEPARATOR__;
       switch (chosenPiece.toLowerCase()) {
