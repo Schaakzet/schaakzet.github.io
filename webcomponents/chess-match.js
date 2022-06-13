@@ -71,8 +71,9 @@
           callback: ({ rows }) => {
             log("createMatch", rows[0]);
             let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = rows[0];
+            this.querySelector("h2").innerHTML = `Match ${player_white} vs ${player_black}`;
 
-            // this.player1 = rows[0];
+            // this.player1 = wp_user_white;
 
             this.initGame(match_guid);
           },
