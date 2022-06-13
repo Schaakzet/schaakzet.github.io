@@ -71,10 +71,11 @@
           callback: ({ rows }) => {
             log("createMatch", rows[0]);
             let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = rows[0];
-            this.querySelector("h2").innerHTML = `Match ${player_white} vs ${player_black}`;
 
-            // this.player1 = wp_user_white;
+            this.player = ROADSTECHNOLOGY.CHESS;
+            console.warn("Player White:", this.player);
 
+            this.querySelector("h2").innerHTML = `Match ${player_white} vs 2B Announced`;
             this.initGame(match_guid);
           },
         });
@@ -101,6 +102,7 @@
                 matchesRow.wp_user_black = this.player.id;
                 matchesRow.player_black = this.player.displayname;
                 this.player.color = "black";
+                console.warn("Player Black:", this.player.matchesRow);
                 this.updatePlayers(matchesRow);
               }
               this.chessboard.fen = fen;
@@ -111,7 +113,7 @@
           },
         });
       }
-      // ================================================== assignPlayers
+      // ================================================== updatePlayers
       updatePlayers({
         match_guid, // matchesRow
         wp_user_white,
@@ -129,7 +131,7 @@
             player_black,
           },
           callback: ({ rows }) => {
-            this.querySelector("h2").innerHTML = `Match ${player_white} vs ${player_black}`;
+            this.querySelector("h2").innerHTML = `Match ${rows[0].player_white} vs ${rows[0].player_black}`;
           },
         });
       }
@@ -158,36 +160,16 @@
           },
         });
       }
-
-      // ================================================== testGame
-      testGame() {
-        this.chessboard.play([
-          ["e2", "e4"],
-          ["e7", "e5"],
-          ["g1", "f3"],
-          ["b8", "c6"],
-        ]);
-      }
       // ================================================== initGame
       initGame(match_guid) {
         log("initGame", match_guid);
         this.chessboard.id = match_guid;
         this.chessboard.fen = undefined; // set start FEN
         localStorage.setItem("match_guid", match_guid);
-        // this.testGame();
       }
       // ================================================== myFEN
       myFEN() {
         this.chessboard.fen = "r3kbnr/ppp2ppp/2npbq2/4p3/4P3/2NPBQ2/PPP2PPP/R3KBNR w KQkq -";
-      }
-      // ================================================== undoMoveDB
-      undoMoveDB() {
-        CHESS.APIRT.undoMove({
-          id: this.match_guid,
-          callback: () => {
-            log("undoMoveDB");
-          },
-        });
       }
       // ================================================== undoMove
       undoMove() {
@@ -200,6 +182,15 @@
           detail: {
             chessboard: this.chessboard,
             toSquare: this.chessboard.lastMove.toSquare,
+          },
+        });
+      }
+      // ================================================== undoMoveDB
+      undoMoveDB() {
+        CHESS.APIRT.undoMove({
+          id: this.match_guid,
+          callback: () => {
+            log("undoMoveDB");
           },
         });
       }
