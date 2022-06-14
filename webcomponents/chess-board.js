@@ -22,7 +22,7 @@
       }
       // ======================================================== <chess-board>.doAnalysis
       get doAnalysis() {
-          return this.getAttribute("analysis") || false;
+        return this.getAttribute("analysis") || false;
       }
       // ======================================================== <chess-board>.connectedCallback
       connectedCallback() {
@@ -101,7 +101,7 @@
       }
       // ======================================================== <chess-board>.attributeChangedCallback
       attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue && name == CHESS.__WC_ATTRIBUTE_FEN__) {
+        if (oldValue && oldValue !== newValue && name == CHESS.__WC_ATTRIBUTE_FEN__) {
           this.fen = newValue;
           // TODO: generic call:
           // this[name] = newValue;
@@ -117,7 +117,7 @@
             let { match_guid, fen, move } = evt.detail;
             if (this.id == match_guid) {
               if (move == "startgame") {
-                // startgame
+                if (!this.hasAttribute("player")) this.player = "wit";
                 console.warn(`%c START ${match_guid}`, "background:red;color:yellow;");
               } else if (this.fen != fen) {
                 let movetype = move[2];
@@ -126,11 +126,10 @@
                   let [from, to] = move.split(movetype);
                   this.movePiece(from, to);
                   // this.play([move.split(movetype)]);
-                } else {
-                  this.fen = fen;
                 }
+                this.fen = fen;
               } else {
-                console.error("same FEN");
+                this.setAttribute(__WC_ATTRIBUTE_FEN__, this.fen);
               }
             }
           };
@@ -315,8 +314,9 @@
       }
       // ======================================================== <chess-board>.changePlayer
       changePlayer() {
-        this.playerturn = CHESS.otherPlayer(this.player); // todo Naar FEN
-        this.initPlayerTurn();
+        this.playerturn = CHESS.otherPlayer(this.playerturn); // todo Naar FEN
+        console.error(this.fen);
+        console.warn("Change PlayerTurn and Who is the player", this.playerturn, this.player);
       }
       // ======================================================== <chess-board>.recordMoveInDatabase
       recordMoveInDatabase({
@@ -412,6 +412,7 @@
                 save2chessMoves(); // save castling move
                 this.lastMove.fen = savedFEN;
 
+                this.changePlayer();
                 this.recordMoveInDatabase({
                   fromSquare,
                   toSquare,
@@ -419,16 +420,15 @@
                 });
 
                 this.doingCastling = false;
-                this.changePlayer();
               }
             } else {
               // regular move
+              this.changePlayer();
               this.recordMoveInDatabase({
                 fromSquare,
                 toSquare,
                 move: fromSquare.at + moveType + toSquare.at, // O-O-O
               });
-              this.changePlayer();
             }
 
             this.play(); // play all moves left in the queue
@@ -443,6 +443,7 @@
         if (animated) chessPiece.animateTo(square).then(movedPiece);
         else movedPiece();
 
+        this.initPlayerTurn();
         this.setMessage("");
       }
       // ======================================================== <chess-board>.initAnalysis
@@ -541,7 +542,7 @@
           // when the constructor runs on document.createElement, the squares are not set yet.
           this._savedfen = fenString;
         }
-        this.setAttribute("setfen", fenString); // not fen because attributeChangedCallback runs again and again and aigan
+        this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
         this.classList.remove("game_over");
 
         // only analyze the board when there are squares on the board.
@@ -660,7 +661,17 @@
         this.getSquare(at).highlight(CHESS.__MOVETYPE_ILLEGAL__);
         this.pieceClicked.moves = this.pieceClicked.moves.filter((move) => move !== this.getSquare(at).at);
       }
-      // ======================================================== <chess-board>.player = current player
+
+      // ============================================================ <chess-board>.player on board
+      get player() {
+        return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__);
+      }
+
+      set player(value) {
+        this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__, value);
+      }
+
+      // ============================================================ <chess-board>.playerturn = current player
       // wie er aan zet is
       get playerturn() {
         return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__);

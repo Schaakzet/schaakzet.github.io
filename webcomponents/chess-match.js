@@ -24,10 +24,6 @@
           this.listen2matchmoves();
         });
       }
-      // ================================================== setPlayerColor
-      setPlayerColor(color = this.player.color) {
-        this.chessboard.setAttribute("player", color);
-      }
       // ================================================== get chessboard
       get chessboard() {
         // todo find chessboard inside shadowDOM?
@@ -124,8 +120,8 @@
                 this.updatePlayers(matchesRow);
                 this.startMatch();
               }
+              this.chessboard.player = this.player.color;
               this.chessboard.fen = fen;
-              this.setPlayerColor(this.player.color);
               this.setPlayerTitles(player_white, player_black);
               log("resumeMatch", fen);
             } else {
@@ -205,7 +201,6 @@
         this.chessboard.id = match_guid;
         this.chessboard.fen = undefined; // set start FEN
         localStorage.setItem("match_guid", match_guid);
-        this.setPlayerColor("none");
       }
       // ================================================== myFEN
       myFEN() {
