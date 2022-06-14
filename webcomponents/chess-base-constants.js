@@ -56,6 +56,9 @@ window.CHESS = Object.assign(
     __PIECE_BISHOP__: "loper",
 
     __TESTBOARD_FOR_MOVES__: "testboard",
+    __PLAYER_COLOR__ : "playercolor",
+
+
     __MOVEPIECE_ANIMATION_DURATION__: 500,
     // ********************************************************** FEN
     __FEN_WHITE_KING__: "K",
