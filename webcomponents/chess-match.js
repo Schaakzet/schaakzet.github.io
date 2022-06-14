@@ -109,7 +109,9 @@
               this.chessboard.fen = fen;
               log("resumeMatch", fen);
             } else {
-              alert("GUID uit LocalStorage niet gevonden in de database\n Wat moeten we nu doen?");
+              // oude GUID in LocalStorage, maar niet in DB
+              localStorage.removeItem("match_guid");
+              this.createMatch();
             }
           },
         });
