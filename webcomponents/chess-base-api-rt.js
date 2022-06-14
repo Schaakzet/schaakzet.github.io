@@ -28,7 +28,9 @@ Object.assign(CHESS.APIRT, {
     callback = () => console.error("No callback function"),
   }) {
     function log(...args) {
-      console.log(`%c ${args.shift()} `, "background:gold", ...args);
+      let label = args.shift();
+      let color = label.includes("fetched") ? "green" : "red";
+      console.log(`%c ${label} `, `background:gold;color:${color}`, ...args);
     }
     body.action = action;
     // -------------------------------------------------- build options
@@ -57,12 +59,17 @@ Object.assign(CHESS.APIRT, {
 
       delete options.body;
     }
-    log(`callAPI:${action}`, body);
+    log(`action=${action}`, body.where || body.id || body);
     // -------------------------------------------------- fetch
     fetch(uri, options)
       .then((response) => response.json())
       .then((json_response) => {
-        log(`DB response ${json_response.rows.length} rows:`, json_response);
+        let rowcount = json_response.rows.length;
+        if (rowcount == 1) {
+          log(`fetched ${body.action} ${body.where || ""}:`, { ROW: json_response.rows[0] });
+        } else {
+          log(`fetched ${body.action} ${body.where || ""} ${rowcount} rows:`, json_response);
+        }
         callback(json_response);
       })
       .catch((e, r) => {

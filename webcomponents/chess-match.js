@@ -106,17 +106,20 @@
             if (rows.length) {
               let matchesRow = rows[0];
               let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = matchesRow;
-              console.warn("Row 1 returning from DB:", matchesRow);
               this.player = ROADSTECHNOLOGY.CHESS;
               if (this.isSamePlayer(this.player.id, wp_user_white)) {
+                console.groupCollapsed(`%c resumeMatch %c player: WHITE `, "background:lightgreen", "background:white;color:black");
+                log(matchesRow);
+                console.groupEnd();
                 this.player.color = CHESS.__PLAYER_WHITE__;
-                console.error("!!!");
               } else {
                 // 2nd player is now known, store info in database
+                console.groupCollapsed(`%c resumeMatch %c player: BLACK `, "background:lightgreen", "background:black;color:white");
+                log(matchesRow);
+                console.groupEnd();
                 matchesRow.wp_user_black = this.player.id;
                 matchesRow.player_black = this.player.displayname;
                 this.player.color = CHESS.__PLAYER_BLACK__;
-                console.warn("Player Black:", this.player);
                 this.updatePlayers(matchesRow);
                 this.startMatch();
               }
