@@ -17,11 +17,9 @@
       pointer-events: none;
     }
 
-    chess-board[playerturn="wit"] .white_square{
-      background: lightgreen;
-    }
-    chess-board[playerturn="zwart"] .white_square{
-      background: cornflowerblue;
+    chess-board[playerturn="zwart"] chess-piece[is*="wit"] img,
+    chess-board[playerturn="wit"] chess-piece[is*="zwart"] img{
+      opacity: .5;
     }
   </style>
 </head>
