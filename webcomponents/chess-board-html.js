@@ -10,7 +10,7 @@
       `chess-square[piece*="${otherPlayer}"]:not([state="${attackedState}"])`; // if piece is not captured
     // disable oponent player squares
     return /*css*/ `${selector} {
-          pointer-events:none;
+          /* pointer-events:none; */
           /* background: ${squareColor} */
         }`;
   }

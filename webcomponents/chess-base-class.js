@@ -87,7 +87,10 @@ CHESS.ChessBaseElement = class extends HTMLElement {
   }
   // ======================================================== BaseElement.resumeChessGame
   resumeChessGame(match_guid, fen) {
-    window.open("match.html", "_blank");
+    let id = new URLSearchParams(document.location.search).get("id");
+    let name = new URLSearchParams(document.location.search).get("name");
+
+    window.open(`match.html?id=${id}&name=${name}`, "_blank");
     localStorage.setItem("match_guid", match_guid);
     this.chessboard.fen = fen;
   }

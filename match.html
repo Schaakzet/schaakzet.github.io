@@ -1,21 +1,36 @@
 <html>
-  <head>
-    <script src="./webcomponents/schaakzet.js"></script>
-    <script id="schaakzetplugin">
-      let ROADSTECHNOLOGY = {
-        CHESS: {
-          id: new URLSearchParams(document.location.search).get("id"),
-          displayname: new URLSearchParams(document.location.search).get("name"),
-        },
-      };
-      console.log("schaakzetplugin", ROADSTECHNOLOGY.CHESS);
-    </script>
-  </head>
 
-  <body>
-    <main>
-      <chess-match></chess-match>
-    </main>
-    <footer></footer>
-  </body>
+<head>
+  <script src="./webcomponents/schaakzet.js"></script>
+  <script id="schaakzetplugin">
+    let ROADSTECHNOLOGY = {
+      CHESS: {
+        id: new URLSearchParams(document.location.search).get("id") || 666,
+        displayname: new URLSearchParams(document.location.search).get("name") || "TESTMATCH",
+      },
+    };
+    console.log("schaakzetplugin", ROADSTECHNOLOGY.CHESS);
+  </script>
+  <style>
+    chess-board[playerturn="zwart"][player="wit"],
+    chess-board[playerturn="wit"][player="zwart"] {
+      pointer-events: none;
+    }
+
+    chess-board[playerturn="wit"] .white_square{
+      background: lightgreen;
+    }
+    chess-board[playerturn="zwart"] .white_square{
+      background: cornflowerblue;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <chess-match></chess-match>
+  </main>
+  <footer></footer>
+</body>
+
 </html>

@@ -24,6 +24,10 @@
           this.listen2matchmoves();
         });
       }
+      // ================================================== setPlayerColor
+      setPlayerColor(color = this.player.color) {
+        this.chessboard.setAttribute("player", color);
+      }
       // ================================================== get chessboard
       get chessboard() {
         // todo find chessboard inside shadowDOM?
@@ -75,12 +79,24 @@
             this.player = ROADSTECHNOLOGY.CHESS;
             console.warn("Player White:", this.player);
 
-            this.querySelector("h2").innerHTML = `Match ${player_white} vs 2B Announced`;
+            this.setPlayerTitles(player_white, "2B Announced");
             this.initGame(match_guid);
           },
         });
       }
 
+      // ================================================== setPlayerTitles()
+      setPlayerTitles(p1, p2) {
+        const preventEmptyName = (x) => {
+          if (!x || x === "") return "onbekend";
+          return x;
+        };
+        this.querySelector("h2").innerHTML = `Match ${preventEmptyName(p1)} vs ${preventEmptyName(p2)}`;
+      }
+      // ================================================== isSamePlayer
+      isSamePlayer(p1, p2) {
+        return Number(p1) == Number(p2);
+      }
       // ================================================== resumeMatch
       // Gets match_guid, FEN, players and their name & (color)
       resumeMatch(id = localStorage.getItem("match_guid")) {
@@ -96,22 +112,41 @@
               let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = matchesRow;
               console.warn("Row 1 returning from DB:", matchesRow);
               this.player = ROADSTECHNOLOGY.CHESS;
-              if (this.player.id === wp_user_white) {
-                this.player.color = "white";
+              if (this.isSamePlayer(this.player.id, wp_user_white)) {
+                this.player.color = CHESS.__PLAYER_WHITE__;
+                console.error("!!!");
               } else {
+                // 2nd player is now known, store info in database
                 matchesRow.wp_user_black = this.player.id;
                 matchesRow.player_black = this.player.displayname;
                 this.player.color = CHESS.__PLAYER_BLACK__;
                 console.warn("Player Black:", this.player);
                 this.updatePlayers(matchesRow);
+                this.startMatch();
               }
-              this.chessboard.setAttribute("player", this.player.color);
               this.chessboard.fen = fen;
+              this.setPlayerColor(this.player.color);
+              this.setPlayerTitles(player_white, player_black);
               log("resumeMatch", fen);
             } else {
               // oude GUID in LocalStorage, maar niet in DB
               localStorage.removeItem("match_guid");
               this.createMatch();
+            }
+          },
+        });
+      }
+      // ================================================== startMatch
+      startMatch(id = localStorage.getItem("match_guid")) {
+        // ask database if there are matchmoves entries
+        // only if there are no matchmoves entries, then start game
+        CHESS.APIRT.callAPI({
+          action: "MOVES",
+          body: { id },
+          callback: ({ rows }) => {
+            let noMovesYet = rows.length == 0;
+            if (noMovesYet) {
+              this.chessboard.recordMoveInDatabase({ move: "startgame" });
             }
           },
         });
@@ -134,7 +169,8 @@
             player_black,
           },
           callback: ({ rows }) => {
-            this.querySelector("h2").innerHTML = `Match ${rows[0].player_white} vs ${rows[0].player_black}`;
+            let { player_white, player_black } = rows[0];
+            this.setPlayerTitles(player_white, player_black);
           },
         });
       }
@@ -169,6 +205,7 @@
         this.chessboard.id = match_guid;
         this.chessboard.fen = undefined; // set start FEN
         localStorage.setItem("match_guid", match_guid);
+        this.setPlayerColor("none");
       }
       // ================================================== myFEN
       myFEN() {

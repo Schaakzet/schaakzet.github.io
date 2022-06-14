@@ -20,6 +20,10 @@
       get localStorageGameID() {
         return "fen"; //this.database_id;
       }
+      // ======================================================== <chess-board>.doAnalysis
+      get doAnalysis() {
+          return this.getAttribute("analysis") || false;
+      }
       // ======================================================== <chess-board>.connectedCallback
       connectedCallback() {
         // when this Component is added to the DOM, create the board with FEN and Arrays.
@@ -43,7 +47,7 @@
 
             this.initPlayerTurn();
 
-            CHESS.analysis(this, "start");
+            if (this.doAnalysis) CHESS.analysis(this, "start");
 
             //! chess-board is display:none, after resize make it display:block
             this.resizeCheck();
@@ -112,7 +116,10 @@
             // listen Functie definieren
             let { match_guid, fen, move } = evt.detail;
             if (this.id == match_guid) {
-              if (this.fen != fen) {
+              if (move == "startgame") {
+                // startgame
+                console.warn(`%c START ${match_guid}`, "background:red;color:yellow;");
+              } else if (this.fen != fen) {
                 let movetype = move[2];
                 if (movetype == "-" || movetype == "x") {
                   console.warn("play", fen);
@@ -313,8 +320,8 @@
       }
       // ======================================================== <chess-board>.recordMoveInDatabase
       recordMoveInDatabase({
-        fromSquare, // <chess-square> from which piece was moved
-        toSquare, // <chess-square> to which piece was moved
+        fromSquare = false, // <chess-square> from which piece was moved
+        toSquare = false, // <chess-square> to which piece was moved
         move, // e2-e4  d7xh8  O-O-O
       }) {
         if (this.record && this.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
@@ -324,8 +331,8 @@
             name: CHESS.__STORECHESSMOVE__,
             detail: {
               chessboard: this, // chessboard.record TRUE/FALSE if the move will be recorded
-              fromsquare: fromSquare.at,
-              tosquare: toSquare.at,
+              fromsquare: fromSquare && fromSquare.at,
+              tosquare: toSquare && toSquare.at,
               move,
               fen: this.fen,
             },
@@ -385,7 +392,7 @@
 
             save2chessMoves(); // save every move, including castling king AND rook
 
-            if (CHESS.analysis && !this.doingCastling) {
+            if (this.doAnalysis && !this.doingCastling) {
               CHESS.analysis(this, CHESS.__ANALYSIS_ENPASSANT__);
               CHESS.analysis(this, CHESS.__ANALYSIS_CASTLING__); // this.doingCastling = "O-O" "O-O-O"
               CHESS.analysis(this, CHESS.__ANALYSIS_PROMOTION__);
@@ -442,7 +449,7 @@
       // initAnalysis wordt aangeroepen in einde Click-event.
       initAnalysis() {
         // console.error("initAnalysis");
-        if (CHESS.analysis) {
+        if (this.doAnalysis) {
           CHESS.analysis(this);
           CHESS.analysis(this, CHESS.__ANALYSIS_ENPASSANT__);
           CHESS.analysis(this, CHESS.__ANALYSIS_CASTLING__);
@@ -540,7 +547,6 @@
         // only analyze the board when there are squares on the board.
         setTimeout(() => {
           if (this._savedfen) this.fen = this._savedfen;
-          if (this.getSquare("e3")) CHESS.analysis(this, "start");
           this.debuginfo();
         });
       } // set fen
@@ -589,7 +595,7 @@
 
         // castling
         let castling = "";
-        console.warn("Castling Array", this.castlingArray);
+        //console.warn("Castling Array", this.castlingArray);
         if (this.castlingArray) {
           if (this.castlingArray.length) castling = this.castlingArray.join("");
           else castling = "-";
@@ -644,7 +650,7 @@
         matchboard = this, // the <chess-board> the user is playing
       }) {
         this.getPiece(from).movePieceTo(to, false); // move piece without animation
-        if (CHESS.analysis(this, "checkcheck")) {
+        if (CHESS.doAnalysis && CHESS.analysis(this, "checkcheck")) {
           matchboard.markIllegalMove(to);
         }
         //this.fen = savedfen;
