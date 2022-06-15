@@ -54,7 +54,7 @@
       // ================================================== addListeners
       addListeners() {
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.storeMove(evt.detail));
-        document.addEventListener("createMatch", (evt) => this.createMatch(evt.detail));
+        document.addEventListener("newGame", (evt) => this.createMatch(evt.detail));
         // handle game buttons
         document.addEventListener(this.localName, (e) => {
           if (this[e.detail.value]) this[e.detail.value](e);
@@ -68,8 +68,8 @@
         CHESS.APIRT.callAPI({
           action: "CREATE",
           body: {
-            player_white: displayname, // user "name"
             wp_user_white: id, // user WordPress wp_user.id
+            player_white: displayname, // user "name"
           },
           callback: ({ rows }) => {
             // todo test for database failure, no rows
@@ -145,7 +145,6 @@
             wp_user_black: WordPress_id, // overwrite wp_user_black with WordPress_id
             player_black: WordPress_displayname, // overwrite player_black with WordPress_displayname
           });
-          this.startMatch_send_startgame_to_database(); // let other/white player know that we are ready
         }
         // -------------------------------------------------- init <chess-board>
         this.chessboard.setPlayerAndFEN(playerColor, fen); // set attribute on <chess-board> set pieces on <chess-board>
@@ -156,7 +155,6 @@
       // Gets match_guid, FEN, players and their name & (color)
       resumeMatch(match_guid = localStorage.getItem(CHESS.__MATCH_GUID__)) {
         let chess_match = this; // easier for new code readers
-        
         chess_match.chessboard.restart(match_guid);
 
         CHESS.APIRT.callAPI({
@@ -166,7 +164,6 @@
             if (rows.length) {
               chess_match.assignPlayerByMatchesRow(rows[0]);
             } else {
-              // old match_guid, not in database anymore
               localStorage.removeItem(CHESS.__MATCH_GUID__);
               chess_match.createMatch();
             }
@@ -208,6 +205,7 @@
           callback: ({ rows }) => {
             let { player_white, player_black } = rows[0];
             this.setPlayerTitles(player_white, player_black);
+            this.startMatch_send_startgame_to_database(); // let other/white player know that we are ready
           },
         });
       }

@@ -346,6 +346,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== endOfGame
   function endOfGame() {
     let answer = prompt("Do you want to play another game? (y/n)");
-    if (answer === "y") document.dispatchEvent(new Event("createMatch"));
+    if (answer === "y") document.dispatchEvent(new Event("newGame", p1, p2));
+    // Make it so the players are connected to the new match_guid. REDIRECT.
   }
 };
