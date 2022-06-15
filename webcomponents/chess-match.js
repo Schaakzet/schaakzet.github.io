@@ -86,7 +86,7 @@
               match_guid, // matchGUID assigned by database
             } = rows[0];
             
-            log("createMatch", match_guid);              );
+            log("createMatch", match_guid);
             this.setPlayerTitles(player_white);
             this.initGame(match_guid);
           },
