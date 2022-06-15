@@ -129,7 +129,7 @@
                 }
                 this.fen = fen;
               } else {
-                this.setAttribute(__WC_ATTRIBUTE_FEN__, this.fen);
+                this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, this.fen);
               }
             }
           };
@@ -379,7 +379,7 @@
 
             // movePiece
             toSquare.addPiece(chessPiece);
-            fromSquare.clear();
+            if (fromSquare) fromSquare.clear();
             chessPiece.animateFinished(); // do <chess-piece> CSS stuff after animation finished
 
             const /* function */ save2chessMoves = () => {

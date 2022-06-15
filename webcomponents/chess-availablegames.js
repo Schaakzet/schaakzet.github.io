@@ -23,7 +23,7 @@
             innerHTML: CSS_Match,
           }),
           Object.assign(document.createElement("div"), {
-            innerHTML: `<h2>${where} games</h2>`,
+            innerHTML: `<h2>${where}</h2>`,
           })
         );
 
