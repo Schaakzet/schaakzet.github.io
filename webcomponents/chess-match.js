@@ -85,7 +85,7 @@
               result,
               match_guid, // matchGUID assigned by database
             } = rows[0];
-            
+
             log("createMatch", match_guid);
             this.setPlayerTitles(player_white);
             this.initGame(match_guid);
@@ -107,15 +107,31 @@
       }
       // ================================================== assignPlayerByMatchesRow
       assignPlayerByMatchesRow(matchesRow) {
-        let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = matchesRow;
+        // -------------------------------------------------- init variables
+        let {
+          tournament_id,
+          wp_user_white, // WordPress wp_user.id
+          wp_user_black, // WordPress wp_user.id
+          player_white,
+          player_black,
+          starttime,
+          endtime,
+          fen, // FEN string from database table Matches
+          result,
+          match_guid,
+        } = matchesRow;
+        // -------------------------------------------------- fancy console.log
         function consoleLog(playerColor) {
           let backgroundColor = playerColor === "WHITE" ? "background:white;color:black" : "background:black;color:white";
           console.groupCollapsed(`%c resumeMatch %c player: ${playerColor} `, "background:lightgreen", backgroundColor, fen);
           log(matchesRow);
           console.groupEnd();
         }
-
-        let { id: WordPress_id, displayname: WordPress_displayname } = ROADSTECHNOLOGY.CHESS;
+        // -------------------------------------------------- determine current player
+        let {
+          id: WordPress_id, // create variable WordPress_id
+          displayname: WordPress_displayname, // create variable WordPress_displayname
+        } = ROADSTECHNOLOGY.CHESS;
         let playerColor;
         if (this.isSamePlayer(WordPress_id, wp_user_white)) {
           consoleLog("WHITE");
@@ -131,6 +147,7 @@
           });
           this.startMatch_send_startgame_to_database(); // let other/white player know that we are ready
         }
+        // -------------------------------------------------- init <chess-board>
         this.chessboard.setPlayerAndFEN(playerColor, fen); // set attribute on <chess-board> set pieces on <chess-board>
         this.setPlayerTitles(player_white, player_black); // set playernames on <chess-match>
       }
