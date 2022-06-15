@@ -286,7 +286,7 @@
         }
       }
       // ======================================================== <chess-board>.restart
-      restart() {
+      restart(match_guid = console.error("No match_guid specified")) {
         this.clear();
 
         this.capturedWhitePieces = [];
@@ -298,6 +298,7 @@
 
         this.dispatch({ name: "restartMatch", detail: { chessboard: this.chessboard } });
         this.initPlayerTurn();
+        this.id = match_guid;
       }
       // ======================================================== <chess-board>.initPlayerTurn
       initPlayerTurn() {

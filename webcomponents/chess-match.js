@@ -156,8 +156,9 @@
       // Gets match_guid, FEN, players and their name & (color)
       resumeMatch(match_guid = localStorage.getItem("match_guid")) {
         let chess_match = this; // easier for new code readers
-        chess_match.chessboard.restart();
-        chess_match.chessboard.id = match_guid;
+        let chess_board = this.chessboard;
+
+        chess_board.restart(match_guid);
 
         CHESS.APIRT.callAPI({
           action: "READ",
