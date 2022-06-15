@@ -111,7 +111,7 @@
       // ======================================================== <chess-board>.listenOnMatchID
       listenOnMatchID() {
         if (this.id) {
-          // console.log("666", "listenOnMatchID <chess-board>", this.id);
+          console.log("listenOnMatchID <chess-board>", this.id);
           const listenFunc = (evt) => {
             // listen Functie definieren
             let { match_guid, fen, move } = evt.detail;
@@ -121,6 +121,7 @@
                 console.warn(`%c START ${match_guid}`, "background:red;color:yellow;");
                 //! todo Sandro
                 // nog een keer "READ" sturen met match_guid, zodat WIT ook ZWARTE spelersnaam uit "matches" table krijgt
+                this.updatePlayerBlack(match_guid);
               } else if (this.fen != fen) {
                 let movetype = move[2];
                 if (movetype == "-" || movetype == "x") {
@@ -135,7 +136,7 @@
               }
             }
           };
-          // als er al een listeners is, verwijderen
+          // als er al een listener is, verwijderen
           if (this._listening) {
             document.removeEventListener(this._listening.id, this._listening.func);
           }
@@ -147,6 +148,20 @@
           // listener toevoegen
           document.addEventListener(this.id, listenFunc);
         } // end if (this.id)
+      }
+      // ======================================================== <chess-board>.readGUID
+      updatePlayerBlack(match_guid) {
+        CHESS.APIRT.callAPI({
+          action: "READ",
+          body: { id: match_guid },
+          callback: ({ rows }) => {
+            if (this.player == CHESS.__PLAYER_WHITE__) {
+              let { player_white, player_black } = rows[0];
+              console.log("MATCH&Players:", this.closest("chess-match"), player_white, player_black);
+              this.closest("chess-match").setPlayerTitles(player_white, player_black);
+            }
+          },
+        });
       }
       // ======================================================== <chess-board>.id
       get id() {
@@ -427,11 +442,14 @@
             } else {
               // regular move
               this.changePlayer();
-              this.recordMoveInDatabase({
-                fromSquare,
-                toSquare,
-                move: fromSquare.at + moveType + toSquare.at, // O-O-O
-              });
+              let currentPlayer = this.playerturn;
+              if (this.player == currentPlayer) {
+                this.recordMoveInDatabase({
+                  fromSquare,
+                  toSquare,
+                  move: fromSquare.at + moveType + toSquare.at, // O-O-O
+                });
+              }
             }
 
             this.play(); // play all moves left in the queue
