@@ -93,50 +93,56 @@
       isSamePlayer(p1, p2) {
         return Number(p1) == Number(p2);
       }
+      // ================================================== assignPlayerByMatchesRow
+      assignPlayerByMatchesRow(matchesRow) {
+        let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = matchesRow;
+        function consoleLog(playerColor) {
+          let backgroundColor = playerColor === "WHITE" ? "background:white;color:black" : "background:black;color:white";
+          console.groupCollapsed(`%c resumeMatch %c player: ${playerColor} `, "background:lightgreen", backgroundColor, fen);
+          log(matchesRow);
+          console.groupEnd();
+        }
+
+        this.player = ROADSTECHNOLOGY.CHESS;
+        if (this.isSamePlayer(this.player.id, wp_user_white)) {
+          consoleLog("WHITE");
+          this.player.color = CHESS.__PLAYER_WHITE__;
+        } else {
+          // 2nd player is now known, store info in database
+          consoleLog("BLACK");
+          matchesRow.wp_user_black = this.player.id;
+          matchesRow.player_black = this.player.displayname;
+          this.player.color = CHESS.__PLAYER_BLACK__;
+          this.updatePlayers(matchesRow);
+          this.startMatch_send_startgame_to_database();
+        }
+        this.chessboard.player = this.player.color; // set attribute on <chess-board>
+        this.chessboard.fen = fen; // set pieces on <chess-board>
+        this.setPlayerTitles(player_white, player_black); // set playernames on <chess-match>
+      }
       // ================================================== resumeMatch
       // Gets match_guid, FEN, players and their name & (color)
-      resumeMatch(id = localStorage.getItem("match_guid")) {
-        this.chessboard.restart();
-        this.chessboard.id = id;
+      resumeMatch(match_guid = localStorage.getItem("match_guid")) {
+        let chess_match = this; // easier for new code readers
+        chess_match.chessboard.restart();
+        chess_match.chessboard.id = match_guid;
 
         CHESS.APIRT.callAPI({
           action: "READ",
-          body: { id },
+          body: { id: match_guid },
           callback: ({ rows }) => {
             if (rows.length) {
-              let matchesRow = rows[0];
-              let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = matchesRow;
-              this.player = ROADSTECHNOLOGY.CHESS;
-              if (this.isSamePlayer(this.player.id, wp_user_white)) {
-                console.groupCollapsed(`%c resumeMatch %c player: WHITE `, "background:lightgreen", "background:white;color:black");
-                log(matchesRow);
-                console.groupEnd();
-                this.player.color = CHESS.__PLAYER_WHITE__;
-              } else {
-                // 2nd player is now known, store info in database
-                console.groupCollapsed(`%c resumeMatch %c player: BLACK `, "background:lightgreen", "background:black;color:white");
-                log(matchesRow);
-                console.groupEnd();
-                matchesRow.wp_user_black = this.player.id;
-                matchesRow.player_black = this.player.displayname;
-                this.player.color = CHESS.__PLAYER_BLACK__;
-                this.updatePlayers(matchesRow);
-                this.startMatch();
-              }
-              this.chessboard.player = this.player.color;
-              this.chessboard.fen = fen;
-              this.setPlayerTitles(player_white, player_black);
-              log("resumeMatch", fen);
+              chess_match.assignPlayerByMatchesRow(rows[0]);
             } else {
-              // oude GUID in LocalStorage, maar niet in DB
+              // old match_guid, not in database anymore
               localStorage.removeItem("match_guid");
-              this.createMatch();
+              chess_match.createMatch();
             }
           },
         });
       }
-      // ================================================== startMatch
-      startMatch(id = localStorage.getItem("match_guid")) {
+      // ================================================== startMatch_send_startgame_to_database
+      startMatch_send_startgame_to_database(id = localStorage.getItem("match_guid")) {
         // ask database if there are matchmoves entries
         // only if there are no matchmoves entries, then start game
         CHESS.APIRT.callAPI({
