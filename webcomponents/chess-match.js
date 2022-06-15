@@ -72,20 +72,17 @@
             log("createMatch", rows[0]);
             let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = rows[0];
 
-            this.player = ROADSTECHNOLOGY.CHESS;
-            console.warn("Player White:", this.player);
-
-            this.setPlayerTitles(player_white, "2B Announced");
+            this.setPlayerTitles(player_white);
             this.initGame(match_guid);
           },
         });
       }
 
       // ================================================== setPlayerTitles()
-      setPlayerTitles(p1, p2) {
-        const preventEmptyName = (x) => {
-          if (!x || x === "") return "onbekend";
-          return x;
+      setPlayerTitles(p1, p2 = "<i>To Be Announced</i>") {
+        const preventEmptyName = (name) => {
+          if (!name || name == "") return "<i>onbekend</i>";
+          return name;
         };
         this.querySelector("h2").innerHTML = `Match ${preventEmptyName(p1)} vs ${preventEmptyName(p2)}`;
       }
@@ -103,20 +100,21 @@
           console.groupEnd();
         }
 
-        this.player = ROADSTECHNOLOGY.CHESS;
-        if (this.isSamePlayer(this.player.id, wp_user_white)) {
+        let { id: WordPress_id, displayname: WordPress_displayname} = ROADSTECHNOLOGY.CHESS;
+        let playerColor;
+        if (this.isSamePlayer(WordPress_id, wp_user_white)) {
           consoleLog("WHITE");
-          this.player.color = CHESS.__PLAYER_WHITE__;
+          playerColor = CHESS.__PLAYER_WHITE__;
         } else {
           // 2nd player is now known, store info in database
           consoleLog("BLACK");
-          matchesRow.wp_user_black = this.player.id;
-          matchesRow.player_black = this.player.displayname;
-          this.player.color = CHESS.__PLAYER_BLACK__;
+          matchesRow.wp_user_black = WordPress_id;
+          matchesRow.player_black = WordPress_displayname;
+          playerColor = CHESS.__PLAYER_BLACK__;
           this.updatePlayers(matchesRow);
           this.startMatch_send_startgame_to_database();
         }
-        this.chessboard.player = this.player.color; // set attribute on <chess-board>
+        this.chessboard.player = playerColor; // set attribute on <chess-board>
         this.chessboard.fen = fen; // set pieces on <chess-board>
         this.setPlayerTitles(player_white, player_black); // set playernames on <chess-match>
       }
