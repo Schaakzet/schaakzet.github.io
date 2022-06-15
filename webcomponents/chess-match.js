@@ -64,14 +64,29 @@
 
       // ================================================== createMatch
       createMatch() {
-        // ------------------------------------------------- RT API
+        let { id, displayname } = ROADSTECHNOLOGY.CHESS;
         CHESS.APIRT.callAPI({
           action: "CREATE",
-          body: { player_white: ROADSTECHNOLOGY.CHESS.displayname, wp_user_white: ROADSTECHNOLOGY.CHESS.id },
+          body: {
+            player_white: displayname, // user "name"
+            wp_user_white: id, // user WordPress wp_user.id
+          },
           callback: ({ rows }) => {
-            log("createMatch", rows[0]);
-            let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = rows[0];
-
+            // todo test for database failure, no rows
+            let {
+              tournament_id,
+              wp_user_white,
+              wp_user_black,
+              player_white, // for now a new match is always created by the white playe
+              player_black,
+              starttime,
+              endtime,
+              fen,
+              result,
+              match_guid, // matchGUID assigned by database
+            } = rows[0];
+            
+            log("createMatch", match_guid);              );
             this.setPlayerTitles(player_white);
             this.initGame(match_guid);
           },
