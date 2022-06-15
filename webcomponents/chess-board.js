@@ -671,6 +671,11 @@
         this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__, value);
       }
 
+      // ============================================================ <chess-board>.setPlayerAndFEN
+      setPlayerAndFEN(player, fen) {
+        this.player = player;
+        this.fen = fen;
+      }
       // ============================================================ <chess-board>.playerturn = current player
       // wie er aan zet is
       get playerturn() {

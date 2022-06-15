@@ -100,7 +100,7 @@
           console.groupEnd();
         }
 
-        let { id: WordPress_id, displayname: WordPress_displayname} = ROADSTECHNOLOGY.CHESS;
+        let { id: WordPress_id, displayname: WordPress_displayname } = ROADSTECHNOLOGY.CHESS;
         let playerColor;
         if (this.isSamePlayer(WordPress_id, wp_user_white)) {
           consoleLog("WHITE");
@@ -108,16 +108,18 @@
         } else {
           // 2nd player is now known, store info in database
           consoleLog("BLACK");
-          matchesRow.wp_user_black = WordPress_id;
-          matchesRow.player_black = WordPress_displayname;
           playerColor = CHESS.__PLAYER_BLACK__;
-          this.updatePlayers(matchesRow);
-          this.startMatch_send_startgame_to_database();
+          this.updatePlayers({
+            ...matchesRow, // all of matchesRow
+            wp_user_black: WordPress_id, // overwrite wp_user_black with WordPress_id
+            player_black: WordPress_displayname, // overwrite player_black with WordPress_displayname
+          });
+          this.startMatch_send_startgame_to_database(); // let other/white player know that we are ready
         }
-        this.chessboard.player = playerColor; // set attribute on <chess-board>
-        this.chessboard.fen = fen; // set pieces on <chess-board>
+        this.chessboard.setPlayerAndFEN(playerColor, fen); // set attribute on <chess-board> set pieces on <chess-board>
         this.setPlayerTitles(player_white, player_black); // set playernames on <chess-match>
       }
+
       // ================================================== resumeMatch
       // Gets match_guid, FEN, players and their name & (color)
       resumeMatch(match_guid = localStorage.getItem("match_guid")) {
