@@ -117,8 +117,10 @@
             let { match_guid, fen, move } = evt.detail;
             if (this.id == match_guid) {
               if (move == "startgame") {
-                if (!this.hasAttribute("player")) this.player = "wit";
+                if (!this.hasAttribute("player")) this.player = CHESS.__PLAYER_WHITE__;
                 console.warn(`%c START ${match_guid}`, "background:red;color:yellow;");
+                //! todo Sandro
+                // nog een keer "READ" sturen met match_guid, zodat WIT ook ZWARTE spelersnaam uit "matches" table krijgt
               } else if (this.fen != fen) {
                 let movetype = move[2];
                 if (movetype == "-" || movetype == "x") {
