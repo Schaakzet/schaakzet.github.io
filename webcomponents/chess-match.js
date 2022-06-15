@@ -16,7 +16,7 @@
       connectedCallback() {
         this.render();
         setTimeout(() => {
-          let match_guid = localStorage.getItem("match_guid");
+          let match_guid = localStorage.getItem(CHESS.__MATCH_GUID__);
           if (match_guid) {
             this.resumeMatch(match_guid);
           } else this.createMatch(); // call back-end for match_guid, then this.initGame(match_guid)
@@ -154,11 +154,10 @@
 
       // ================================================== resumeMatch
       // Gets match_guid, FEN, players and their name & (color)
-      resumeMatch(match_guid = localStorage.getItem("match_guid")) {
+      resumeMatch(match_guid = localStorage.getItem(CHESS.__MATCH_GUID__)) {
         let chess_match = this; // easier for new code readers
-        let chess_board = this.chessboard;
-
-        chess_board.restart(match_guid);
+        
+        chess_match.chessboard.restart(match_guid);
 
         CHESS.APIRT.callAPI({
           action: "READ",
@@ -168,14 +167,14 @@
               chess_match.assignPlayerByMatchesRow(rows[0]);
             } else {
               // old match_guid, not in database anymore
-              localStorage.removeItem("match_guid");
+              localStorage.removeItem(CHESS.__MATCH_GUID__);
               chess_match.createMatch();
             }
           },
         });
       }
       // ================================================== startMatch_send_startgame_to_database
-      startMatch_send_startgame_to_database(id = localStorage.getItem("match_guid")) {
+      startMatch_send_startgame_to_database(id = localStorage.getItem(CHESS.__MATCH_GUID__)) {
         // ask database if there are matchmoves entries
         // only if there are no matchmoves entries, then start game
         CHESS.APIRT.callAPI({
@@ -242,7 +241,7 @@
         log("initGame", match_guid);
         this.chessboard.id = match_guid;
         this.chessboard.fen = undefined; // set start FEN
-        localStorage.setItem("match_guid", match_guid);
+        localStorage.setItem(CHESS.__MATCH_GUID__, match_guid);
       }
       // ================================================== myFEN
       myFEN() {

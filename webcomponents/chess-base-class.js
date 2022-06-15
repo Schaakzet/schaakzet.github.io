@@ -91,7 +91,7 @@ CHESS.ChessBaseElement = class extends HTMLElement {
     let name = new URLSearchParams(document.location.search).get("name");
 
     window.open(`match.html?id=${id}&name=${name}`, "_blank");
-    localStorage.setItem("match_guid", match_guid);
+    localStorage.setItem(CHESS.__MATCH_GUID__, match_guid);
     this.chessboard.fen = fen;
   }
   // end ChessBaseElement

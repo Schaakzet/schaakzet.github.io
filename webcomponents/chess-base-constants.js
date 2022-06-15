@@ -58,6 +58,7 @@ window.CHESS = Object.assign(
 
     __TESTBOARD_FOR_MOVES__: "testboard",
     __PLAYER_COLOR__: "playercolor",
+    __MATCH_GUID__: "match_guid",
 
     __MOVEPIECE_ANIMATION_DURATION__: 500,
     // ********************************************************** FEN
