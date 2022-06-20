@@ -142,6 +142,7 @@
         if (this.isSamePlayer(WordPress_id, wp_user_white)) {
           consoleLog("WHITE");
           playerColor = CHESS.__PLAYER_WHITE__;
+          this.updateProgressFromDatabase({ match_guid });
         } else {
           // 2nd player is now known, store info in database
           consoleLog("BLACK");
@@ -187,12 +188,50 @@
           callback: ({ rows }) => {
             let noMovesYet = rows.length == 0;
             if (noMovesYet) {
+              // player BLACK tells player WHITE to start the game:
               this.chessboard.recordMoveInDatabase({ move: "startgame" });
             } else {
-              //console.error("game with rows", rows[0]);
+              this.updateProgressFromDatabase({ rows });
             }
           },
         });
+      }
+      // ================================================== updateProgressFromDatabase
+      updateProgressFromDatabase({
+        rows = false, // if false then call database again with match_guid
+        match_guid,
+      }) {
+        let chessboard = this.chessboard;
+        function processRows(rows) {
+          console.warn("Update progress from ", rows.length, "database rows");
+          rows.forEach((row) => {
+            let { matchmoves_id, match_guid, fromsquare, tosquare, move, fen, tournament_id } = row;
+            if (move != "startgame") {
+              chessboard.addChessMove({
+                chessPiece: false, // database does not know which piece it is
+                //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
+                fromSquare: fromsquare,
+                toSquare: tosquare,
+                fen,
+              });
+              chessboard.dispatch({
+                name: "recordDatabaseMove",
+                detail: {
+                  chessboard,
+                  move,
+                },
+              });
+            }
+          });
+        }
+        if (rows) processRows(rows);
+        else {
+          CHESS.APIRT.callAPI({
+            action: "MOVES",
+            body: { id: match_guid },
+            callback: ({ rows }) => processRows(rows),
+          });
+        }
       }
       // ================================================== updatePlayers
       updatePlayers({

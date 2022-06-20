@@ -6,7 +6,8 @@
       connectedCallback() {
         super.connectedCallback();
         this.render();
-        document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.processMoves(evt.detail));
+        document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.addMove(evt.detail));
+        document.addEventListener("recordDatabaseMove", (evt) => this.addMove(evt.detail));
         document.addEventListener("restartMatch", (evt) => this.clear());
       }
       clear() {
@@ -15,7 +16,7 @@
       render() {
         this.style = `display:grid;grid:1fr/1fr 1fr;gap:1em`;
       }
-      processMoves(detail) {
+      addMove(detail) {
         let nr = detail.chessboard.chessMoves.length;
         this.append(
           Object.assign(document.createElement("div"), {

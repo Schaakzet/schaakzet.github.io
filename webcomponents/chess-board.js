@@ -368,6 +368,21 @@
         } else {
         }
       }
+      // ======================================================== <chess-board>.addChessMove
+      addChessMove({
+        chessPiece = false, // moves from database don't know chesspiece
+        fromSquare,
+        toSquare,
+        fen,
+      }) {
+        this.chessMoves.push({
+          chessPiece,
+          fromSquare,
+          toSquare,
+          fen,
+        });
+      }
+
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
         console.warn("this.player:", this.player, "movePiece", chessPiece, square);
@@ -414,11 +429,11 @@
             chessPiece.animateFinished(); // do <chess-piece> CSS stuff after animation finished
 
             const /* function */ save2chessMoves = () => {
-                this.chessMoves.push({
-                  chessPiece,
-                  fromSquare,
-                  toSquare,
-                  fen: lastFEN,
+                this.addChessMove({
+                  chessPiece, //
+                  fromSquare, //
+                  toSquare, //
+                  fen: lastFEN, //
                 });
               };
 
