@@ -347,6 +347,7 @@
       // ======================================================== <chess-piece>.animateFinished
       animateFinished() {
         this.style.position = this._savedposition;
+        
       }
       // ======================================================== <chess-piece>.disableCheckMakingMoves
       disableCheckMakingMoves({
