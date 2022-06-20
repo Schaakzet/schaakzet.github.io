@@ -10,6 +10,7 @@
         super().attachShadow({ mode: "open" }).innerHTML = `<style>${CSS_Boards}</style>${DIV_Boards}`;
       }
       connectedCallback() {
+        super.connectedCallback();
         this.render();
         this.listen2matchmoves();
       }

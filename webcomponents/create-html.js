@@ -1,7 +1,15 @@
+/* 
+
+USAGE: button|eventName:detailValue|buttonText
+Will trigger an eventName with detailValue when clicked.
+
+
+*/
 customElements.define(
   "create-html",
   class extends CHESS.ChessBaseElement {
     connectedCallback() {
+      super.connectedCallback();
       setTimeout(() => {
         this.innerHTML = this.innerHTML
           .trim()
@@ -16,6 +24,7 @@ customElements.define(
                 {
                   br: `<br>`,
                   a: `<a title="${title}" target="${target}" href="${uri}">${label}</a>`,
+                  // ------------------------------------------------- BUTTON: goto URI or dispatch event
                   button: isURI
                     ? `<button onclick="document.location='${uri}'">${label}</button>`
                     : `<button onclick="this.closest('create-html').dispatch(this,'${uri}')">${label}</button>`,
@@ -36,7 +45,7 @@ customElements.define(
 
     dispatch(button, eventName) {
       let [name, value] = eventName.split(":");
-      console.log("dispatch", name, value, this);
+      console.log(`%c dispatch:${name} detail:`, "background:lightcoral;color:white", value, "scope:", this);
       this.dispatchEvent(
         new CustomEvent(name, {
           bubbles: true,

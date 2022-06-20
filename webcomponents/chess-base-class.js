@@ -1,8 +1,20 @@
 // ********************************************************** ChessBaseElement
 // one BaseClass for all to be created Custom Elements/Web Components
 CHESS.ChessBaseElement = class extends HTMLElement {
+  // ======================================================== constructor
   constructor() {
     super();
+  }
+  // ======================================================== connectedCallback
+  connectedCallback() {
+    // ------------------------------------------------------- listen to <x-y> events
+    document.addEventListener(this.localName, (e) => {
+      let { value: valueMethod } = evt.detail;
+      // if a method on this DOM element exists
+      if (this[valueMethod]) {
+        this[valueMethod](e); // call method
+      }
+    });
   }
   // ======================================================== BaseElement.docs
   // List methods and properties of a Component in the console

@@ -5,6 +5,7 @@ customElements.define(
   "schaak-stuk",
   class extends CHESS.ChessBaseElement {
     connectedCallback() {
+      super.connectedCallback();
       this.render();
     }
     render() {

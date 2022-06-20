@@ -26,6 +26,7 @@
       }
       // ======================================================== <chess-board>.connectedCallback
       connectedCallback() {
+        super.connectedCallback();
         // when this Component is added to the DOM, create the board with FEN and Arrays.
         // <chess-square> and <chess-piece> are loaded ASYNC, so we need to wait for them to be defined before creating the board
         customElements.whenDefined(CHESS.__WC_CHESS_SQUARE__).then(() => {
@@ -112,23 +113,21 @@
       listenOnMatchID() {
         if (this.id) {
           console.log("listenOnMatchID <chess-board>", this.id);
+          // --------------------------------------------------- separate listener for each board
           const listenFunc = (evt) => {
-            // listen Functie definieren
+            // ----------------------------- get data from EventSource, moves and board state
             let { match_guid, fen, move } = evt.detail;
             if (this.id == match_guid) {
               if (move == "startgame") {
+                // ----------------------------- startgame
                 if (!this.hasAttribute("player")) this.player = CHESS.__PLAYER_WHITE__;
-                console.warn(`%c START ${match_guid}`, "background:red;color:yellow;");
-                //! todo Sandro
-                // nog een keer "READ" sturen met match_guid, zodat WIT ook ZWARTE spelersnaam uit "matches" table krijgt
                 this.updatePlayerBlack(match_guid);
               } else if (this.fen != fen) {
+                // ----------------------------- process move
                 let movetype = move[2];
                 if (movetype == "-" || movetype == "x") {
-                  console.warn("play", fen);
                   let [from, to] = move.split(movetype);
                   this.movePiece(from, to);
-                  // this.play([move.split(movetype)]);
                 }
                 this.fen = fen;
               } else {
@@ -136,16 +135,15 @@
               }
             }
           };
-          // als er al een listener is, verwijderen
+          // -------------------------------------------------- remove existing listener
           if (this._listening) {
             document.removeEventListener(this._listening.id, this._listening.func);
           }
-          // registreer deze nieuwe listener
+          // -------------------------------------------------- add new listener
           this._listening = {
             id: this.id,
             func: listenFunc,
           };
-          // listener toevoegen
           document.addEventListener(this.id, listenFunc);
         } // end if (this.id)
       }
@@ -155,11 +153,9 @@
           action: "READ",
           body: { id: match_guid },
           callback: ({ rows }) => {
-            if (this.player == CHESS.__PLAYER_WHITE__) {
-              let { player_white, player_black } = rows[0];
-              console.log("MATCH&Players:", this.closest("chess-match"), player_white, player_black);
-              this.closest("chess-match").setPlayerTitles(player_white, player_black);
-            }
+            let { player_white, player_black } = rows[0];
+            console.log("MATCH&Players:", this.closest("chess-match"), player_white, player_black);
+            this.closest("chess-match").setPlayerTitles(player_white, player_black);
           },
         });
       }

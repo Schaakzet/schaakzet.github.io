@@ -46,6 +46,7 @@
       }
       // ======================================================== <chess-square>.connectedCallback
       connectedCallback() {
+        super.connectedCallback();
         this.addEventListener("click", () => {
           log("`click` event on", this.at);
           if (this.chessboard.pieceClicked) {

@@ -2,6 +2,7 @@ customElements.define(
   "h1-chess",
   class extends CHESS.ChessBaseElement {
     connectedCallback() {
+      super.connectedCallback();
       //console.log([...document.scripts].map((x) => x.src));
       this.innerHTML =
         `<h1>Roads Technology SchaakZet - <a target=_blank

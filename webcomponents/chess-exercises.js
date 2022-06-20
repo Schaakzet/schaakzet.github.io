@@ -35,6 +35,8 @@ customElements.define(
     }
 
     connectedCallback() {
+      super.connectedCallback();
+
       console.error("connected");
 
       this.hidden(true);

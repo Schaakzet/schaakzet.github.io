@@ -3,6 +3,7 @@
 */
 customElements.define("schaak-bord", class extends CHESS.ChessBaseElement {
     connectedCallback() {
+        super.connectedCallback();
         this.createboard("SCHAAKBORD_ROB");
     }
     createboard(name) {

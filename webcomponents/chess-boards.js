@@ -11,6 +11,7 @@
         super().attachShadow({ mode: "open" }).innerHTML = `<style>${CSS_Boards}</style>${DIV_Boards}`;
       }
       connectedCallback() {
+        super.connectedCallback();
         setTimeout(() => this.render()); // wait till innerHTML is parsed by the browser
       }
       // ======================================================== <chess-boards>.render

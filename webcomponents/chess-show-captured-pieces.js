@@ -4,6 +4,7 @@
     "chess-show-captured-pieces",
     class extends CHESS.ChessBaseElement {
       connectedCallback() {
+        super.connectedCallback();
         this.render();
 
         document.addEventListener("restartMatch", (evt) => this.clear());

@@ -13,7 +13,10 @@
     "chess-match",
     class extends CHESS.ChessBaseElement {
       // todo create shadowDOM?
+      // ================================================== connectedCallback
       connectedCallback() {
+        super.connectedCallback();
+
         this.render();
         setTimeout(() => {
           let match_guid = localStorage.getItem(CHESS.__MATCH_GUID__);
@@ -56,21 +59,20 @@
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.storeMove(evt.detail));
         document.addEventListener("newGame", (evt) => this.createMatch(evt.detail));
         // handle game buttons
-        document.addEventListener(this.localName, (e) => {
-          if (this[e.detail.value]) this[e.detail.value](e);
-        });
         this.addListeners = () => {}; // attach listeners only once
       }
 
       // ================================================== createMatch
       createMatch() {
         let { id, displayname } = ROADSTECHNOLOGY.CHESS;
+        // -------------------------------------------------- callAPI
         CHESS.APIRT.callAPI({
           action: "CREATE",
           body: {
             wp_user_white: id, // user WordPress wp_user.id
             player_white: displayname, // user "name"
           },
+          // -------------------------------------------------- callback
           callback: ({ rows }) => {
             // todo test for database failure, no rows
             let {
@@ -156,10 +158,11 @@
       resumeMatch(match_guid = localStorage.getItem(CHESS.__MATCH_GUID__)) {
         let chess_match = this; // easier for new code readers
         chess_match.chessboard.restart(match_guid);
-
+        // -------------------------------------------------- callAPI
         CHESS.APIRT.callAPI({
           action: "READ",
           body: { id: match_guid },
+          // -------------------------------------------------- callback
           callback: ({ rows }) => {
             if (rows.length) {
               chess_match.assignPlayerByMatchesRow(rows[0]);
@@ -220,7 +223,7 @@
         log("storeMove", move, chessboard.id);
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
-
+        // -------------------------------------------------- callAPI
         CHESS.APIRT.callAPI({
           action: "CHESSMOVE",
           body: {
@@ -228,12 +231,13 @@
             move,
             fen,
           },
-
+          // -------------------------------------------------- callback
           callback: ({ rows }) => {
             log("move saved", rows);
           },
         });
       }
+
       // ================================================== initGame
       initGame(match_guid) {
         log("initGame", match_guid);
@@ -245,11 +249,17 @@
       myFEN() {
         this.chessboard.fen = "r3kbnr/ppp2ppp/2npbq2/4p3/4P3/2NPBQ2/PPP2PPP/R3KBNR w KQkq -";
       }
+      // ================================================== removeMatch
+      removeMatch() {
+        localStorage.removeItem(CHESS.__MATCH_GUID__);
+        location.reload();
+      }
       // ================================================== undoMove
       undoMove() {
         log("UNDO MOVE"); //todo test
         this.chessboard.undoMove();
         this.undoMoveDB();
+        // -------------------------------------------------- dispatch undoMove
         this.dispatch({
           root: document,
           name: "undoMove",
@@ -275,7 +285,7 @@
           this.chessboard.classList.add("game_over");
         }
       }
-      // ================================================== remise
+      // ================================================== fullscreen
       fullScreen() {
         var elem = this;
 
