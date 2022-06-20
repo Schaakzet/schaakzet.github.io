@@ -8,11 +8,12 @@ CHESS.ChessBaseElement = class extends HTMLElement {
   // ======================================================== connectedCallback
   connectedCallback() {
     // ------------------------------------------------------- listen to <x-y> events
-    document.addEventListener(this.localName, (e) => {
+    document.addEventListener(this.localName, (evt) => {
       let { value: valueMethod } = evt.detail;
       // if a method on this DOM element exists
+      // "createMatch"
       if (this[valueMethod]) {
-        this[valueMethod](e); // call method
+        this[valueMethod](evt); // call method
       }
     });
   }

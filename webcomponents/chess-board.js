@@ -111,8 +111,9 @@
       }
       // ======================================================== <chess-board>.listenOnMatchID
       listenOnMatchID() {
-        if (this.id) {
-          console.log("listenOnMatchID <chess-board>", this.id);
+        let listenRoot = document.body;
+        const invalidIDs = ["testboard", "matchboard"];
+        if (this.id && !invalidIDs.includes(this.id)) {
           // --------------------------------------------------- separate listener for each board
           const listenFunc = (evt) => {
             // ----------------------------- get data from EventSource, moves and board state
@@ -125,11 +126,22 @@
               } else if (this.fen != fen) {
                 // ----------------------------- process move
                 let movetype = move[2];
-                if (movetype == "-" || movetype == "x") {
-                  let [from, to] = move.split(movetype);
-                  this.movePiece(from, to);
+                if (move.includes("O-O")) {
+                  // todo roccade
+                } else {
+                  if (movetype == "-" || movetype == "x") {
+                    let [from, to] = move.split(movetype);
+                    this.movePiece(from, to);
+                    setTimeout(() => {
+                      if (this.fen !== fen) {
+                        // should never happen, but just in case
+                        console.error("FEN ERROR! after move", move);
+                      }
+                    }, 3000);
+                  } else {
+                    this.fen = fen;
+                  }
                 }
-                this.fen = fen;
               } else {
                 this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, this.fen);
               }
@@ -137,14 +149,14 @@
           };
           // -------------------------------------------------- remove existing listener
           if (this._listening) {
-            document.removeEventListener(this._listening.id, this._listening.func);
+            listenRoot.removeEventListener(this._listening.id, this._listening.func);
           }
           // -------------------------------------------------- add new listener
           this._listening = {
             id: this.id,
             func: listenFunc,
           };
-          document.addEventListener(this.id, listenFunc);
+          listenRoot.addEventListener(this.id, listenFunc);
         } // end if (this.id)
       }
       // ======================================================== <chess-board>.readGUID
@@ -328,9 +340,10 @@
       }
       // ======================================================== <chess-board>.changePlayer
       changePlayer() {
-        this.playerturn = CHESS.otherPlayer(this.playerturn); // todo Naar FEN
-        console.error(this.fen);
-        console.warn("Change PlayerTurn and Who is the player", this.playerturn, this.player);
+        if (this.player) {
+          this.playerturn = CHESS.otherPlayer(this.playerturn); // todo Naar FEN
+          console.warn("changePlayer turn:", this.playerturn, "player:", this.player, this.fen);
+        }
       }
       // ======================================================== <chess-board>.recordMoveInDatabase
       recordMoveInDatabase({
@@ -338,6 +351,7 @@
         toSquare = false, // <chess-square> to which piece was moved
         move, // e2-e4  d7xh8  O-O-O
       }) {
+        console.warn("666", this.record, this.id);
         if (this.record && this.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
           // emit Event to <chess-match> which records all moves in database
           this.dispatch({
@@ -351,12 +365,15 @@
               fen: this.fen,
             },
           });
+        } else {
         }
       }
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
-        // console.error("movePiece", chessPiece, square);
-        if (isString(chessPiece)) chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
+        console.warn("this.player:", this.player, "movePiece", chessPiece, square);
+        if (isString(chessPiece)) {
+          chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
+        }
         if (!chessPiece) {
           console.error("Er is geen chesspiece. Chesspiece = ", chessPiece);
           return;
@@ -365,6 +382,7 @@
             let fromSquare = chessPiece.square;
             let toSquare = this.getSquare(square);
             let moveType = toSquare.piece ? CHESS.__MOVETYPE_CAPTURE__ : CHESS.__MOVETYPE_MOVE__;
+            //console.error(square, fromSquare, moveType, toSquare);
             const lastFEN = this.fen;
 
             // Clear en Passant pawn and add to capturedPiece
@@ -438,8 +456,7 @@
             } else {
               // regular move
               this.changePlayer();
-              let currentPlayer = this.playerturn;
-              if (this.player == currentPlayer) {
+              if (this.player) {
                 this.recordMoveInDatabase({
                   fromSquare,
                   toSquare,
@@ -654,7 +671,7 @@
             this.movePiece(from, to);
           }
         } else {
-          console.error(666, "No play moves", this);
+          // console.error(666, "No play moves", this);
           // delete this._doingmoremoves;
         }
       }

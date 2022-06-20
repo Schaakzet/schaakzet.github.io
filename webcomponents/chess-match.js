@@ -22,7 +22,9 @@
           let match_guid = localStorage.getItem(CHESS.__MATCH_GUID__);
           if (match_guid) {
             this.resumeMatch(match_guid);
-          } else this.createMatch(); // call back-end for match_guid, then this.initGame(match_guid)
+          } else {
+            this.createMatch(); // call back-end for match_guid, then this.initGame(match_guid)
+          }
           this.addListeners();
           this.listen2matchmoves();
         });
@@ -64,35 +66,37 @@
 
       // ================================================== createMatch
       createMatch() {
-        let { id, displayname } = ROADSTECHNOLOGY.CHESS;
-        // -------------------------------------------------- callAPI
-        CHESS.APIRT.callAPI({
-          action: "CREATE",
-          body: {
-            wp_user_white: id, // user WordPress wp_user.id
-            player_white: displayname, // user "name"
-          },
-          // -------------------------------------------------- callback
-          callback: ({ rows }) => {
-            // todo test for database failure, no rows
-            let {
-              tournament_id,
-              wp_user_white,
-              wp_user_black,
-              player_white, // for now a new match is always created by the white playe
-              player_black,
-              starttime,
-              endtime,
-              fen,
-              result,
-              match_guid, // matchGUID assigned by database
-            } = rows[0];
+        if (confirm("Do you want to start a new match as player white?")) {
+          let { id, displayname } = ROADSTECHNOLOGY.CHESS;
+          // -------------------------------------------------- callAPI
+          CHESS.APIRT.callAPI({
+            action: "CREATE",
+            body: {
+              wp_user_white: id, // user WordPress wp_user.id
+              player_white: displayname, // user "name"
+            },
+            // -------------------------------------------------- callback
+            callback: ({ rows }) => {
+              // todo test for database failure, no rows
+              let {
+                tournament_id,
+                wp_user_white,
+                wp_user_black,
+                player_white, // for now a new match is always created by the white playe
+                player_black,
+                starttime,
+                endtime,
+                fen,
+                result,
+                match_guid, // matchGUID assigned by database
+              } = rows[0];
 
-            log("createMatch", match_guid);
-            this.setPlayerTitles(player_white);
-            this.initGame(match_guid);
-          },
-        });
+              log("createMatch", match_guid);
+              this.setPlayerTitles(player_white);
+              this.initGame(match_guid);
+            },
+          });
+        }
       }
 
       // ================================================== setPlayerTitles()
@@ -184,6 +188,8 @@
             let noMovesYet = rows.length == 0;
             if (noMovesYet) {
               this.chessboard.recordMoveInDatabase({ move: "startgame" });
+            } else {
+              //console.error("game with rows", rows[0]);
             }
           },
         });
