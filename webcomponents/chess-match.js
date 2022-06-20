@@ -96,6 +96,15 @@
               this.initGame(match_guid);
             },
           });
+        } else {
+          // Take wp_user_black and player_black:
+          let { id, displayname } = ROADSTECHNOLOGY.CHESS;
+          let wp_user_black = id;
+          let player_black = displayname;
+          // show availableGames2:
+
+          // resumeMatch with wp_user_black and player_black:
+          this.resumeMatch(match_guid);
         }
       }
 
@@ -113,6 +122,7 @@
       }
       // ================================================== assignPlayerByMatchesRow
       assignPlayerByMatchesRow(matchesRow) {
+        // todo : Check again whether this function does what it is supposed to do.
         // -------------------------------------------------- init variables
         let {
           tournament_id,
