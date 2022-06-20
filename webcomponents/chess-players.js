@@ -28,7 +28,7 @@
     }
 
     connectedCallback() {
-      this.innerHTML = /*html*/ this.getAttribute("name") + `666`;
+      this.innerHTML = /*html*/ this.getAttribute("name") + `<chess-player>`;
     }
   }
 
