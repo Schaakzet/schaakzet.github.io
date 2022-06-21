@@ -50,8 +50,6 @@
               `<div id="message"></div>` +
               `<chess-show-captured-pieces></chess-show-captured-pieces>` +
               `<chess-game-progress></chess-game-progress>` +
-              `<chess-availablegames></chess-availablegames>` +
-              `<chess-availablegames where="ALLGAMES"></chess-availablegames>` +
               `</div>`,
           })
         );
@@ -101,10 +99,8 @@
           let { id, displayname } = ROADSTECHNOLOGY.CHESS;
           let wp_user_black = id;
           let player_black = displayname;
-          // show availableGames2:
-
-          // resumeMatch with wp_user_black and player_black:
-          this.resumeMatch(match_guid);
+          // show availableGames:
+          window.open(`seats.html?id=${wp_user_black}&name=${player_black}` /* , "_blank" */);
         }
       }
 
