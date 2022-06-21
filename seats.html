@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Choose a Match</title>
+
+    <script src="./webcomponents/schaakzet.js"></script>
+    <script id="schaakzetplugin">
+      let ROADSTECHNOLOGY = {
+        CHESS: {
+          id: new URLSearchParams(document.location.search).get("id") || 44,
+          displayname: new URLSearchParams(document.location.search).get("name") || "SEATS.html",
+        },
+      };
+      console.log(`%c WORDPRESS MOCK DATA: `, "background:red;color:white", ROADSTECHNOLOGY.CHESS);
+    </script>
+  </head>
+  <body>
+    <h2>Choose a Match to play as Black:</h2>
+    <!-- ************************************************************************* -->
+    <main>
+      <chess-availablegames></chess-availablegames>
+      <chess-availablegames where="ALLGAMES"></chess-availablegames>
+    </main>
+  </body>
+</html>
