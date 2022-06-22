@@ -43,14 +43,14 @@
           }),
           Object.assign(document.createElement("div"), {
             innerHTML:
-              `<h2>Match</h2>` +
-              `<chess-match-buttons></chess-match-buttons>` +
-              `<chess-board id="matchboard" fen="" record labels></chess-board>` +
-              `<div>` +
-              `<div id="message"></div>` +
-              `<chess-show-captured-pieces></chess-show-captured-pieces>` +
-              `<chess-game-progress></chess-game-progress>` +
-              `</div>`,
+              `<div style="display:grid;grid-template-columns:1fr 1fr">` +
+              `  <chess-board fen="" record labels></chess-board>` +
+              `  <div>` +
+              `    <chess-show-captured-pieces></chess-show-captured-pieces>` +
+              `    <chess-game-progress></chess-game-progress>` +
+              `  </div>` +
+              `</div>` +
+              `<div id="message"></div>` 
           })
         );
       }

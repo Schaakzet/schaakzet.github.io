@@ -251,6 +251,17 @@
       get labels() {
         return this.hasAttribute("labels");
       }
+      // ======================================================== <chess-board>.border
+      set border(on = false) {
+        if(on){
+
+        } else {
+
+        }
+      }
+      get border(){
+        return this.hasAttribute("border");
+      }
       // ======================================================== <chess-board>.disabled
       // TODO use disabled to not calculate board
       get disabled() {

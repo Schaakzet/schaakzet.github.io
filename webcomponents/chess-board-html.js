@@ -28,6 +28,9 @@
       position: relative;
      
     }` +
+    /*css*/ `chess-board{--chessboardbgcolor:grey}` +
+    /*css*/ `chess-board{background:var(--chessboardbgcolor)}` +
+    /*css*/ `chess-board{border:calc(var(--chess_board_resized_width)/40) solid var(--chessboardbgcolor)}` +
     /*css*/ `chess-board{display:none;position:relative}` +
     /*css*/ `chess-board:after{content:"";display:block;padding-bottom:100%}` + // make sure chessboard displays as a square
     /* position multiple layers on top of eachother */
@@ -37,9 +40,10 @@
       position: absolute;
       width: 100%;
       height: 100%;
-      border: calc(var(--width) / 40) solid gray;
+      /* border: calc(var(--width) / 40) solid gray; */
       display: grid;
-      background-color: gray;
+      /* padding:40px; */
+      background-color: hotpink;
       grid-template-columns: repeat(8, 1fr);
       grid-template-rows: repeat(8, 1fr);
       grid-template-areas:
@@ -107,13 +111,15 @@
   );
 
   window.CHESS.chessboard_innerHTML =
+    `<div stylex="border:10px solid red">` +
     chessboardSTYLES +
     labelsSTYLE +
     disabledBoardSTYLE +
     /*html*/ `<style id="chessboard_gridareas"></style>` + // inject 64 gridarea definitions here
     /*html*/ `<div id="chessboard_squares" class="chessboard_layer"></div>` + // squares layer
     /*html*/ `<div id="chessboard_debuginfo" class="chessboard_layer">21</div>` + // squares layer
-    /*html*/ `<div id="chessboard_pieces" class="chessboard_layer"></div>`;
+    /*html*/ `<div id="chessboard_pieces" class="chessboard_layer"></div>` +
+    `</div>`;
 
   //`<style>chess-square:before{content:"d:" attr(defendedby) " a:" attr(attackedby)}</style>`
 })();
