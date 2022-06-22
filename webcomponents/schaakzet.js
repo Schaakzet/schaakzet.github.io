@@ -1,4 +1,9 @@
 !(function () {
+  if (window.CHESS) {
+    console.error("Don't load schaakzet.js again!");
+    return; // prevent loading again
+  }
+
   let base_url = ".";
   if (location.hostname.includes("github") || location.hostname.includes("schaakzet")) base_url = "https://schaakzet.github.io";
 
