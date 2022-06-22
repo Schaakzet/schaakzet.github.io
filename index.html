@@ -1,4 +1,5 @@
 <html>
+
 <head>
   <script src="./webcomponents/schaakzet.js"></script>
 </head>
@@ -9,20 +10,22 @@
     <schaakzet-teams></schaakzet-teams>
   </main>
   <script>
-    customElements.define("schaakzet-teams", class extends CHESS.ChessBaseElement {
-      connectedCallback() {
-        this.innerHTML = [
-          ["https://www.schaakzet.nl", "", "Nancy & Team"],
-          ["sandro.html", "programmeren", "Sandro, Bart"],
-          ["rob.html", "vormgeving, introductie oefeningen", "Rob, Geert"],
-          ["match.html", "1 Match schaakbord/players", ""],
-          ["testDB.html", "Zetten gaan naar database", "Agneta, Bart, Frans, Danny"],
-          ["dashboard.html", "Alle match schaakborden", ""],
-          ["", "Functioneel testen", "Ashraf"],
-          ["", "Simultaan Toernooi", "Iedereen tegen Laurent"],
-        ].map(([uri, label, team]) => `<div><a href="${uri}">${uri}</a><span>${label}</span><span>${team}</span></div>`).join("");
-      }
-    })
+    setTimeout(() => { // wait till CHESS is available
+      customElements.define("schaakzet-teams", class extends CHESS.ChessBaseElement {
+        connectedCallback() {
+          this.innerHTML = [
+            ["https://www.schaakzet.nl", "", "Nancy & Team"],
+            ["sandro.html", "programmeren", "Sandro, Bart"],
+            ["rob.html", "vormgeving, introductie oefeningen", "Rob, Geert"],
+            ["match.html", "1 Match schaakbord/players", ""],
+            ["testDB.html", "Zetten gaan naar database", "Agneta, Bart, Frans, Danny"],
+            ["dashboard.html", "Alle match schaakborden", ""],
+            ["", "Functioneel testen", "Ashraf"],
+            ["", "Simultaan Toernooi", "Iedereen tegen Laurent"],
+          ].map(([uri, label, team]) => `<div><a href="${uri}">${uri}</a><span>${label}</span><span>${team}</span></div>`).join("");
+        }
+      })
+    }, 0);
     // make sure our dev code executes after all chess boards are 100% created
     window.addEventListener("load", () => {
       // define a GLOBAL setFEN function so all inputs can call this function
