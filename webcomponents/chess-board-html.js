@@ -15,6 +15,11 @@
         }`;
   }
 
+  const chessmatchSTYLES =
+    /*html*/ `<style id="chessmatch_styles">` +
+    /*css*/ `#match_and_progress{display:grid;grid-template-columns:1fr 1fr;gap:1em}` + //
+    /*html*/ `</style>`;
+
   const chessboardSTYLES =
     /*html*/ `<style id="chessboard_definition">` +
     squareStateCSS(CHESS.__PLAYER_WHITE__) +
@@ -31,6 +36,7 @@
     /*css*/ `chess-board{--chessboardbgcolor:grey}` +
     /*css*/ `chess-board{background:var(--chessboardbgcolor)}` +
     /*css*/ `chess-board{border:calc(var(--chess_board_resized_width)/40) solid var(--chessboardbgcolor)}` +
+    /*css*/ `chess-board{border-bottom-color:white}` +
     /*css*/ `chess-board{display:none;position:relative}` +
     /*css*/ `chess-board:after{content:"";display:block;padding-bottom:100%}` + // make sure chessboard displays as a square
     /* position multiple layers on top of eachother */
@@ -111,7 +117,7 @@
   );
 
   window.CHESS.chessboard_innerHTML =
-    `<div stylex="border:10px solid red">` +
+    chessmatchSTYLES +
     chessboardSTYLES +
     labelsSTYLE +
     disabledBoardSTYLE +
@@ -119,7 +125,6 @@
     /*html*/ `<div id="chessboard_squares" class="chessboard_layer"></div>` + // squares layer
     /*html*/ `<div id="chessboard_debuginfo" class="chessboard_layer">21</div>` + // squares layer
     /*html*/ `<div id="chessboard_pieces" class="chessboard_layer"></div>` +
-    `</div>`;
-
-  //`<style>chess-square:before{content:"d:" attr(defendedby) " a:" attr(attackedby)}</style>`
+    //`<style>chess-square:before{content:"d:" attr(defendedby) " a:" attr(attackedby)}</style>` +
+    ``;
 })();

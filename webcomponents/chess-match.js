@@ -43,20 +43,27 @@
           }),
           Object.assign(document.createElement("div"), {
             innerHTML:
-              `<div style="display:grid;grid-template-columns:1fr 1fr">` +
-              `  <chess-board fen="" record labels></chess-board>` +
+              (this.getAttribute("buttons") ? `<chess-match-buttons></chess-match-buttons>` : ``) +
+              (this.getAttribute("playernames") ? `<div class="match_playernames"></div>` : ``) +
+              `<div id="match_and_progress">` +
+              `  <div>` +
+              `    <chess-board fen="" record labels></chess-board>` +
+              `  </div>` +
               `  <div>` +
               `    <chess-show-captured-pieces></chess-show-captured-pieces>` +
               `    <chess-game-progress></chess-game-progress>` +
               `  </div>` +
               `</div>` +
-              `<div id="message"></div>` 
+              `<div id="message"></div>`,
           })
         );
       }
       // ================================================== addListeners
       addListeners() {
-        document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.storeMove(evt.detail));
+        document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => {
+          console.error("currentPlayer",this.chessboard.player);
+          this.storeMove(evt.detail);
+        });
         document.addEventListener("newGame", (evt) => this.createMatch(evt.detail));
         // handle game buttons
         this.addListeners = () => {}; // attach listeners only once
@@ -106,11 +113,14 @@
 
       // ================================================== setPlayerTitles()
       setPlayerTitles(p1, p2 = "<i>To Be Announced</i>") {
-        const preventEmptyName = (name) => {
-          if (!name || name == "") return "<i>onbekend</i>";
-          return name;
-        };
-        this.querySelector("h2").innerHTML = `Match ${preventEmptyName(p1)} vs ${preventEmptyName(p2)}`;
+        const match_playernames = this.querySelector(".match_playernames");
+        if (match_playernames) {
+          function preventEmptyName(name) {
+            if (!name || name == "") return "<i>onbekend</i>";
+            return name;
+          }
+          match_playernames.innerHTML = `Match ${preventEmptyName(p1)} vs ${preventEmptyName(p2)}`;
+        }
       }
       // ================================================== isSamePlayer
       isSamePlayer(p1, p2) {
