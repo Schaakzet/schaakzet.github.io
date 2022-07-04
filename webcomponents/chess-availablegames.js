@@ -31,8 +31,8 @@
         this.get_availableGames(where);
       }
       // ================================================== deleteMatch
-      deleteMatch(evt) {
-        console.error("deleteMatch", this, evt, evt.target, evt.detail);
+      deleteMatch(match_guid) {
+        window.CHESS.APIRT.deleteMatchByGUID(match_guid);
       }
       // ================================================== get_availableGames
       get_availableGames(where) {
@@ -52,7 +52,7 @@
                 // ------------------------------------------------- callAPI READ
                 let gameButtons = "";
                 if (where == "AVAILABLEGAMES") {
-                  gameButtons = `<create-html>button|aa1:aa2|play Black</create-html>`;
+                  gameButtons = `<create-html>button|chess-availablegames:resumeChessGame:${match_guid}|play Black</create-html>`;
                 }
                 gameButtons += `<create-html>button|chess-availablegames:deleteMatch:${match_guid}|delete match</create-html>`;
 
@@ -61,15 +61,6 @@
                   tag: "div",
                   props: {
                     innerHTML: `white:<b>${player_white}</b> (wp:${wp_user_white}) ${match_guid} ${gameButtons}`,
-                    onclick: (evt) => {
-                      if (evt.target.tagName !== "BUTTON") {
-                        if (evt.ctrlKey) {
-                          window.CHESS.APIRT.deleteMatchByGUID(match_guid);
-                        } else {
-                          this.resumeChessGame(match_guid, fen);
-                        }
-                      }
-                    },
                   },
                 });
               });

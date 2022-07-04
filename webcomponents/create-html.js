@@ -25,7 +25,9 @@ customElements.define(
                   br: `<br>`,
                   a: `<a title="${title}" target="${target}" href="${uri}">${label}</a>`,
                   // ------------------------------------------------- BUTTON: goto URI or dispatch event
-                  button: isURI ? `<button onclick="document.location='${uri}'">${label}</button>` : `<button onclick=".dispatch(this,'${uri}')">${label}</button>`,
+                  button: isURI
+                    ? `<button onclick="document.location='${uri}'">${label}</button>`
+                    : `<button onclick="this.closest('create-html').dispatch(this,'${uri}')">${label}</button>`,
                   input:
                     uri == "select"
                       ? `<select name="${label}" >${title

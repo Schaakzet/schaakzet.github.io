@@ -99,12 +99,11 @@ CHESS.ChessBaseElement = class extends HTMLElement {
     return Object.assign(document.createElement(tag), props);
   }
   // ======================================================== BaseElement.resumeChessGame
-  resumeChessGame(match_guid, fen) {
-    let id = new URLSearchParams(document.location.search).get("id");
-    let name = new URLSearchParams(document.location.search).get("name");
+  resumeChessGame(evt) {
+    let { id, displayname } = ROADSTECHNOLOGY.CHESS;
 
-    localStorage.setItem(CHESS.__MATCH_GUID__, match_guid);
-    window.open(`match.html?id=${id}&name=${name}` /* , "_blank" */);
+    localStorage.setItem(CHESS.__MATCH_GUID__, evt.detail.data);
+    window.open(`match.html?id=${id}&name=${displayname}` /* , "_blank" */);
     // this.chessboard.fen = fen;
   }
   // end ChessBaseElement

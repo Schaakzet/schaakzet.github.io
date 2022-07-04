@@ -71,8 +71,10 @@
 
       // ================================================== createMatch
       createMatch() {
+        ROADSTECHNOLOGY.CHESS.displayname = prompt("Enter your Displayname", "Anonymous");
+        ROADSTECHNOLOGY.CHESS.id = this.getRandomID(1000);
+        let { id, displayname } = ROADSTECHNOLOGY.CHESS;
         if (confirm("Do you want to start a new match as player white?")) {
-          let { id, displayname } = ROADSTECHNOLOGY.CHESS;
           // -------------------------------------------------- callAPI
           CHESS.APIRT.callAPI({
             action: "CREATE",
@@ -87,7 +89,7 @@
                 tournament_id,
                 wp_user_white,
                 wp_user_black,
-                player_white, // for now a new match is always created by the white playe
+                player_white, // for now a new match is always created by the white player
                 player_black,
                 starttime,
                 endtime,
@@ -103,12 +105,16 @@
           });
         } else {
           // Take wp_user_black and player_black:
-          let { id, displayname } = ROADSTECHNOLOGY.CHESS;
           let wp_user_black = id;
           let player_black = displayname;
-          // show availableGames:
-          window.open(`seats.html?id=${wp_user_black}&name=${player_black}` /* , "_blank" */);
+          // show availableGames (seats.html):
+          window.open(`seats.html?id=${wp_user_black}&name=${player_black}`);
         }
+      }
+
+      // ================================================== getRandomID()
+      getRandomID(value) {
+        return Math.floor(Math.random() * value);
       }
 
       // ================================================== setPlayerTitles()
@@ -177,6 +183,9 @@
       // ================================================== resumeMatch
       // Gets match_guid, FEN, players and their name & (color)
       resumeMatch(match_guid = localStorage.getItem(CHESS.__MATCH_GUID__)) {
+        // ROADSTECHNOLOGY.CHESS.displayname = prompt("Enter your Displayname", "Anonymous");
+        // ROADSTECHNOLOGY.CHESS.id = this.getRandomID(1000);
+
         let chess_match = this; // easier for new code readers
         chess_match.chessboard.restart(match_guid);
         // -------------------------------------------------- callAPI
