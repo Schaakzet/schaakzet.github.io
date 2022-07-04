@@ -43,8 +43,8 @@
           }),
           Object.assign(document.createElement("div"), {
             innerHTML:
-              (this.getAttribute("buttons") ? `<chess-match-buttons></chess-match-buttons>` : ``) +
-              (this.getAttribute("playernames") ? `<div class="match_playernames"></div>` : ``) +
+              (this.hasAttribute("buttons") ? `<chess-match-buttons></chess-match-buttons>` : ``) +
+              (this.hasAttribute("playernames") ? `<div class="match_playernames"></div>` : ``) +
               `<div id="match_and_progress">` +
               `  <div>` +
               `    <chess-board fen="" record labels></chess-board>` +
@@ -61,7 +61,7 @@
       // ================================================== addListeners
       addListeners() {
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => {
-          console.error("currentPlayer",this.chessboard.player);
+          console.error("currentPlayer", this.chessboard.player);
           this.storeMove(evt.detail);
         });
         document.addEventListener("newGame", (evt) => this.createMatch(evt.detail));

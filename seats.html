@@ -11,14 +11,14 @@
       let ROADSTECHNOLOGY = {
         CHESS: {
           id: new URLSearchParams(document.location.search).get("id") || 44,
-          displayname: new URLSearchParams(document.location.search).get("name") || "SEATS.html",
+          displayname: new URLSearchParams(document.location.search).get("name") || "seats.html",
         },
       };
       console.log(`%c WORDPRESS MOCK DATA: `, "background:red;color:white", ROADSTECHNOLOGY.CHESS);
     </script>
   </head>
   <body>
-    <h2>Choose a Match to play as Black:</h2>
+    <h2>Choose a Match to play as Black (Available Games) or restart an existing Match (All Games):</h2>
     <!-- ************************************************************************* -->
     <main>
       <chess-availablegames></chess-availablegames>
