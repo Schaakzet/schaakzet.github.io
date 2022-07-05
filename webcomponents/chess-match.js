@@ -72,9 +72,10 @@
       // ================================================== createMatch
       createMatch() {
         ROADSTECHNOLOGY.CHESS.displayname = prompt("Enter your Displayname", "Anonymous");
-        ROADSTECHNOLOGY.CHESS.id = this.getRandomID(1000);
+        ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(window.location.search).get("id") || this.getRandomID(1000);
         let { id, displayname } = ROADSTECHNOLOGY.CHESS;
         if (confirm("Do you want to start a new match as player white?")) {
+          localStorage.removeItem("match_guid");
           // -------------------------------------------------- callAPI
           CHESS.APIRT.callAPI({
             action: "CREATE",
@@ -108,7 +109,7 @@
           let wp_user_black = id;
           let player_black = displayname;
           // show availableGames (seats.html):
-          window.open(`seats.html?id=${wp_user_black}&name=${player_black}`);
+          location.assign(`seats.html?id=${wp_user_black}&name=${player_black}`);
         }
       }
 
@@ -289,7 +290,7 @@
         move = "e2-e4",
         fen = chessboard.fen,
       }) {
-        console.error("FEN", fen);
+        console.error("Correct FEN:", fen);
         log("storeMove", move, chessboard.id);
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();

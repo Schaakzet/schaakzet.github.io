@@ -128,10 +128,12 @@
                 let movetype = move[2];
                 if (move.includes("O-O")) {
                   // todo roccade
+                  console.warn("Implement Castling listenOnMatchID");
                 } else {
                   if (movetype == "-" || movetype == "x") {
                     let [from, to] = move.split(movetype);
-                    this.movePiece(from, to);
+                    this.movePiece(from, to); // Changes this.fen, so FEN ERROR!
+                    console.warn("FENs:", this.fen, fen);
                     setTimeout(() => {
                       if (this.fen !== fen) {
                         // should never happen, but just in case
@@ -253,13 +255,11 @@
       }
       // ======================================================== <chess-board>.border
       set border(on = false) {
-        if(on){
-
+        if (on) {
         } else {
-
         }
       }
-      get border(){
+      get border() {
         return this.hasAttribute("border");
       }
       // ======================================================== <chess-board>.disabled

@@ -103,7 +103,7 @@ CHESS.ChessBaseElement = class extends HTMLElement {
     let { id, displayname } = ROADSTECHNOLOGY.CHESS;
 
     localStorage.setItem(CHESS.__MATCH_GUID__, evt.detail.data);
-    window.open(`match.html?id=${id}&name=${displayname}` /* , "_blank" */);
+    location.assign(`match.html?id=${id}&name=${displayname}` /* , "_blank" */);
     // this.chessboard.fen = fen;
   }
   // end ChessBaseElement
