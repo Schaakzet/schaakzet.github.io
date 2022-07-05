@@ -78,6 +78,18 @@ CHESS.ChessBaseElement = class extends HTMLElement {
     log("init", API);
     try {
       const evtSource = new EventSource(API);
+      evtSource.onopen = () => {
+        console.warn("%c EventSource opened", "background:blue;color:white");
+        if (this.EVERROR) {
+          console.warn("EVERROR", this);
+          this.updateProgressFromDatabase({});
+        }
+        this.EVERROR = false;
+      };
+      evtSource.onerror = (evt) => {
+        this.EVERROR = true;
+        console.warn("%c EventSource error", "background:red;color:white", evt);
+      };
       evtSource.onmessage = (evt) => {
         // respond to the Event
         if (evt.data) {
