@@ -61,7 +61,7 @@
       // ================================================== addListeners
       addListeners() {
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => {
-          console.error("currentPlayer", this.chessboard.player);
+          log("currentPlayer", this.chessboard.player);
           this.storeMove(evt.detail);
         });
         document.addEventListener("newGame", (evt) => this.createMatch(evt.detail));
@@ -157,12 +157,17 @@
           console.groupEnd();
         }
         // -------------------------------------------------- determine current player
+        if (ROADSTECHNOLOGY.CHESS.id == null) {
+          ROADSTECHNOLOGY.CHESS.id = wp_user_white;
+          ROADSTECHNOLOGY.CHESS.displayname = player_white;
+        }
         let {
-          id: WordPress_id, // create variable WordPress_id
-          displayname: WordPress_displayname, // create variable WordPress_displayname
+          id, // create variable WordPress_id
+          displayname, // create variable WordPress_displayname
         } = ROADSTECHNOLOGY.CHESS;
+
         let playerColor;
-        if (this.isSamePlayer(WordPress_id, wp_user_white)) {
+        if (this.isSamePlayer(id, wp_user_white)) {
           consoleLog("WHITE");
           playerColor = CHESS.__PLAYER_WHITE__;
           this.updateProgressFromDatabase({ match_guid });
@@ -172,8 +177,8 @@
           playerColor = CHESS.__PLAYER_BLACK__;
           this.updatePlayers({
             ...matchesRow, // all of matchesRow
-            wp_user_black: WordPress_id, // overwrite wp_user_black with WordPress_id
-            player_black: WordPress_displayname, // overwrite player_black with WordPress_displayname
+            wp_user_black: id, // overwrite wp_user_black with WordPress_id
+            player_black: displayname, // overwrite player_black with WordPress_displayname
           });
         }
         // -------------------------------------------------- init <chess-board>
@@ -218,6 +223,7 @@
               this.chessboard.recordMoveInDatabase({ move: "startgame" });
             } else {
               this.updateProgressFromDatabase({ rows });
+              this.chessboard.showLastMoveOnBoard();
             }
           },
         });
@@ -225,7 +231,7 @@
       // ================================================== updateProgressFromDatabase
       updateProgressFromDatabase({
         rows = false, // if false then call database again with match_guid
-        match_guid,
+        match_guid = localStorage.getItem(CHESS.__MATCH_GUID__),
       }) {
         let chessboard = this.chessboard;
         function processRows(rows) {
@@ -249,6 +255,7 @@
               });
             }
           });
+          chessboard.showLastMoveOnBoard();
         }
         if (rows) processRows(rows);
         else {
@@ -290,7 +297,6 @@
         move = "e2-e4",
         fen = chessboard.fen,
       }) {
-        console.error("Correct FEN:", fen);
         log("storeMove", move, chessboard.id);
         chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
@@ -366,6 +372,16 @@
           /* Safari */
           elem.webkitRequestFullscreen();
         }
+      }
+      // ================================================== forceBlackPlayer
+      forceBlackPlayer() {
+        this.updatePlayers({
+          match_guid: this.chessboard.id,
+          wp_user_white: ROADSTECHNOLOGY.CHESS.id,
+          wp_user_black: this.getRandomID(),
+          player_white: ROADSTECHNOLOGY.CHESS.displayname,
+          player_black: "FORCED BLACK PLAYER",
+        });
       }
     } //class
   ); //customElements.define("chess-match", class extends CHESS.ChessBaseElement

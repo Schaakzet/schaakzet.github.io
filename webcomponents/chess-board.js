@@ -168,7 +168,6 @@
           body: { id: match_guid },
           callback: ({ rows }) => {
             let { player_white, player_black } = rows[0];
-            console.log("MATCH&Players:", this.closest("chess-match"), player_white, player_black);
             this.closest("chess-match").setPlayerTitles(player_white, player_black);
           },
         });
@@ -362,7 +361,6 @@
         toSquare = false, // <chess-square> to which piece was moved
         move, // e2-e4  d7xh8  O-O-O
       }) {
-        console.warn("666", this.record, this.id);
         if (this.record && this.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
           // emit Event to <chess-match> which records all moves in database
           this.dispatch({
@@ -388,15 +386,15 @@
       }) {
         this.chessMoves.push({
           chessPiece,
-          fromSquare,
-          toSquare,
+          fromSquare: this.getSquare(fromSquare),
+          toSquare: this.getSquare(toSquare),
           fen,
         });
       }
 
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
-        console.warn("this.player:", this.player, "movePiece", chessPiece, square);
+        // console.warn("this.player:", this.player, "movePiece", chessPiece, square);
         if (isString(chessPiece)) {
           chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
         }
@@ -492,11 +490,7 @@
             }
 
             this.play(); // play all moves left in the queue
-            this.chessMoves.slice(-2)[0].fromSquare.classList.remove("lastmove");
-            this.chessMoves.slice(-2)[0].toSquare.classList.remove("lastmove");
-            this.lastMove.fromSquare.classList.add("lastmove");
-            this.lastMove.toSquare.classList.add("lastmove");
-
+            this.showLastMoveOnBoard();
             return chessPiece;
           }; // end movedPiece function
 
@@ -505,6 +499,19 @@
 
         this.initPlayerTurn();
         this.setMessage("");
+      }
+      // ======================================================== <chess-board>.showLastMoveOnBoard
+      showLastMoveOnBoard() {
+        let chessMoves = this.chessMoves;
+          // remove lastmove CSS color from previous move
+        //! extra scope because we want to use fromSquare, toSquare again
+        let { fromSquare, toSquare } = chessMoves.slice(-2)[0];
+        if (fromSquare) fromSquare.classList.remove("lastmove");
+        else console.warn("fromSquare is undefined");
+        toSquare.classList.remove("lastmove");
+        // set lastmove CSS color to current move
+        this.lastMove.fromSquare.classList.add("lastmove");
+        this.lastMove.toSquare.classList.add("lastmove");
       }
       // ======================================================== <chess-board>.initAnalysis
       // initAnalysis wordt aangeroepen in einde Click-event.
