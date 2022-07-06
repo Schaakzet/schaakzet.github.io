@@ -214,7 +214,7 @@
         // ask database if there are matchmoves entries
         // only if there are no matchmoves entries, then start game
         CHESS.APIRT.callAPI({
-          action: "MOVES",
+          action: "MOVES", // vraag moves van deze match_guid
           body: { id },
           callback: ({ rows }) => {
             let noMovesYet = rows.length == 0;
@@ -334,8 +334,7 @@
       // ================================================== undoMove
       undoMove() {
         log("UNDO MOVE"); //todo test
-        this.chessboard.undoMove();
-        this.undoMoveDB();
+        this.chessboard.recordMoveInDatabase({ move: "undomove" });
         // -------------------------------------------------- dispatch undoMove
         this.dispatch({
           root: document,
@@ -343,15 +342,6 @@
           detail: {
             chessboard: this.chessboard,
             toSquare: this.chessboard.lastMove.toSquare,
-          },
-        });
-      }
-      // ================================================== undoMoveDB
-      undoMoveDB() {
-        CHESS.APIRT.undoMove({
-          id: this.match_guid,
-          callback: () => {
-            log("undoMoveDB");
           },
         });
       }

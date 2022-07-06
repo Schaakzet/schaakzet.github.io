@@ -123,6 +123,8 @@
                 // ----------------------------- startgame
                 if (!this.hasAttribute("player")) this.player = CHESS.__PLAYER_WHITE__;
                 this.updatePlayerBlack(match_guid);
+              } else if (move == "undomove") {
+                this.undoMove();
               } else if (this.fen != fen) {
                 // ----------------------------- process move
                 let movetype = move[2];
@@ -533,8 +535,10 @@
       }
       // ======================================================== <chess-board>.undoMove
       undoMove() {
-        if (this.lastMove) this.fen = this.lastMove.fen;
-        this.chessMoves.pop();
+        if (this.lastMove) {
+          this.fen = this.lastMove.fen; // board is correct again
+          this.chessMoves.pop();
+        }
       }
       // ======================================================== <chess-board>.findPieceSquare
       findPieceSquare(piece) {
