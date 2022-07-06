@@ -41,9 +41,9 @@ window.CHESS = Object.assign(
     __PROTECT_PIECE__: "p", // used to highlight the moves a chesspiece can make
     __ATTACK_PIECE__: "x", // used to highlight the moves a chesspiece can make
     __EMPTY_SQUARE__: "e", // used to highlight the moves a chesspiece can make
+
     __MOVETYPE_MOVE__: "-", // used in move notation
     __MOVETYPE_CAPTURE__: "x", // used in move notation
-
     __MOVETYPE_ILLEGAL__: "X", // used in move notation
 
     __PLAYER_WHITE__: "wit", // used as player color AND chesspiece names

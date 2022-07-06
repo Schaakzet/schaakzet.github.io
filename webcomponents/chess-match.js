@@ -47,7 +47,7 @@
               (this.hasAttribute("playernames") ? `<div class="match_playernames"></div>` : ``) +
               `<div id="match_and_progress">` +
               `  <div>` +
-              `    <chess-board fen="" record labels></chess-board>` +
+              `    <chess-board fen="" record labels analysis></chess-board>` +
               `  </div>` +
               `  <div>` +
               `    <chess-show-captured-pieces></chess-show-captured-pieces>` +

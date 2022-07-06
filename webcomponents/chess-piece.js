@@ -243,6 +243,8 @@
           const playerColor = $chessboard.player;
           const castlingArray = $chessboard.castlingArray;
 
+          console.error("CASTLING PIECE", longWhiteRook);
+
           function isCastling(castlingLetter, typeOfRook, rookSquareName) {
             return (
               typeOfRook.isRook && //
@@ -257,9 +259,10 @@
           const longBlackCastling = isCastling(CHESS.__FEN_BLACK_QUEEN__, longBlackRook, "d8");
           const shortBlackCastling = isCastling(CHESS.__FEN_BLACK_KING__, shortBlackRook, "f8");
 
+          console.error("CASTLING", longWhiteCastling);
+
           function castlingInterrupt(color, offset) {
             // True: Castling interrupted
-
             let kingPosition = $chessboard.getSquare(color == CHESS.__PLAYER_WHITE__ ? CHESS.__SQUARE_WHITE_KING_START__ : CHESS.__SQUARE_BLACK_KING_START__);
 
             let checkInterrupt = (i) => {
@@ -282,7 +285,7 @@
               // console.log("No castling interrupt", squareName);
               square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
               _potentialMovesArray.push(squareName);
-            } // else console.log("Castling interrupt", squareName);
+            } else console.log("Castling not possible", squareName);
           }
 
           if (playerColor == CHESS.__PLAYER_WHITE__) {
@@ -293,6 +296,7 @@
             if (shortBlackCastling) checkCastlingInterrupt(2, "g8");
           }
           this.moves = _potentialMovesArray;
+          console.error("potentialKingMoves", this.moves); //! BUG is above HERE.
 
           // ALLOWED MOVES
           const allowedMoves = _potentialMovesArray.filter((squareName) => {
@@ -304,14 +308,16 @@
             });
             return !ultimateDefenders.length;
           });
+          this.moves = allowedMoves;
+
           // FALSE MOVES
           const falseMoves = this.moves.filter((potentialMove) => {
             return !allowedMoves.includes(potentialMove);
           });
           this.falseMoves = falseMoves; // Piece Koning krijgt een array falseMoves. Voor staleMate.
+
           // NEW DEFENDED ARRAY
           const kingPosition = CHESS.convertFEN(this.is) + this.at;
-
           for (const squarename of falseMoves) {
             const square = $chessboard.getSquare(squarename);
             const defendedby = square.defenders;
@@ -330,7 +336,6 @@
               square.style.border = "";
             }
           }
-          this.moves = allowedMoves;
         }
       }
       // ======================================================== <chess-piece>.animateTo
@@ -347,7 +352,6 @@
       // ======================================================== <chess-piece>.animateFinished
       animateFinished() {
         this.style.position = this._savedposition;
-        
       }
       // ======================================================== <chess-piece>.disableCheckMakingMoves
       disableCheckMakingMoves({

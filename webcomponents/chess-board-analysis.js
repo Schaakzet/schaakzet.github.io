@@ -8,6 +8,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   const movePiece = /* function */ (piece, to) => $chessboard.movePiece(piece, to);
 
   if (type == "checkcheck") {
+    console.log("analyze checkcheck");
     analyzeWholeBoard();
     return isInCheck($chessboard.player);
   }
@@ -22,10 +23,16 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       castling();
     } else if (type == CHESS.__ANALYSIS_PROMOTION__) {
       promotion();
-    } else analyzeWholeBoard();
+    } else {
+      console.log("analyze ELSE");
+      analyzeWholeBoard();
+    }
   }
 
-  if (type == "start") analyzeWholeBoard();
+  if (type == "start") {
+    console.log("analyze START");
+    analyzeWholeBoard();
+  }
 
   function log(...args) {
     console.log("%c A ", "background:orange;", ...args);
@@ -86,7 +93,6 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   }
   // ======================================================== analyzeWholeBoard
   function analyzeWholeBoard() {
-    //log("analyzeWholeBoard");
     calculateBoard();
     const player = $chessboard.player;
     staleMate(player);
@@ -96,11 +102,13 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== calculateBoard
   function calculateBoard() {
     $chessboard.clearAttributes();
+    console.log($chessboard.squares);
     for (const square of $chessboard.squares) {
       let piece = getPiece(square);
       if (piece) {
         piece.potentialMoves();
-      }
+        console.warn("Piece potMoves", piece.at, piece.moves, piece);
+      } else console.warn(piece.at, "is leeg");
     }
     for (const square of $chessboard.squares) {
       let piece = getPiece(square);

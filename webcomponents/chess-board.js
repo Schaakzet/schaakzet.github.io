@@ -22,7 +22,7 @@
       }
       // ======================================================== <chess-board>.doAnalysis
       get doAnalysis() {
-        return this.getAttribute("analysis") || false;
+        return this.hasAttribute("analysis") || true;
       }
       // ======================================================== <chess-board>.connectedCallback
       connectedCallback() {
@@ -48,11 +48,14 @@
 
             this.initPlayerTurn();
 
-            if (this.doAnalysis) CHESS.analysis(this, "start");
+            // if (this.doAnalysis) CHESS.analysis(this, "start");
 
             //! chess-board is display:none, after resize make it display:block
             this.resizeCheck();
-            setTimeout(() => (this.style.display = "block"), 100);
+            setTimeout(() => {
+              this.style.display = "block";
+              console.error(666, this.squares);
+            }, 100);
           });
         });
       }
@@ -312,6 +315,7 @@
       }
       // ======================================================== <chess-board>.clearAttributes
       clearAttributes() {
+        console.error("clearAttributes");
         for (const square of this.squares) {
           this.getSquare(square).clearAttributes();
         }
@@ -512,8 +516,10 @@
           else console.warn("fromSquare is undefined");
           toSquare.classList.remove("lastmove");
           // set lastmove CSS color to current move
-          this.lastMove.fromSquare.classList.add("lastmove");
-          this.lastMove.toSquare.classList.add("lastmove");
+          if (this.lastMove.fromSquare && this.lastMove.toSquare) {
+            this.lastMove.fromSquare.classList.add("lastmove");
+            this.lastMove.toSquare.classList.add("lastmove");
+          }
         }
       }
       // ======================================================== <chess-board>.initAnalysis
@@ -611,6 +617,7 @@
           if (document.querySelector("#fen")) document.querySelector("#fen").value = fenString;
           delete this._savedfen;
         } else {
+          console.warn(666, "No squares");
           // when the constructor runs on document.createElement, the squares are not set yet.
           this._savedfen = fenString;
         }
@@ -621,6 +628,8 @@
         setTimeout(() => {
           if (this._savedfen) this.fen = this._savedfen;
           this.debuginfo();
+          console.error(666, fenString);
+          if (this.doAnalysis) CHESS.analysis(this, "start");
         });
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
