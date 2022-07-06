@@ -503,15 +503,16 @@
       // ======================================================== <chess-board>.showLastMoveOnBoard
       showLastMoveOnBoard() {
         let chessMoves = this.chessMoves;
-          // remove lastmove CSS color from previous move
-        //! extra scope because we want to use fromSquare, toSquare again
-        let { fromSquare, toSquare } = chessMoves.slice(-2)[0];
-        if (fromSquare) fromSquare.classList.remove("lastmove");
-        else console.warn("fromSquare is undefined");
-        toSquare.classList.remove("lastmove");
-        // set lastmove CSS color to current move
-        this.lastMove.fromSquare.classList.add("lastmove");
-        this.lastMove.toSquare.classList.add("lastmove");
+        // remove lastmove CSS color from previous move
+        if (chessMoves.length) {
+          let { fromSquare, toSquare } = chessMoves.slice(-2)[0];
+          if (fromSquare) fromSquare.classList.remove("lastmove");
+          else console.warn("fromSquare is undefined");
+          toSquare.classList.remove("lastmove");
+          // set lastmove CSS color to current move
+          this.lastMove.fromSquare.classList.add("lastmove");
+          this.lastMove.toSquare.classList.add("lastmove");
+        }
       }
       // ======================================================== <chess-board>.initAnalysis
       // initAnalysis wordt aangeroepen in einde Click-event.
