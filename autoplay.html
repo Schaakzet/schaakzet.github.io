@@ -1,0 +1,33 @@
+<html>
+
+<head>
+  <script src="./webcomponents/schaakzet.js"></script>
+  <script id="schaakzetplugin">
+    let ROADSTECHNOLOGY = {
+      CHESS: {
+        id: new URLSearchParams(document.location.search).get("id"),
+        displayname: new URLSearchParams(document.location.search).get("name"),
+      },
+    };
+    console.log(`%c WORDPRESS MOCK DATA: `, "background:red;color:white", ROADSTECHNOLOGY.CHESS);
+  </script>
+</head>
+
+<body>
+  <main>
+    <chess-board id="chessboard" labels></chess-board>
+  </main>
+  <footer></footer>
+  <script>
+    // herdersmat: e2-e4 e7-e5. Lf1-c4 Pb8-c6.
+    const herdersmat1 = [["e2", "e4"], ["e7", "e5"],["f1", "c4"], ["b8", "c6"], ["g1", "f3"], ["g8", "f6"]];	
+    setTimeout(() => {
+      chessboard.play(herdersmat1);
+    }, 500);
+    setTimeout(() => {
+      location.reload();
+    }, 5000);
+  </script>
+</body>
+
+</html>
