@@ -243,8 +243,6 @@
           const playerColor = $chessboard.player;
           const castlingArray = $chessboard.castlingArray;
 
-          console.error("CASTLING PIECE", longWhiteRook);
-
           function isCastling(castlingLetter, typeOfRook, rookSquareName) {
             return (
               typeOfRook.isRook && //
@@ -258,8 +256,6 @@
           const shortWhiteCastling = isCastling(CHESS.__FEN_WHITE_KING__, shortWhiteRook, "f1");
           const longBlackCastling = isCastling(CHESS.__FEN_BLACK_QUEEN__, longBlackRook, "d8");
           const shortBlackCastling = isCastling(CHESS.__FEN_BLACK_KING__, shortBlackRook, "f8");
-
-          console.error("CASTLING", longWhiteCastling);
 
           function castlingInterrupt(color, offset) {
             // True: Castling interrupted
@@ -296,7 +292,6 @@
             if (shortBlackCastling) checkCastlingInterrupt(2, "g8");
           }
           this.moves = _potentialMovesArray;
-          console.error("potentialKingMoves", this.moves); //! BUG is above HERE.
 
           // ALLOWED MOVES
           const allowedMoves = _potentialMovesArray.filter((squareName) => {
@@ -344,7 +339,7 @@
         let { top: destTop, left: destLeft } = this.chessboard.getSquare(destinationSquare).getBoundingClientRect();
         this._savedposition = this.style.position;
         this.style.position = "absolute";
-        console.warn(555)
+        console.warn(555);
         return this.animate([{ transform: `translateX(0px) translateY(0px)` }, { transform: `translateX(${destLeft - left}px) translateY(${destTop - top}px)` }], {
           duration: CHESS.__MOVEPIECE_ANIMATION_DURATION__,
           iterations: 1,

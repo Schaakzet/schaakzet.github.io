@@ -7,88 +7,88 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   const kingSquare = /* function */ (color) => $chessboard.kingSquare(color);
   const movePiece = /* function */ (piece, to) => $chessboard.movePiece(piece, to);
 
+  console.warn("CHESS.analysis!!!");
+
+  if (type == CHESS.__ANALYSIS_PRE__) {
+    console.log("analyze pre");
+    analyzeWholeBoard();
+  }
+
+  if (type == CHESS.__ANALYSIS_MAIN__) {
+    console.log("analyze main");
+    enPassantPosition();
+    castling();
+    promotion();
+  }
+
   if (type == "checkcheck") {
     console.log("analyze checkcheck");
-    analyzeWholeBoard();
     return isInCheck($chessboard.player);
-  }
-
-  let lastMovedPiece;
-  if ($chessboard.lastMove) {
-    lastMovedPiece = $chessboard.lastMove.toSquare.piece;
-
-    if (type == CHESS.__ANALYSIS_ENPASSANT__) {
-      enPassantPosition();
-    } else if (type == CHESS.__ANALYSIS_CASTLING__) {
-      castling();
-    } else if (type == CHESS.__ANALYSIS_PROMOTION__) {
-      promotion();
-    } else {
-      console.log("analyze ELSE");
-      analyzeWholeBoard();
-    }
-  }
-
-  if (type == "start") {
-    console.log("analyze START");
-    analyzeWholeBoard();
   }
 
   function log(...args) {
     console.log("%c A ", "background:orange;", ...args);
   }
+
   // ======================================================== promotion
   function promotion() {
-    if (lastMovedPiece.isPawnAtEnd && $chessboard.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
-      const chosenPiece = String(prompt("Kies een stuk (toets letter in): Q, N, R, B.")); // pass parameter
-      let newPiece = lastMovedPiece.color + CHESS.__PIECE_SEPARATOR__;
-      switch (chosenPiece.toLowerCase()) {
-        case "q":
-          newPiece += CHESS.__PIECE_QUEEN__;
-          break;
-        case "n":
-          newPiece += CHESS.__PIECE_KNIGHT__;
-          break;
-        case "r":
-          newPiece += CHESS.__PIECE_ROOK__;
-          break;
-        case "b":
-          newPiece += CHESS.__PIECE_BISHOP__;
-          break;
-        default:
-          newPiece = false;
+    console.log("Analysis PROMOTION");
+    if ($chessboard.lastMove) {
+      let lastMovedPiece = $chessboard.lastMove.toSquare.piece;
+      if (lastMovedPiece.isPawnAtEnd && $chessboard.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
+        const chosenPiece = String(prompt("Kies een stuk (toets letter in): Q, N, R, B.")); // pass parameter
+        let newPiece = lastMovedPiece.color + CHESS.__PIECE_SEPARATOR__;
+        switch (chosenPiece.toLowerCase()) {
+          case "q":
+            newPiece += CHESS.__PIECE_QUEEN__;
+            break;
+          case "n":
+            newPiece += CHESS.__PIECE_KNIGHT__;
+            break;
+          case "r":
+            newPiece += CHESS.__PIECE_ROOK__;
+            break;
+          case "b":
+            newPiece += CHESS.__PIECE_BISHOP__;
+            break;
+          default:
+            newPiece = false;
+        }
+        if (newPiece) $chessboard.addPiece(newPiece, lastMovedPiece.at);
+        if (lastMovedPiece.isWhite) {
+          $chessboard.capturedWhitePieces.push(lastMovedPiece.is);
+        } else {
+          $chessboard.capturedBlackPieces.push(lastMovedPiece.is);
+        }
+        console.log("promotion");
       }
-      if (newPiece) $chessboard.addPiece(newPiece, lastMovedPiece.at);
-      if (lastMovedPiece.isWhite) {
-        $chessboard.capturedWhitePieces.push(lastMovedPiece.is);
-      } else {
-        $chessboard.capturedBlackPieces.push(lastMovedPiece.is);
-      }
-      console.log("promotion");
     }
   }
 
   // ======================================================== castling
   function castling() {
-    // const wasKingMove = $chessboard.lastMove.toSquare.piece.isKing;
-    reduceCastlingArray($chessboard.lastMove.fromSquare.at);
-    $chessboard.doingCastling = false;
-    if (lastMovedPiece.isKing) {
-      let { fromSquare, toSquare } = $chessboard.lastMove;
-      const __SHORTCASTLING__ = "O-O";
-      const __LONGCASTLING__ = "O-O-O";
-      const /* function */ moveRook = (from, to, castlingLongShort) => {
-          $chessboard.doingCastling = castlingLongShort;
-          movePiece(getPiece(getSquare(from)), to);
-        };
-      if (fromSquare.at == CHESS.__SQUARE_WHITE_KING_START__) {
-        if (toSquare.at == "c1") moveRook("a1", "d1", __LONGCASTLING__);
-        else if (toSquare.at == "g1") moveRook("h1", "f1", __SHORTCASTLING__);
-      } else if (fromSquare.at == CHESS.__SQUARE_BLACK_KING_START__) {
-        if (toSquare.at == "c8") moveRook("a8", "d8", __LONGCASTLING__);
-        else if (toSquare.at == "g8") moveRook("h8", "f8", __SHORTCASTLING__);
+    console.log("Analysis CASTLING");
+    if ($chessboard.lastMove) {
+      let lastMovedPiece = $chessboard.lastMove.toSquare.piece;
+      reduceCastlingArray($chessboard.lastMove.fromSquare.at);
+      $chessboard.doingCastling = false;
+      if (lastMovedPiece.isKing) {
+        let { fromSquare, toSquare } = $chessboard.lastMove;
+        const __SHORTCASTLING__ = "O-O";
+        const __LONGCASTLING__ = "O-O-O";
+        const /* function */ moveRook = (from, to, castlingLongShort) => {
+            $chessboard.doingCastling = castlingLongShort;
+            movePiece(getPiece(getSquare(from)), to);
+          };
+        if (fromSquare.at == CHESS.__SQUARE_WHITE_KING_START__) {
+          if (toSquare.at == "c1") moveRook("a1", "d1", __LONGCASTLING__);
+          else if (toSquare.at == "g1") moveRook("h1", "f1", __SHORTCASTLING__);
+        } else if (fromSquare.at == CHESS.__SQUARE_BLACK_KING_START__) {
+          if (toSquare.at == "c8") moveRook("a8", "d8", __LONGCASTLING__);
+          else if (toSquare.at == "g8") moveRook("h8", "f8", __SHORTCASTLING__);
+        }
+        log("castling", $chessboard.doingCastling ? "TRUE" : "FALSE");
       }
-      log("castling", $chessboard.doingCastling ? "TRUE" : "FALSE");
     }
   }
   // ======================================================== analyzeWholeBoard
@@ -125,13 +125,16 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
 
   // ======================================================== enPassantPosition
   function enPassantPosition() {
-    const { chessPiece, fromSquare, toSquare } = $chessboard.lastMove;
-    if (chessPiece.isPawn && fromSquare.rankDistance(toSquare) == 2) {
-      let position = fromSquare.file + (chessPiece.isWhite ? "3" : "6"); // file+3 OF file+6
-      $chessboard.enPassantPosition = position; // Was er een en passant square van een pion?
-      return position;
-    } else {
-      $chessboard.enPassantPosition = "-";
+    console.log("Analysis ENPASSANT");
+    if ($chessboard.lastMove) {
+      const { chessPiece, fromSquare, toSquare } = $chessboard.lastMove;
+      if (chessPiece.isPawn && fromSquare.rankDistance(toSquare) == 2) {
+        let position = fromSquare.file + (chessPiece.isWhite ? "3" : "6"); // file+3 OF file+6
+        $chessboard.enPassantPosition = position; // Was er een en passant square van een pion?
+        return position;
+      } else {
+        $chessboard.enPassantPosition = "-";
+      }
     }
   }
   // ======================================================== reduceCastlingArray
@@ -173,8 +176,8 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
         $chessboard.setMessage("Je staat schaak.");
         return true;
       }
+      return false;
     }
-    return false;
   }
   // ======================================================== findSquaresBetween
   function findSquaresBetween(attackingPieceSquare, kingSquare) {

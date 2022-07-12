@@ -185,9 +185,8 @@ Object.assign(CHESS, {
 
 // ********************************************************** CHESS Analysis constants
 Object.assign(CHESS, {
-  __ANALYSIS_ENPASSANT__: 1,
-  __ANALYSIS_CASTLING__: 2,
-  __ANALYSIS_PROMOTION__: 3,
+  __ANALYSIS_PRE__: "pre_analysis",
+  __ANALYSIS_MAIN__: "main_analysis",
 });
 
 // ********************************************************** Square functions

@@ -126,7 +126,7 @@
             if (!name || name == "") return "<i>onbekend</i>";
             return name;
           }
-          match_playernames.innerHTML = `Match ${preventEmptyName(p1)} vs ${preventEmptyName(p2)}`;
+          match_playernames.innerHTML = `Match ${preventEmptyName(p1)} (${this.wp_user_white}) vs ${preventEmptyName(p2)} (${this.wp_user_black})`;
         }
       }
       // ================================================== isSamePlayer
@@ -193,13 +193,16 @@
         // ROADSTECHNOLOGY.CHESS.id = this.getRandomID(1000);
 
         let chess_match = this; // easier for new code readers
-        chess_match.chessboard.restart(match_guid);
+        chess_match.chessboard.resume(match_guid);
         // -------------------------------------------------- callAPI
         CHESS.APIRT.callAPI({
           action: "READ",
           body: { id: match_guid },
           // -------------------------------------------------- callback
           callback: ({ rows }) => {
+            let { wp_user_white, wp_user_black } = rows[0];
+            this.wp_user_white = wp_user_white;
+            this.wp_user_black = wp_user_black;
             if (rows.length) {
               chess_match.assignPlayerByMatchesRow(rows[0]);
             } else {

@@ -18,6 +18,18 @@
       constructor() {
         super();
       }
+      // ======================================================== <chess-square>.connectedCallback
+      connectedCallback() {
+        super.connectedCallback();
+        this.addEventListener("click", () => {
+          log("`click` event on", this.at);
+          if (this.chessboard.pieceClicked) {
+            this.handleSecondClick();
+          } else {
+            this.handleFirstClick();
+          }
+        });
+      }
       // ======================================================== <chess-square>.handleFirstClick
       handleFirstClick() {
         if (this.hasAttribute(CHESS.__WC_ATTRIBUTE_PIECENAME__)) {
@@ -45,18 +57,6 @@
         } else {
           console.warn("handleSecondClick : No piece clicked");
         }
-      }
-      // ======================================================== <chess-square>.connectedCallback
-      connectedCallback() {
-        super.connectedCallback();
-        this.addEventListener("click", () => {
-          log("`click` event on", this.at);
-          if (this.chessboard.pieceClicked) {
-            this.handleSecondClick();
-          } else {
-            this.handleFirstClick();
-          }
-        });
       }
       // ======================================================== <chess-square>.piece
       get piece() {

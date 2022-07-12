@@ -17,8 +17,8 @@
       }
 
       // ======================================================= <chess-board>.localStorageGameID
-      get localStorageGameID() {
-        return "fen"; //this.database_id;
+      get localFEN() {
+        return [CHESS.__WC_ATTRIBUTE_FEN__];
       }
       // ======================================================== <chess-board>.doAnalysis
       get doAnalysis() {
@@ -34,21 +34,28 @@
             const templateInHTML = this.getAttribute("template");
             const isMatchBoard = this.record;
             const hasFENAttribute = this.hasAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
-            const localFEN = localStorage.getItem(this.localStorageGameID);
+            const localFEN = localStorage.getItem(this.localFEN);
 
             this.createboard(templateInHTML);
 
-            if (isMatchBoard && localFEN) this.fen = localFEN;
-            else if (hasFENAttribute) this.fen = this.getAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
-            else if (this._savedfen) this.fen = this._savedfen;
-            else this.fen = undefined; // use default all pieces start board
-
+            // Define this.fen (set FEN)
+            if (isMatchBoard && localFEN) {
+              this.fen = localFEN;
+              console.log("this.fen = localFEN");
+            } else if (hasFENAttribute) {
+              this.fen = this.getAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
+              console.log("this.fen = FEN attribute");
+            } else if (this._savedfen) {
+              this.fen = this._savedfen;
+              console.log("this.fen = _savedfen");
+            } else {
+              this.fen = undefined; // use default all pieces start board
+              console.log("this.fen = undefined");
+            }
             window.addEventListener("resize", (e) => this.resizeCheck(e));
             if (this.id !== CHESS.__TESTBOARD_FOR_MOVES__) this.listenOnMatchID();
 
             this.initPlayerTurn();
-
-            // if (this.doAnalysis) CHESS.analysis(this, "start");
 
             //! chess-board is display:none, after resize make it display:block
             this.resizeCheck();
@@ -107,9 +114,6 @@
       attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue && oldValue !== newValue && name == CHESS.__WC_ATTRIBUTE_FEN__) {
           this.fen = newValue;
-          // TODO: generic call:
-          // this[name] = newValue;
-          // should work as well, because a getter "fen" exists on this
         }
       }
       // ======================================================== <chess-board>.listenOnMatchID
@@ -327,17 +331,18 @@
         }
       }
       // ======================================================== <chess-board>.restart
-      restart(match_guid = console.error("No match_guid specified")) {
-        this.clear();
+      resume(match_guid = console.error("No match_guid specified")) {
+        // Old code: Was restart, possible to implement again somewhere else
+        // this.clear();
 
-        this.capturedWhitePieces = [];
-        this.capturedBlackPieces = [];
-        this.chessMoves = [];
+        // this.capturedWhitePieces = [];
+        // this.capturedBlackPieces = [];
+        // this.chessMoves = [];
 
-        localStorage.removeItem("fen");
-        this.fen = undefined; // force start position
+        // localStorage.removeItem("fen");
+        // this.fen = undefined; // force start position
 
-        this.dispatch({ name: "restartMatch", detail: { chessboard: this.chessboard } });
+        // this.dispatch({ name: "restartMatch", detail: { chessboard: this.chessboard } });
         this.initPlayerTurn();
         this.id = match_guid;
       }
@@ -455,9 +460,7 @@
             save2chessMoves(); // save every move, including castling king AND rook
 
             if (this.doAnalysis && !this.doingCastling) {
-              CHESS.analysis(this, CHESS.__ANALYSIS_ENPASSANT__);
-              CHESS.analysis(this, CHESS.__ANALYSIS_CASTLING__); // this.doingCastling = "O-O" "O-O-O"
-              CHESS.analysis(this, CHESS.__ANALYSIS_PROMOTION__);
+              CHESS.analysis(this, CHESS.__ANALYSIS_MAIN__);
             }
             if (this.doingCastling) {
               if (chessPiece.isKing) {
@@ -527,10 +530,8 @@
       initAnalysis() {
         // console.error("initAnalysis");
         if (this.doAnalysis) {
-          CHESS.analysis(this);
-          CHESS.analysis(this, CHESS.__ANALYSIS_ENPASSANT__);
-          CHESS.analysis(this, CHESS.__ANALYSIS_CASTLING__);
-          CHESS.analysis(this, CHESS.__ANALYSIS_PROMOTION__);
+          CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
+          CHESS.analysis(this, CHESS.__ANALYSIS_MAIN__);
         }
       }
       // ======================================================== <chess-board>.lastMove
@@ -624,13 +625,8 @@
         this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
         this.classList.remove("game_over");
 
-        // only analyze the board when there are squares on the board.
-        setTimeout(() => {
-          if (this._savedfen) this.fen = this._savedfen;
-          this.debuginfo();
-          console.error(666, fenString);
-          if (this.doAnalysis) CHESS.analysis(this, "start");
-        });
+        this.debuginfo();
+        console.error("SET FEN END!!!", fenString);
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
       get fen() {
@@ -765,14 +761,17 @@
       set playerturn(v) {
         this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__, v);
       }
+      // ============================================================ <chess-board>.updateFENonScreen
       updateFENonScreen() {
         let fenElement = document.getElementById("fen");
         if (fenElement) fenElement.value = this.fen;
       }
+      // ============================================================ <chess-board>.saveFENinLocalStorage
       saveFENinLocalStorage() {
         // console.log("localStorage", this.fen);
-        localStorage.setItem(this.localStorageGameID, this.fen);
+        localStorage.setItem(this.localFEN, this.fen);
       }
+      // ============================================================ <chess-board>.debuginfo
       debuginfo() {
         let debuginfo = document.getElementById("chessboard_debuginfo");
         if (debuginfo && this.id != CHESS.__TESTBOARD_FOR_MOVES__) debuginfo.innerHTML = `GUID: ${this.id}   __ FEN: ${this.fen.replaceAll(" ", "  ")}`;
