@@ -358,6 +358,7 @@
           // loop all possible moves
           let testboard;
           if (showboardsIn) {
+            console.warn("To:", to);
             // create a new board for every possible move
             testboard = showboardsIn.appendChild(
               CHESS.createBoardElement({
@@ -367,6 +368,7 @@
                 },
               })
             );
+            console.error("id:", CHESS.__TESTBOARD_FOR_MOVES__, "fen:", matchboard.fen);
             // force a hidden board if user did not supply a DOM container to place all possible move/boards into
             /* if (showboardsIn == document.body) */ testboard.style.display = "none";
           }

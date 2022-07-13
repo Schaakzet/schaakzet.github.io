@@ -7,8 +7,6 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   const kingSquare = /* function */ (color) => $chessboard.kingSquare(color);
   const movePiece = /* function */ (piece, to) => $chessboard.movePiece(piece, to);
 
-  console.warn("CHESS.analysis!!!");
-
   if (type == CHESS.__ANALYSIS_PRE__) {
     console.log("analyze pre");
     analyzeWholeBoard();
@@ -16,6 +14,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
 
   if (type == CHESS.__ANALYSIS_MAIN__) {
     console.log("analyze main");
+    analyzeWholeBoard();
     enPassantPosition();
     castling();
     promotion();
@@ -102,21 +101,13 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== calculateBoard
   function calculateBoard() {
     $chessboard.clearAttributes();
-    console.log($chessboard.squares);
+
     for (const square of $chessboard.squares) {
       let piece = getPiece(square);
-      if (piece) {
-        piece.potentialMoves();
-        console.warn("Piece potMoves", piece.at, piece.moves, piece);
-      } else console.warn(piece.at, "is leeg");
+      if (piece) piece.potentialMoves();
+      if (piece.isKing) piece.potentialKingMoves();
     }
-    for (const square of $chessboard.squares) {
-      let piece = getPiece(square);
-      if (piece) {
-        piece.potentialKingMoves();
-        // wit-koning
-      }
-    }
+
     for (let element of $chessboard.squares) {
       let chessSquare = $chessboard.getSquare(element);
       chessSquare.highlight(false);

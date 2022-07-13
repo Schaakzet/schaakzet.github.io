@@ -16,10 +16,6 @@
         this.doingCastling = false;
       }
 
-      // ======================================================= <chess-board>.localStorageGameID
-      get localFEN() {
-        return [CHESS.__WC_ATTRIBUTE_FEN__];
-      }
       // ======================================================== <chess-board>.doAnalysis
       get doAnalysis() {
         return this.hasAttribute("analysis") || true;
@@ -34,34 +30,30 @@
             const templateInHTML = this.getAttribute("template");
             const isMatchBoard = this.record;
             const hasFENAttribute = this.hasAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
-            const localFEN = localStorage.getItem(this.localFEN);
 
             this.createboard(templateInHTML);
 
             // Define this.fen (set FEN)
-            if (isMatchBoard && localFEN) {
-              this.fen = localFEN;
-              console.log("this.fen = localFEN");
-            } else if (hasFENAttribute) {
-              this.fen = this.getAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
-              console.log("this.fen = FEN attribute");
-            } else if (this._savedfen) {
-              this.fen = this._savedfen;
-              console.log("this.fen = _savedfen");
-            } else {
-              this.fen = undefined; // use default all pieces start board
-              console.log("this.fen = undefined");
-            }
+            // if (hasFENAttribute) {
+            //   this.fen = this.getAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
+            //   console.log("this.fen = FEN attribute");
+            // } else if (this._savedfen) {
+            //   this.fen = this._savedfen;
+            //   console.log("this.fen = _savedfen");
+            // } else {
+            //   this.fen = undefined; // use default all pieces start board
+            //   console.log("this.fen = undefined");
+            // }
+
             window.addEventListener("resize", (e) => this.resizeCheck(e));
             if (this.id !== CHESS.__TESTBOARD_FOR_MOVES__) this.listenOnMatchID();
 
-            this.initPlayerTurn();
+            // this.initPlayerTurn();
 
             //! chess-board is display:none, after resize make it display:block
             this.resizeCheck();
             setTimeout(() => {
               this.style.display = "block";
-              console.error(666, this.squares);
             }, 100);
           });
         });
@@ -343,7 +335,7 @@
         // this.fen = undefined; // force start position
 
         // this.dispatch({ name: "restartMatch", detail: { chessboard: this.chessboard } });
-        this.initPlayerTurn();
+        // this.initPlayerTurn();
         this.id = match_guid;
       }
       // ======================================================== <chess-board>.initPlayerTurn
@@ -459,7 +451,7 @@
 
             save2chessMoves(); // save every move, including castling king AND rook
 
-            if (this.doAnalysis && !this.doingCastling) {
+            if (!this.doingCastling) {
               CHESS.analysis(this, CHESS.__ANALYSIS_MAIN__);
             }
             if (this.doingCastling) {
@@ -530,7 +522,6 @@
       initAnalysis() {
         // console.error("initAnalysis");
         if (this.doAnalysis) {
-          CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
           CHESS.analysis(this, CHESS.__ANALYSIS_MAIN__);
         }
       }
@@ -625,8 +616,15 @@
         this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
         this.classList.remove("game_over");
 
-        this.debuginfo();
-        console.error("SET FEN END!!!", fenString);
+        // only analyze the board when there are squares on the board.
+        setTimeout(() => {
+          if (this._savedfen) this.fen = this._savedfen;
+          this.debuginfo();
+          console.error("SET FEN END!!!", fenString);
+          if (this.doAnalysis) {
+            CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
+          }
+        });
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
       get fen() {
@@ -679,7 +677,7 @@
           else castling = "-";
         } else {
           //! waarom is die castlingArray er niet?
-          console.error("No this.castlingArray - What happened");
+          console.error("No this.castlingArray - Logical Error");
         }
         fenParts.push(castling);
         // enpassant
@@ -765,11 +763,6 @@
       updateFENonScreen() {
         let fenElement = document.getElementById("fen");
         if (fenElement) fenElement.value = this.fen;
-      }
-      // ============================================================ <chess-board>.saveFENinLocalStorage
-      saveFENinLocalStorage() {
-        // console.log("localStorage", this.fen);
-        localStorage.setItem(this.localFEN, this.fen);
       }
       // ============================================================ <chess-board>.debuginfo
       debuginfo() {

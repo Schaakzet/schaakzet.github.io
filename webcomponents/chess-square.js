@@ -40,9 +40,8 @@
           console.error("moves 2", this.piece.moves);
           this.chessboard.pieceClicked = this.piece; // Hier wordt pieceClicked pas gedefinieerd.
           this.piece.disableCheckMakingMoves({
-            showboardsIn: document.getElementById("TEST4CHECKBOARDS") || document.body, //! REQUIRED FOR NOW
+            showboardsIn: document.getElementById("TEST4CHECKBOARDS") || document.body,
           });
-          // console.log("Zetten: ", this.piece.pieceName, this.chessboard.pieceClicked.moves);
         }
       }
       // ======================================================== <chess-square>.handleSecondClick

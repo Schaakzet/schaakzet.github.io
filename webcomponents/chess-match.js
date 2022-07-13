@@ -16,8 +16,8 @@
       // ================================================== connectedCallback
       connectedCallback() {
         super.connectedCallback();
-
         this.render();
+
         setTimeout(() => {
           let match_guid = localStorage.getItem(CHESS.__MATCH_GUID__);
           if (match_guid) {
@@ -47,7 +47,8 @@
               (this.hasAttribute("playernames") ? `<div class="match_playernames"></div>` : ``) +
               `<div id="match_and_progress">` +
               `  <div>` +
-              `    <chess-board fen="" record labels analysis></chess-board>` +
+              `    <chess-board record labels analysis></chess-board>` +
+              `    <div id="TEST4CHECKBOARDS" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1em"></div>` +
               `  </div>` +
               `  <div>` +
               `    <chess-show-captured-pieces></chess-show-captured-pieces>` +
@@ -301,7 +302,6 @@
         fen = chessboard.fen,
       }) {
         log("storeMove", move, chessboard.id);
-        chessboard.saveFENinLocalStorage();
         chessboard.updateFENonScreen();
         // -------------------------------------------------- callAPI
         CHESS.APIRT.callAPI({
