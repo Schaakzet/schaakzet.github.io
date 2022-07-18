@@ -339,7 +339,7 @@
         let { top: destTop, left: destLeft } = this.chessboard.getSquare(destinationSquare).getBoundingClientRect();
         this._savedposition = this.style.position;
         this.style.position = "absolute";
-        console.warn(555);
+        console.warn("animateTo", destinationSquare);
         return this.animate([{ transform: `translateX(0px) translateY(0px)` }, { transform: `translateX(${destLeft - left}px) translateY(${destTop - top}px)` }], {
           duration: CHESS.__MOVEPIECE_ANIMATION_DURATION__,
           iterations: 1,

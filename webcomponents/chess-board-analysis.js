@@ -69,6 +69,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
     console.log("Analysis CASTLING");
     if ($chessboard.lastMove) {
       let lastMovedPiece = $chessboard.lastMove.toSquare.piece;
+      console.warn("lastMove.fromSquare", $chessboard.lastMove.fromSquare, "(incorrect)");
       reduceCastlingArray($chessboard.lastMove.fromSquare.at);
       $chessboard.doingCastling = false;
       if (lastMovedPiece.isKing) {
@@ -92,6 +93,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   }
   // ======================================================== analyzeWholeBoard
   function analyzeWholeBoard() {
+    console.error("Analyze Whole Board");
     calculateBoard();
     const player = $chessboard.player;
     staleMate(player);
@@ -102,12 +104,18 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   function calculateBoard() {
     $chessboard.clearAttributes();
 
+    console.error("piece.potential(King)Moves");
     for (const square of $chessboard.squares) {
       let piece = getPiece(square);
-      if (piece) piece.potentialMoves();
+      console.log(piece);
+      if (piece) {
+        piece.potentialMoves();
+        console.log("piece.potentialMoves:", piece.potentialMoves());
+      }
       if (piece.isKing) piece.potentialKingMoves();
     }
 
+    // unhighlight
     for (let element of $chessboard.squares) {
       let chessSquare = $chessboard.getSquare(element);
       chessSquare.highlight(false);

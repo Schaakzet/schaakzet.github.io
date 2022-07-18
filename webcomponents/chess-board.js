@@ -576,6 +576,7 @@
 
         //! THIS WILL TRIGGER set fen again: this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
         // make sure we don't run before the board exists, because attributeChangedCallback runs early
+        // setTimeout(() => {
         if (this.squares) {
           this.clear();
           if (fenString !== "") {
@@ -607,24 +608,20 @@
             if (enpassant && enpassant !== "-") this.enPassantPosition = enpassant;
           }
           if (document.querySelector("#fen")) document.querySelector("#fen").value = fenString;
-          delete this._savedfen;
         } else {
-          console.warn(666, "No squares");
+          console.warn("set fen, No this.squares");
           // when the constructor runs on document.createElement, the squares are not set yet.
-          this._savedfen = fenString;
         }
+        // }, 100);
         this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
         this.classList.remove("game_over");
 
         // only analyze the board when there are squares on the board.
-        setTimeout(() => {
-          if (this._savedfen) this.fen = this._savedfen;
-          this.debuginfo();
-          console.error("SET FEN END!!!", fenString);
-          if (this.doAnalysis) {
-            CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
-          }
-        });
+        this.debuginfo();
+        console.error("SET FEN END!!!", fenString);
+        if (this.doAnalysis) {
+          CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
+        }
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
       get fen() {
