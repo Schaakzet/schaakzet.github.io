@@ -164,15 +164,11 @@ Object.assign(CHESS, {
   otherPlayer: (color) => (color == CHESS.__PLAYER_WHITE__ ? CHESS.__PLAYER_BLACK__ : CHESS.__PLAYER_WHITE__),
 
   // ======================================================== CHESS.createBoardElement
-  createBoardElement: ({
-    tag = CHESS.__WC_CHESS_BOARD__, //
-    props = {},
-    attrs = [],
-  }) => {
-    const chessboard = Object.assign(
-      document.createElement(tag),
-      props // properties: { fen, onclick etc. }
-    );
+  createBoardElement: ({ tag = CHESS.__WC_CHESS_BOARD__, props = {}, attrs = [] }) => {
+    console.error("Props:", props);
+    const chessboard = Object.assign(document.createElement(tag), {
+      props, // Object: { id: testboard, fen: kloppend }
+    });
     attrs.map(([name, value]) => chessboard.setAttribute(name, value));
     return chessboard;
   },

@@ -354,12 +354,13 @@
         showboardsIn = console.error("%c Cant test move on same board yet, it removes any captured pieces", "background:red;color:yellow"), // a DOM element where all possible moves for this piece are shown
         matchboard = this.chessboard, // the board where the disabled squares/moves are shown
       }) {
+        console.warn("matchboard: ", this.chessboard);
         this.moves.forEach((to) => {
           // loop all possible moves
           let testboard;
           if (showboardsIn) {
             console.warn("To:", to);
-            // create a new board for every possible move
+            // create a new testboard for every possible move
             testboard = showboardsIn.appendChild(
               CHESS.createBoardElement({
                 props: {
@@ -368,7 +369,7 @@
                 },
               })
             );
-            console.error("id:", CHESS.__TESTBOARD_FOR_MOVES__, "fen:", matchboard.fen);
+            console.error("testboard succeeded, id:", CHESS.__TESTBOARD_FOR_MOVES__, "fen:", matchboard.fen);
             // force a hidden board if user did not supply a DOM container to place all possible move/boards into
             /* if (showboardsIn == document.body) */ testboard.style.display = "none";
           }

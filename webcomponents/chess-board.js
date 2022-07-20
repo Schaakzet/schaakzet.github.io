@@ -208,6 +208,7 @@
           this.append(templ.content.cloneNode(true));
         } else {
           this.innerHTML = CHESS.chessboard_innerHTML;
+          console.log("createboard", this);
         }
 
         // instead of 'const' store the variables on the <chess-board> so ALL code can use it (in 2022)
@@ -618,10 +619,11 @@
 
         // only analyze the board when there are squares on the board.
         this.debuginfo();
-        console.error("SET FEN END!!!", fenString);
+        console.error("SET FEN END!!!", this);
         if (this.doAnalysis) {
           CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
         }
+        console.error("SET FEN END 2!!!", this);
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
       get fen() {
@@ -684,6 +686,7 @@
         fenParts.push(enpassant);
         // join
         fenString = fenParts.join(" ");
+        console.warn("get fen fenString: ", fenString);
         return fenString;
       } // get fen()
       // ======================================================== <chess-board>.record GETTER
@@ -764,7 +767,7 @@
       // ============================================================ <chess-board>.debuginfo
       debuginfo() {
         let debuginfo = document.getElementById("chessboard_debuginfo");
-        if (debuginfo && this.id != CHESS.__TESTBOARD_FOR_MOVES__) debuginfo.innerHTML = `GUID: ${this.id}   __ FEN: ${this.fen.replaceAll(" ", "  ")}`;
+        if (debuginfo && this.id != CHESS.__TESTBOARD_FOR_MOVES__) debuginfo.innerHTML = `GUID: ${this.id}   __ FEN: ${this.fen}`;
       }
     } // class ChessBoard
   ); // end of class definition

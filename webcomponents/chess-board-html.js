@@ -123,8 +123,6 @@
     disabledBoardSTYLE +
     /*html*/ `<style id="chessboard_gridareas"></style>` + // inject 64 gridarea definitions here
     /*html*/ `<div id="chessboard_squares" class="chessboard_layer"></div>` + // squares layer
-    /*html*/ `<div id="chessboard_debuginfo" class="chessboard_layer">21</div>` + // squares layer
     /*html*/ `<div id="chessboard_pieces" class="chessboard_layer"></div>` +
-    //`<style>chess-square:before{content:"d:" attr(defendedby) " a:" attr(attackedby)}</style>` +
-    ``;
+    /*html*/ `<div id="chessboard_debuginfo" class="chessboard_layer">debuginfo</div>`;
 })();

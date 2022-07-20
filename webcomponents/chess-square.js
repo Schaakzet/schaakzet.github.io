@@ -39,6 +39,7 @@
           this.piece.potentialKingMoves(this.at);
           console.error("moves 2", this.piece.moves);
           this.chessboard.pieceClicked = this.piece; // Hier wordt pieceClicked pas gedefinieerd.
+          console.warn("handleFirstClick Chessboard", this.chessboard);
           this.piece.disableCheckMakingMoves({
             showboardsIn: document.getElementById("TEST4CHECKBOARDS") || document.body,
           });

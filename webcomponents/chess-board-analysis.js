@@ -110,10 +110,15 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       console.log(piece);
       if (piece) {
         piece.potentialMoves();
-        console.log("piece.potentialMoves:", piece.potentialMoves());
+        console.log("piece.moves:", piece.moves);
       }
-      if (piece.isKing) piece.potentialKingMoves();
+      if (piece.isKing) {
+        piece.potentialKingMoves();
+        console.log("piece.moves (King):", piece.moves);
+      }
     }
+
+    console.error("calculateBoard $chessboard", $chessboard);
 
     // unhighlight
     for (let element of $chessboard.squares) {
