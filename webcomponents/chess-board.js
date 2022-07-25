@@ -128,7 +128,7 @@
                 // ----------------------------- process move
                 let movetype = move[2];
                 if (move.includes("O-O")) {
-                  // todo roccade
+                  //! todo roccade
                   console.warn("Implement Castling listenOnMatchID");
                 } else {
                   if (movetype == "-" || movetype == "x") {
@@ -208,7 +208,6 @@
           this.append(templ.content.cloneNode(true));
         } else {
           this.innerHTML = CHESS.chessboard_innerHTML;
-          console.log("createboard", this);
         }
 
         // instead of 'const' store the variables on the <chess-board> so ALL code can use it (in 2022)
@@ -288,7 +287,8 @@
         // return reference to <chess-square at=" [position] ">
         if (square) {
           let squareElement = square;
-          if (isString(square)) squareElement = this.queryBoard(`[${CHESS.__WC_ATTRIBUTE_AT__}="${square}"]`);
+          if (isString(square)) squareElement = this.queryBoard(`[${CHESS.__WC_ATTRIBUTE_AT__}=${square}]`);
+          // console.error("square element:", squareElement);
           if (!squareElement) console.warn(square, "is not a valid square");
           return squareElement;
         }
@@ -571,6 +571,7 @@
       }
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
+        console.warn("Set fen START");
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
         // console.log("%c set fen: ", "background:orange", fenString);
         this.castlingArray = [CHESS.__FEN_WHITE_KING__, CHESS.__FEN_WHITE_QUEEN__, CHESS.__FEN_BLACK_KING__, CHESS.__FEN_BLACK_QUEEN__]; // Halen we uit FEN
@@ -610,7 +611,7 @@
           }
           if (document.querySelector("#fen")) document.querySelector("#fen").value = fenString;
         } else {
-          console.warn("set fen, No this.squares");
+          console.warn("NOT set fen, No this.squares");
           // when the constructor runs on document.createElement, the squares are not set yet.
         }
         // }, 100);
@@ -725,6 +726,8 @@
         to, // "e3"
         matchboard = this, // the <chess-board> the user is playing
       }) {
+        console.warn("trymove, getPiece", this.getPiece(from), from);
+        console.warn("trymove", matchboard);
         this.getPiece(from).movePieceTo(to, false); // move piece without animation
         if (CHESS.doAnalysis && CHESS.analysis(this, "checkcheck")) {
           matchboard.markIllegalMove(to);

@@ -165,10 +165,11 @@ Object.assign(CHESS, {
 
   // ======================================================== CHESS.createBoardElement
   createBoardElement: ({ tag = CHESS.__WC_CHESS_BOARD__, props = {}, attrs = [] }) => {
-    console.error("Props:", props);
-    const chessboard = Object.assign(document.createElement(tag), {
-      props, // Object: { id: testboard, fen: kloppend }
-    });
+    let chessboard = document.createElement(
+      tag,
+      { props } // Object: { id: testboard, fen: kloppend }
+    );
+    console.error("createBoard:", chessboard);
     attrs.map(([name, value]) => chessboard.setAttribute(name, value));
     return chessboard;
   },

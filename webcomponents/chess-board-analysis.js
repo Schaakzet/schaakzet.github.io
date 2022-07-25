@@ -107,14 +107,11 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
     console.error("piece.potential(King)Moves");
     for (const square of $chessboard.squares) {
       let piece = getPiece(square);
-      console.log(piece);
       if (piece) {
         piece.potentialMoves();
-        console.log("piece.moves:", piece.moves);
       }
       if (piece.isKing) {
         piece.potentialKingMoves();
-        console.log("piece.moves (King):", piece.moves);
       }
     }
 
