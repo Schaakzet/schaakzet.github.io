@@ -76,7 +76,6 @@
         ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(window.location.search).get("id") || this.getRandomID(1000);
         let { id, displayname } = ROADSTECHNOLOGY.CHESS;
         if (confirm("Do you want to start a new match as player white?")) {
-          localStorage.removeItem("match_guid");
           // -------------------------------------------------- callAPI
           CHESS.APIRT.callAPI({
             action: "CREATE",
@@ -106,6 +105,7 @@
             },
           });
         } else {
+          // JOIN MATCH
           // Take wp_user_black and player_black:
           let wp_user_black = id;
           let player_black = displayname;
@@ -158,39 +158,44 @@
           console.groupEnd();
         }
         // -------------------------------------------------- determine current player
-        if (ROADSTECHNOLOGY.CHESS.id == null) {
+        if (ROADSTECHNOLOGY.CHESS.id === null) {
           ROADSTECHNOLOGY.CHESS.id = wp_user_white;
           ROADSTECHNOLOGY.CHESS.displayname = player_white;
         }
-        let {
-          id, // create variable WordPress_id
-          displayname, // create variable WordPress_displayname
-        } = ROADSTECHNOLOGY.CHESS;
+        let { id, displayname } = ROADSTECHNOLOGY.CHESS;
 
         let playerColor;
-        if (this.isSamePlayer(id, wp_user_white)) {
+        console.error("Player White:", player_white, "Player Black:", player_black);
+        if (this.playerName === player_white) {
           consoleLog("WHITE");
           playerColor = CHESS.__PLAYER_WHITE__;
           this.updateProgressFromDatabase({ match_guid });
-        } else {
-          // 2nd player is now known, store info in database
+          this.updatePlayers({
+            ...matchesRow, // all of matchesRow
+            wp_user_white: id, // overwrite wp_user_white with WordPress_id
+            player_white: displayname, // overwrite player_white with WordPress_displayname
+          });
+        } else if (this.playerName === player_black) {
           consoleLog("BLACK");
           playerColor = CHESS.__PLAYER_BLACK__;
+          this.updateProgressFromDatabase({ match_guid });
           this.updatePlayers({
             ...matchesRow, // all of matchesRow
             wp_user_black: id, // overwrite wp_user_black with WordPress_id
             player_black: displayname, // overwrite player_black with WordPress_displayname
           });
+        } else {
+          alert("Your name is not a player in this match. Resuming...");
+          this.resumeMatch(match_guid);
         }
         // -------------------------------------------------- init <chess-board>
+        this.setPlayerTitles(player_white, player_black);
         this.chessboard.setPlayerAndFEN(playerColor, fen); // set attribute on <chess-board> set pieces on <chess-board>
-        this.setPlayerTitles(player_white, player_black); // set playernames on <chess-match>
       }
 
       // ================================================== resumeMatch
       // Gets match_guid, FEN, players and their name & (color)
-      resumeMatch(match_guid = localStorage.getItem(CHESS.__MATCH_GUID__)) {
-        // ROADSTECHNOLOGY.CHESS.displayname = prompt("Enter your Displayname", "Anonymous");
+      resumeMatch(match_guid) {
         // ROADSTECHNOLOGY.CHESS.id = this.getRandomID(1000);
 
         let chess_match = this; // easier for new code readers
@@ -201,9 +206,8 @@
           body: { id: match_guid },
           // -------------------------------------------------- callback
           callback: ({ rows }) => {
-            let { wp_user_white, wp_user_black } = rows[0];
-            this.wp_user_white = wp_user_white;
-            this.wp_user_black = wp_user_black;
+            let { player_white, player_black } = rows[0];
+            this.playerName = prompt(`Match: ${player_white} VS ${player_black} Enter your previous display name`);
             if (rows.length) {
               chess_match.assignPlayerByMatchesRow(rows[0]);
             } else {
@@ -290,7 +294,7 @@
           callback: ({ rows }) => {
             let { player_white, player_black } = rows[0];
             this.setPlayerTitles(player_white, player_black);
-            this.startMatch_send_startgame_to_database(); // let other/white player know that we are ready
+            this.startMatch_send_startgame_to_database(); // let other player know that we are ready
           },
         });
       }

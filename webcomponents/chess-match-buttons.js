@@ -8,8 +8,8 @@ customElements.define(
         /*css*/ `<create-html>
 a|index.html|schaakzet
 |Play:
-button|chess-match:createMatch|createMatch
-button|chess-match:resumeMatch|resumeMatch` +
+button|chess-match:removeMatch|Quit Match
+button|chess-match:newMatch|New Match` +
         // `button|chess-match:removeMatch|removeMatch` +
         // `button|chess-match:myFEN|My FEN` +
         // `button|chess-match:forceBlackPlayer|Force Black` +
