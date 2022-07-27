@@ -115,6 +115,7 @@ CHESS.ChessBaseElement = class extends HTMLElement {
 
     localStorage.setItem(CHESS.__MATCH_GUID__, evt.detail.data);
     location.assign(`match.html?id=${id}&name=${displayname}` /* , "_blank" */);
+
     // this.chessboard.fen = fen;
   }
   // end ChessBaseElement

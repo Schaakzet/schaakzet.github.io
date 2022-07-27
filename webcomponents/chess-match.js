@@ -72,7 +72,8 @@
 
       // ================================================== createMatch
       createMatch() {
-        ROADSTECHNOLOGY.CHESS.displayname = prompt("Enter your Displayname", "Anonymous");
+        console.warn("createMatch");
+        ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(window.location.search).get("name") || prompt("Enter your Displayname", "Anonymous");
         ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(window.location.search).get("id") || this.getRandomID(1000);
         let { id, displayname } = ROADSTECHNOLOGY.CHESS;
         if (confirm("Do you want to start a new match as player white?")) {
@@ -100,7 +101,7 @@
               } = rows[0];
 
               log("createMatch", match_guid);
-              this.setPlayerTitles(player_white);
+              this.setPlayerTitles(player_white, player_black, wp_user_white, wp_user_black);
               this.initGame(match_guid);
             },
           });
@@ -120,14 +121,14 @@
       }
 
       // ================================================== setPlayerTitles()
-      setPlayerTitles(p1, p2 = "<i>To Be Announced</i>") {
+      setPlayerTitles(p1, p2 = "<i>To Be Announced</i>", wp_user_white, wp_user_black) {
         const match_playernames = this.querySelector(".match_playernames");
         if (match_playernames) {
           function preventEmptyName(name) {
             if (!name || name == "") return "<i>onbekend</i>";
             return name;
           }
-          match_playernames.innerHTML = `Match ${preventEmptyName(p1)} (${this.wp_user_white}) vs ${preventEmptyName(p2)} (${this.wp_user_black})`;
+          match_playernames.innerHTML = `Match ${preventEmptyName(p1)} (${wp_user_white}) vs ${preventEmptyName(p2)} (${wp_user_black})`;
         }
       }
       // ================================================== isSamePlayer
@@ -158,15 +159,12 @@
           console.groupEnd();
         }
         // -------------------------------------------------- determine current player
-        if (ROADSTECHNOLOGY.CHESS.id === null) {
-          ROADSTECHNOLOGY.CHESS.id = wp_user_white;
-          ROADSTECHNOLOGY.CHESS.displayname = player_white;
-        }
         let { id, displayname } = ROADSTECHNOLOGY.CHESS;
 
         let playerColor;
-        console.error("Player White:", player_white, "Player Black:", player_black);
-        if (this.playerName === player_white) {
+        // let playerName = prompt(`Match: ${player_white} VS ${player_black} Enter your previous display name`);
+
+        if (ROADSTECHNOLOGY.CHESS.displayname == player_white) {
           consoleLog("WHITE");
           playerColor = CHESS.__PLAYER_WHITE__;
           this.updateProgressFromDatabase({ match_guid });
@@ -175,7 +173,7 @@
             wp_user_white: id, // overwrite wp_user_white with WordPress_id
             player_white: displayname, // overwrite player_white with WordPress_displayname
           });
-        } else if (this.playerName === player_black) {
+        } else {
           consoleLog("BLACK");
           playerColor = CHESS.__PLAYER_BLACK__;
           this.updateProgressFromDatabase({ match_guid });
@@ -184,35 +182,28 @@
             wp_user_black: id, // overwrite wp_user_black with WordPress_id
             player_black: displayname, // overwrite player_black with WordPress_displayname
           });
-        } else {
-          alert("Your name is not a player in this match. Resuming...");
-          this.resumeMatch(match_guid);
         }
         // -------------------------------------------------- init <chess-board>
-        this.setPlayerTitles(player_white, player_black);
+        this.setPlayerTitles(player_white, player_black, wp_user_white, wp_user_black);
         this.chessboard.setPlayerAndFEN(playerColor, fen); // set attribute on <chess-board> set pieces on <chess-board>
       }
 
       // ================================================== resumeMatch
       // Gets match_guid, FEN, players and their name & (color)
       resumeMatch(match_guid) {
-        // ROADSTECHNOLOGY.CHESS.id = this.getRandomID(1000);
-
-        let chess_match = this; // easier for new code readers
-        chess_match.chessboard.resume(match_guid);
+        console.warn("resumeMatch", match_guid);
+        this.chessboard.resume(match_guid);
         // -------------------------------------------------- callAPI
         CHESS.APIRT.callAPI({
           action: "READ",
           body: { id: match_guid },
           // -------------------------------------------------- callback
           callback: ({ rows }) => {
-            let { player_white, player_black } = rows[0];
-            this.playerName = prompt(`Match: ${player_white} VS ${player_black} Enter your previous display name`);
             if (rows.length) {
-              chess_match.assignPlayerByMatchesRow(rows[0]);
+              this.assignPlayerByMatchesRow(rows[0]);
             } else {
               localStorage.removeItem(CHESS.__MATCH_GUID__);
-              chess_match.createMatch();
+              this.createMatch();
             }
           },
         });
@@ -292,8 +283,8 @@
             player_black,
           },
           callback: ({ rows }) => {
-            let { player_white, player_black } = rows[0];
-            this.setPlayerTitles(player_white, player_black);
+            let { player_white, player_black, wp_user_white, wp_user_black } = rows[0];
+            this.setPlayerTitles(player_white, player_black, wp_user_white, wp_user_black);
             this.startMatch_send_startgame_to_database(); // let other player know that we are ready
           },
         });
