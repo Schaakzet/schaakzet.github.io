@@ -20,7 +20,7 @@
           //console.log(this.chessboard)
         }, 0);
       }
-      // ======================================================== <chess-piece>.movePiece
+      // ======================================================== <chess-piece>.movePieceTo
       movePieceTo(at, animated = true) {
         this.chessboard.movePiece(this, at, animated);
       }

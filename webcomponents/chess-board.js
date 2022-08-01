@@ -168,8 +168,8 @@
           action: "READ",
           body: { id: match_guid },
           callback: ({ rows }) => {
-            let { player_white, player_black } = rows[0];
-            this.closest("chess-match").setPlayerTitles(player_white, player_black);
+            let { player_white, player_black, wp_user_white, wp_user_black } = rows[0];
+            this.closest("chess-match").setPlayerTitles(player_white, player_black, wp_user_white, wp_user_black);
           },
         });
       }
@@ -300,6 +300,7 @@
       // ======================================================== <chess-board>.getPiece
       getPiece(square) {
         const squareElement = this.getSquare(square);
+        // console.error("squareElement, squareElement.piece", squareElement, squareElement.piece);
         if (squareElement) return squareElement.piece;
       }
       // ======================================================== <chess-board>.addPiece
@@ -482,6 +483,7 @@
             } else {
               // regular move
               this.changePlayer();
+              console.error("Player:", this.player);
               if (this.player) {
                 this.recordMoveInDatabase({
                   fromSquare,
@@ -727,7 +729,6 @@
         matchboard = this, // the <chess-board> the user is playing
       }) {
         console.warn("trymove, getPiece", this.getPiece(from), from);
-        console.warn("trymove", matchboard);
         this.getPiece(from).movePieceTo(to, false); // move piece without animation
         if (CHESS.doAnalysis && CHESS.analysis(this, "checkcheck")) {
           matchboard.markIllegalMove(to);
