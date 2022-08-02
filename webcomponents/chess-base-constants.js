@@ -165,20 +165,15 @@ Object.assign(CHESS, {
 
   // ======================================================== CHESS.createBoardElement
   createBoardElement: ({ tag = CHESS.__WC_CHESS_BOARD__, props = {}, attrs = [] }) => {
-    console.warn("TAG", tag, "PROPS", props);
-    const chessboard = Object.assign(
-      document.createElement(tag)
-      // props // Object: { id: testboard, fen: kloppend }
-    );
-    // chessboard.setAttribute(id, props.id);
-    // chessboard.setAttribute(fen, props.fen);
+    console.warn("TAG:", tag, "PROPS:", props);
+    const chessboard = document.createElement(tag);
+    chessboard.id = props.id;
+    console.warn("SET PROPS FEN:", props.fen);
+    setTimeout(() => {
+      chessboard.fen = props.fen;
+    }, 10);
     attrs.map(([name, value]) => chessboard.setAttribute(name, value));
     return chessboard;
-  },
-  // ======================================================== CHESS.createBoardHTML
-  createBoardHTML: ({ fen = "" }) => {
-    fen = fen || `fen="${fen}"`;
-    return `<${CHESS.__WC_CHESS_BOARD__} ${fen} ></${CHESS.__WC_CHESS_BOARD__}>`;
   },
 });
 

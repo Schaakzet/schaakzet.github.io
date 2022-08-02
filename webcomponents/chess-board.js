@@ -199,6 +199,7 @@
       }
       // ======================================================== <chess-board>.createboard
       createboard(name) {
+        console.warn("createboard => Pieces HTML:", this.innerHTML, "this:", this);
         let userHTMLpieces = this.innerHTML;
         this.innerHTML = ""; // delete all userPieces, we will put them in another layer later
 
@@ -622,11 +623,10 @@
 
         // only analyze the board when there are squares on the board.
         this.debuginfo();
-        console.error("SET FEN END!!!", this);
-        if (this.doAnalysis) {
+        if (this.doAnalysis && this.id !== "testboard") {
           CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
         }
-        console.error("SET FEN END 2!!!", this);
+        console.error("SET FEN END!!!", this);
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
       get fen() {
@@ -673,7 +673,7 @@
 
         // castling
         let castling = "";
-        //console.warn("Castling Array", this.castlingArray);
+        console.warn("Castling Array", this.castlingArray);
         if (this.castlingArray) {
           if (this.castlingArray.length) castling = this.castlingArray.join("");
           else castling = "-";
@@ -690,6 +690,7 @@
         // join
         fenString = fenParts.join(" ");
         console.warn("get fen fenString: ", fenString);
+        console.warn("this.innerHTML", this.innerHTML);
         return fenString;
       } // get fen()
       // ======================================================== <chess-board>.record GETTER
