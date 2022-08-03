@@ -167,7 +167,7 @@
         if (ROADSTECHNOLOGY.CHESS.displayname == player_white) {
           consoleLog("WHITE");
           playerColor = CHESS.__PLAYER_WHITE__;
-          this.updateProgressFromDatabase({ match_guid });
+          // this.updateProgressFromDatabase({ match_guid });
           this.updatePlayers({
             ...matchesRow, // all of matchesRow
             wp_user_white: id, // overwrite wp_user_white with WordPress_id
@@ -176,7 +176,7 @@
         } else {
           consoleLog("BLACK");
           playerColor = CHESS.__PLAYER_BLACK__;
-          this.updateProgressFromDatabase({ match_guid });
+          // this.updateProgressFromDatabase({ match_guid });
           this.updatePlayers({
             ...matchesRow, // all of matchesRow
             wp_user_black: id, // overwrite wp_user_black with WordPress_id
@@ -237,21 +237,14 @@
           console.warn("Update progress from ", rows.length, "database rows");
           rows.forEach((row) => {
             let { matchmoves_id, match_guid, fromsquare, tosquare, move, fen, tournament_id } = row;
-            if (move != "startgame") {
-              chessboard.addChessMove({
-                chessPiece: false, // database does not know which piece it is
+            if (move != "startgame" && move != "undomove") {
+              chessboard.processMove(
+                chessPiece, // database does not know which piece it is
                 //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
-                fromSquare: fromsquare,
-                toSquare: tosquare,
-                fen,
-              });
-              chessboard.dispatch({
-                name: "recordDatabaseMove",
-                detail: {
-                  chessboard,
-                  move,
-                },
-              });
+                fromSquare,
+                toSquare,
+                fen
+              );
             }
           });
           chessboard.showLastMoveOnBoard();

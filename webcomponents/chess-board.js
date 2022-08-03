@@ -332,7 +332,7 @@
 
         // this.capturedWhitePieces = [];
         // this.capturedBlackPieces = [];
-        // this.chessMoves = [];
+        this.chessMoves = [];
 
         // localStorage.removeItem("fen");
         // this.fen = undefined; // force start position
@@ -382,6 +382,18 @@
           });
         } else {
         }
+      }
+      // ======================================================== <chess-board>.processMove
+      processMove(chessPiece, fromSquare, toSquare, fen) {
+        this.addChessMove({ chessPiece, fromSquare, toSquare, fen }); // Pushes the array chessMoves
+        // Adds the move to Game Progress
+        this.dispatch({
+          name: "gameProgress",
+          detail: {
+            chessboard,
+            move,
+          },
+        });
       }
       // ======================================================== <chess-board>.addChessMove
       addChessMove({
@@ -444,12 +456,13 @@
             chessPiece.animateFinished(); // do <chess-piece> CSS stuff after animation finished
 
             const /* function */ save2chessMoves = () => {
-                this.addChessMove({
-                  chessPiece, //
-                  fromSquare, //
-                  toSquare, //
-                  fen: lastFEN, //
-                });
+                if (this.player === this.playerturn)
+                  this.processMove(
+                    chessPiece, //
+                    fromSquare, //
+                    toSquare, //
+                    lastFEN //
+                  );
               };
 
             save2chessMoves(); // save every move, including castling king AND rook
@@ -690,7 +703,7 @@
         // join
         fenString = fenParts.join(" ");
         console.warn("get fen fenString: ", fenString);
-        console.warn("this.innerHTML", this.innerHTML);
+        // console.warn("this.innerHTML", this.innerHTML);
         return fenString;
       } // get fen()
       // ======================================================== <chess-board>.record GETTER

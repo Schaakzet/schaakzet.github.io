@@ -63,8 +63,6 @@ CHESS.ChessBaseElement = class extends HTMLElement {
       })
     );
   }
-  // ======================================================== BaseElement.listen
-  listen() {}
   // ======================================================== BaseElement.listen2matchmoves
   listen2matchmoves(
     root = this // disppatch matchid name event from this root (this = default)
