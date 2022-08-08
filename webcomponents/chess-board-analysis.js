@@ -13,7 +13,6 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   }
 
   if (type == CHESS.__ANALYSIS_MAIN__) {
-    console.log("analyze main");
     analyzeWholeBoard();
     enPassantPosition();
     castling();
@@ -21,7 +20,6 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   }
 
   if (type == "checkcheck") {
-    console.log("analyze checkcheck");
     return isInCheck($chessboard.player);
   }
 
@@ -115,7 +113,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       }
     }
 
-    console.error("calculateBoard $chessboard", $chessboard);
+    console.error("calculateBoard $chessboard", $chessboard.id, $chessboard.fen);
 
     // unhighlight
     for (let element of $chessboard.squares) {

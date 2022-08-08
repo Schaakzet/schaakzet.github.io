@@ -332,7 +332,7 @@
 
         // this.capturedWhitePieces = [];
         // this.capturedBlackPieces = [];
-        this.chessMoves = [];
+        // this.chessMoves = [];
 
         // localStorage.removeItem("fen");
         // this.fen = undefined; // force start position
@@ -384,13 +384,14 @@
         }
       }
       // ======================================================== <chess-board>.processMove
-      processMove(chessPiece, fromSquare, toSquare, fen) {
-        this.addChessMove({ chessPiece, fromSquare, toSquare, fen }); // Pushes the array chessMoves
+      processMove({ chessPiece, fromsquare, tosquare, fen, move }) {
+        this.addChessMove({ chessPiece, fromsquare, tosquare, fen }); // Pushes the array chessMoves
+        console.warn("processMove chessPiece, from, to:", chessPiece, fromsquare, tosquare);
         // Adds the move to Game Progress
         this.dispatch({
           name: "gameProgress",
           detail: {
-            chessboard,
+            chessboard: this,
             move,
           },
         });
@@ -398,14 +399,14 @@
       // ======================================================== <chess-board>.addChessMove
       addChessMove({
         chessPiece = false, // moves from database don't know chesspiece
-        fromSquare,
-        toSquare,
+        fromsquare,
+        tosquare,
         fen,
       }) {
         this.chessMoves.push({
           chessPiece,
-          fromSquare: this.getSquare(fromSquare),
-          toSquare: this.getSquare(toSquare),
+          fromSquare: this.getSquare(fromsquare),
+          toSquare: this.getSquare(tosquare),
           fen,
         });
       }
@@ -523,6 +524,7 @@
         let chessMoves = this.chessMoves;
         // remove lastmove CSS color from previous move
         if (chessMoves.length) {
+          console.error("Last chessMove", chessMoves);
           let { fromSquare, toSquare } = chessMoves.slice(-2)[0];
           if (fromSquare) fromSquare.classList.remove("lastmove");
           else console.warn("fromSquare is undefined");
@@ -742,15 +744,21 @@
         to, // "e3"
         matchboard = this, // the <chess-board> the user is playing
       }) {
-        console.warn("trymove, getPiece", this.getPiece(from), from);
-        this.getPiece(from).movePieceTo(to, false); // move piece without animation
-        if (CHESS.doAnalysis && CHESS.analysis(this, "checkcheck")) {
-          matchboard.markIllegalMove(to);
+        let testPiece = this.getPiece(from);
+        if (testPiece) {
+          console.warn("666 trymove", testPiece.is, from, "->", to);
+          testPiece.movePieceTo(to, false); // move piece without animation
+          if (CHESS.doAnalysis && CHESS.analysis(this, "checkcheck")) {
+            matchboard.markIllegalMove(to);
+          }
+        } else {
+          console.error("trymove Error: no Piece on:", from);
         }
         //this.fen = savedfen;
       }
       // ======================================================== <chess-board>.markIllegalMove
       markIllegalMove(at) {
+        console.log("666-DE MarkIllegalMove", at);
         this.getSquare(at).highlight(CHESS.__MOVETYPE_ILLEGAL__);
         this.pieceClicked.moves = this.pieceClicked.moves.filter((move) => move !== this.getSquare(at).at);
       }

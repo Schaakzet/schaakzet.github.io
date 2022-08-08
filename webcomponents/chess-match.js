@@ -164,6 +164,7 @@
         let playerColor;
         // let playerName = prompt(`Match: ${player_white} VS ${player_black} Enter your previous display name`);
 
+        console.log("assignPlayerByMatchesRow");
         if (ROADSTECHNOLOGY.CHESS.displayname == player_white) {
           consoleLog("WHITE");
           playerColor = CHESS.__PLAYER_WHITE__;
@@ -237,14 +238,18 @@
           console.warn("Update progress from ", rows.length, "database rows");
           rows.forEach((row) => {
             let { matchmoves_id, match_guid, fromsquare, tosquare, move, fen, tournament_id } = row;
+            let chessMovesBoard = chessboard;
+            chessMovesBoard.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fen);
             if (move != "startgame" && move != "undomove") {
-              chessboard.processMove(
-                chessPiece, // database does not know which piece it is
+              chessboard.processMove({
+                chessPiece: chessMovesBoard.getPiece(tosquare), // database does not know which piece it is
                 //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
-                fromSquare,
-                toSquare,
-                fen
-              );
+                fromsquare,
+                tosquare,
+                fen,
+                move,
+              });
+              console.warn("processRows from&to Square:", fromsquare, tosquare);
             }
           });
           chessboard.showLastMoveOnBoard();
