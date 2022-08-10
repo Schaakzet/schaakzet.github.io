@@ -65,9 +65,9 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== castling
   function castling() {
     console.log("Analysis CASTLING");
-    if ($chessboard.lastMove) {
+    if ($chessboard.lastMove !== undefined) {
+      console.error($chessboard.lastMove);
       let lastMovedPiece = $chessboard.lastMove.toSquare.piece;
-      console.warn("lastMove.fromSquare", $chessboard.lastMove.fromSquare, "(incorrect)");
       reduceCastlingArray($chessboard.lastMove.fromSquare.at);
       $chessboard.doingCastling = false;
       if (lastMovedPiece.isKing) {

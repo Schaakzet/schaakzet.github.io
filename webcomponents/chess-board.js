@@ -384,9 +384,9 @@
         }
       }
       // ======================================================== <chess-board>.processMove
-      processMove({ chessPiece, fromsquare, tosquare, fen, move }) {
-        this.addChessMove({ chessPiece, fromsquare, tosquare, fen }); // Pushes the array chessMoves
-        console.warn("processMove chessPiece, from, to:", chessPiece, fromsquare, tosquare);
+      processMove({ chessPiece, fromSquare, toSquare, fen, move }) {
+        console.warn("processMove chessPiece, from, to:", chessPiece, fromSquare, toSquare);
+        this.addChessMove({ chessPiece, fromSquare, toSquare, fen }); // Pushes the array chessMoves
         // Adds the move to Game Progress
         this.dispatch({
           name: "gameProgress",
@@ -399,14 +399,14 @@
       // ======================================================== <chess-board>.addChessMove
       addChessMove({
         chessPiece = false, // moves from database don't know chesspiece
-        fromsquare,
-        tosquare,
+        fromSquare,
+        toSquare,
         fen,
       }) {
         this.chessMoves.push({
           chessPiece,
-          fromSquare: this.getSquare(fromsquare),
-          toSquare: this.getSquare(tosquare),
+          fromSquare: this.getSquare(fromSquare),
+          toSquare: this.getSquare(toSquare),
           fen,
         });
       }
@@ -456,14 +456,19 @@
             if (fromSquare) fromSquare.clear();
             chessPiece.animateFinished(); // do <chess-piece> CSS stuff after animation finished
 
+            console.warn("PLAYER & TURN:", this.player, this.playerturn);
+            const move = fromSquare.at + moveType + toSquare.at;
+            console.warn("chessPiece, from, to, move", chessPiece, fromSquare, toSquare, move);
+
             const /* function */ save2chessMoves = () => {
                 if (this.player === this.playerturn)
-                  this.processMove(
+                  this.processMove({
                     chessPiece, //
                     fromSquare, //
                     toSquare, //
-                    lastFEN //
-                  );
+                    lastFEN, //
+                    move,
+                  });
               };
 
             save2chessMoves(); // save every move, including castling king AND rook
@@ -524,7 +529,7 @@
         let chessMoves = this.chessMoves;
         // remove lastmove CSS color from previous move
         if (chessMoves.length) {
-          console.error("Last chessMove", chessMoves);
+          console.error("Last chessMoves", chessMoves);
           let { fromSquare, toSquare } = chessMoves.slice(-2)[0];
           if (fromSquare) fromSquare.classList.remove("lastmove");
           else console.warn("fromSquare is undefined");
@@ -546,7 +551,7 @@
       }
       // ======================================================== <chess-board>.lastMove
       get lastMove() {
-        if (this.chessMoves && this.chessMoves.length) {
+        if (this.chessMoves.length) {
           return this.chessMoves.slice(-1)[0];
         }
       }
@@ -627,7 +632,6 @@
             // enpassant
             if (enpassant && enpassant !== "-") this.enPassantPosition = enpassant;
           }
-          if (document.querySelector("#fen")) document.querySelector("#fen").value = fenString;
         } else {
           console.warn("NOT set fen, No this.squares");
           // when the constructor runs on document.createElement, the squares are not set yet.

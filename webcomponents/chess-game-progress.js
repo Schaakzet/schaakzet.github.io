@@ -6,7 +6,6 @@
       connectedCallback() {
         super.connectedCallback();
         this.render();
-        document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.addMove(evt.detail));
         document.addEventListener("gameProgress", (evt) => this.addMove(evt.detail));
         document.addEventListener("restartMatch", (evt) => this.clear());
       }

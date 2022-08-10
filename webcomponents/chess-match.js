@@ -73,8 +73,10 @@
       // ================================================== createMatch
       createMatch() {
         console.warn("createMatch");
-        ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(window.location.search).get("name") || prompt("Enter your Displayname", "Anonymous");
         ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(window.location.search).get("id") || this.getRandomID(1000);
+        ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(window.location.search).get("name") || prompt("Enter your Displayname", "Anonymous");
+        localStorage.setItem("wp_user", ROADSTECHNOLOGY.CHESS.id);
+        localStorage.setItem("player", ROADSTECHNOLOGY.CHESS.displayname);
         let { id, displayname } = ROADSTECHNOLOGY.CHESS;
         if (confirm("Do you want to start a new match as player white?")) {
           // -------------------------------------------------- callAPI
@@ -138,6 +140,13 @@
       // ================================================== assignPlayerByMatchesRow
       assignPlayerByMatchesRow(matchesRow) {
         // todo : Check again whether this function does what it is supposed to do.
+        // -------------------------------------------------- fancy console.log
+        function consoleLog(playerColor) {
+          let backgroundColor = playerColor === "WHITE" ? "background:white;color:black" : "background:black;color:white";
+          console.groupCollapsed(`%c resumeMatch %c player: ${playerColor} `, "background:lightgreen", backgroundColor, fen);
+          log(matchesRow);
+          console.groupEnd();
+        }
         // -------------------------------------------------- init variables
         let {
           tournament_id,
@@ -151,23 +160,21 @@
           result,
           match_guid,
         } = matchesRow;
-        // -------------------------------------------------- fancy console.log
-        function consoleLog(playerColor) {
-          let backgroundColor = playerColor === "WHITE" ? "background:white;color:black" : "background:black;color:white";
-          console.groupCollapsed(`%c resumeMatch %c player: ${playerColor} `, "background:lightgreen", backgroundColor, fen);
-          log(matchesRow);
-          console.groupEnd();
-        }
         // -------------------------------------------------- determine current player
+        ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(document.location.search).get("id") || ROADSTECHNOLOGY.CHESS.id || localStorage.getItem("wp_user");
+        ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(document.location.search).get("name") || ROADSTECHNOLOGY.CHESS.displayname || localStorage.getItem("player");
+
+        console.error(ROADSTECHNOLOGY.CHESS);
+
         let { id, displayname } = ROADSTECHNOLOGY.CHESS;
 
-        let playerColor;
         // let playerName = prompt(`Match: ${player_white} VS ${player_black} Enter your previous display name`);
 
         console.log("assignPlayerByMatchesRow");
         if (ROADSTECHNOLOGY.CHESS.displayname == player_white) {
           consoleLog("WHITE");
-          playerColor = CHESS.__PLAYER_WHITE__;
+          this.chessboard.player = CHESS.__PLAYER_WHITE__;
+          console.warn(this.chessboard, this.chessboard.player);
           // this.updateProgressFromDatabase({ match_guid });
           this.updatePlayers({
             ...matchesRow, // all of matchesRow
@@ -176,7 +183,7 @@
           });
         } else {
           consoleLog("BLACK");
-          playerColor = CHESS.__PLAYER_BLACK__;
+          this.chessboard.player = CHESS.__PLAYER_BLACK__;
           // this.updateProgressFromDatabase({ match_guid });
           this.updatePlayers({
             ...matchesRow, // all of matchesRow
@@ -186,7 +193,7 @@
         }
         // -------------------------------------------------- init <chess-board>
         this.setPlayerTitles(player_white, player_black, wp_user_white, wp_user_black);
-        this.chessboard.setPlayerAndFEN(playerColor, fen); // set attribute on <chess-board> set pieces on <chess-board>
+        this.chessboard.setPlayerAndFEN(this.chessboard.player, fen); // set attribute on <chess-board> set pieces on <chess-board>
       }
 
       // ================================================== resumeMatch
@@ -223,7 +230,6 @@
               this.chessboard.recordMoveInDatabase({ move: "startgame" });
             } else {
               this.updateProgressFromDatabase({ rows });
-              this.chessboard.showLastMoveOnBoard();
             }
           },
         });
@@ -240,12 +246,12 @@
             let { matchmoves_id, match_guid, fromsquare, tosquare, move, fen, tournament_id } = row;
             let chessMovesBoard = chessboard;
             chessMovesBoard.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fen);
-            if (move != "startgame" && move != "undomove") {
+            if (move != "startgame" && move != "undomove" && CHESS.ChessBaseElement.evtCounter < 2) {
               chessboard.processMove({
                 chessPiece: chessMovesBoard.getPiece(tosquare), // database does not know which piece it is
                 //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
-                fromsquare,
-                tosquare,
+                fromSquare: fromsquare,
+                toSquare: tosquare,
                 fen,
                 move,
               });
@@ -254,14 +260,14 @@
           });
           chessboard.showLastMoveOnBoard();
         }
+
         if (rows) processRows(rows);
-        else {
+        else
           CHESS.APIRT.callAPI({
             action: "MOVES",
             body: { id: match_guid },
             callback: ({ rows }) => processRows(rows),
           });
-        }
       }
       // ================================================== updatePlayers
       updatePlayers({
