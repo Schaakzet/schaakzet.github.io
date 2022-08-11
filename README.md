@@ -21,7 +21,7 @@ Repo: https://github.com/schaakzet/schaakzet.github.io
 8. Move back. 
 9. Enter FEN-position.
 
-### Programmeren door Sandro
+### Programmeren door Marc & Sandro
 
 * Code woensdag 3 november. Gekopieerd naar v04.js!!! \* set fen() {code}
 
