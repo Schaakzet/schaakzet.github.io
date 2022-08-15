@@ -140,7 +140,7 @@
                         // should never happen, but just in case
                         console.error("FEN ERROR! after move", move);
                       }
-                    }, 3000);
+                    }, 400);
                   } else {
                     this.fen = fen;
                   }
@@ -361,11 +361,12 @@
           console.warn("changePlayer turn:", this.playerturn, "player:", this.player, this.fen);
         }
       }
-      // ======================================================== <chess-board>.recordMoveInDatabase
-      recordMoveInDatabase({
+      // ======================================================== <chess-board>.dispatchChessMove
+      // Listeners: Captured Pieces, Game Progress
+      dispatchChessMove({
         fromSquare = false, // <chess-square> from which piece was moved
         toSquare = false, // <chess-square> to which piece was moved
-        move, // e2-e4  d7xh8  O-O-O
+        move, // "startgame" e2-e4  d7xh8  O-O-O
       }) {
         if (this.record && this.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
           // emit Event to <chess-match> which records all moves in database
@@ -380,21 +381,7 @@
               fen: this.fen,
             },
           });
-        } else {
         }
-      }
-      // ======================================================== <chess-board>.processMove
-      processMove({ chessPiece, fromSquare, toSquare, fen, move }) {
-        console.warn("processMove chessPiece, from, to:", chessPiece, fromSquare, toSquare);
-        this.addChessMove({ chessPiece, fromSquare, toSquare, fen }); // Pushes the array chessMoves
-        // Adds the move to Game Progress
-        this.dispatch({
-          name: "gameProgress",
-          detail: {
-            chessboard: this,
-            move,
-          },
-        });
       }
       // ======================================================== <chess-board>.addChessMove
       addChessMove({
@@ -413,7 +400,7 @@
 
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
-        // console.warn("this.player:", this.player, "movePiece", chessPiece, square);
+        console.warn("movePiece FEN", this.fen);
         if (isString(chessPiece)) {
           chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
         }
@@ -462,7 +449,7 @@
 
             const /* function */ save2chessMoves = () => {
                 if (this.player === this.playerturn)
-                  this.processMove({
+                  this.addChessMove({
                     chessPiece, //
                     fromSquare, //
                     toSquare, //
@@ -492,25 +479,25 @@
                 this.lastMove.fen = savedFEN;
 
                 this.changePlayer();
-                this.recordMoveInDatabase({
-                  fromSquare,
-                  toSquare,
-                  move: this.doingCastling, //record castling type "O-O"  "O-O-O"
-                });
+                if (this.player === this.playerturn) {
+                  this.closest("chess-match").storeMove({
+                    move: this.doingCastling, // record castling type "O-O"  "O-O-O"
+                  });
+                }
+                this.dispatchChessMove({ fromSquare, toSquare, move });
 
                 this.doingCastling = false;
               }
             } else {
               // regular move
               this.changePlayer();
-              console.error("Player:", this.player);
-              if (this.player) {
-                this.recordMoveInDatabase({
-                  fromSquare,
-                  toSquare,
-                  move: fromSquare.at + moveType + toSquare.at, // O-O-O
+              if (this.player === this.playerturn) {
+                this.closest("chess-match").storeMove({
+                  chessboard: this,
+                  move: fromSquare.at + moveType + toSquare.at, // record regular move "e2-e4" "e4xd5"
                 });
               }
+              this.dispatchChessMove({ fromSquare, toSquare, move });
             }
 
             this.play(); // play all moves left in the queue
@@ -594,6 +581,7 @@
       }
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
+        console.log("MAGIC FUNCTIONS:", new Error().stack);
         console.warn("Set fen START");
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
         // console.log("%c set fen: ", "background:orange", fenString);
@@ -637,7 +625,7 @@
           // when the constructor runs on document.createElement, the squares are not set yet.
         }
         // }, 100);
-        this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
+        // this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
         this.classList.remove("game_over");
 
         // only analyze the board when there are squares on the board.
