@@ -61,10 +61,6 @@
       }
       // ================================================== addListeners
       addListeners() {
-        document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => {
-          log("currentPlayer", this.chessboard.player);
-          this.storeMove(evt.detail);
-        });
         document.addEventListener("newGame", (evt) => this.createMatch(evt.detail));
         // handle game buttons
         this.addListeners = () => {}; // attach listeners only once
@@ -227,7 +223,7 @@
             let noMovesYet = rows.length == 0;
             if (noMovesYet) {
               // player BLACK tells player WHITE to start the game:
-              this.chessboard.recordMoveInDatabase({ move: "startgame" });
+              this.storeMove({ move: "startgame" });
             } else {
               this.updateProgressFromDatabase({ rows });
             }
@@ -244,11 +240,9 @@
           console.warn("Update progress from ", rows.length, "database rows");
           rows.forEach((row) => {
             let { matchmoves_id, match_guid, fromsquare, tosquare, move, fen, tournament_id } = row;
-            let chessMovesBoard = chessboard;
-            chessMovesBoard.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fen);
-            if (move != "startgame" && move != "undomove" && CHESS.ChessBaseElement.evtCounter < 2) {
-              chessboard.processMove({
-                chessPiece: chessMovesBoard.getPiece(tosquare), // database does not know which piece it is
+            if (move != "startgame" && move != "undomove" && CHESS.ChessBaseElement.evtCounter == 1) {
+              chessboard.addChessMove({
+                chessPiece: chessboard.getPiece(tosquare), // database does not know which piece it is
                 //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
                 fromSquare: fromsquare,
                 toSquare: tosquare,
@@ -300,8 +294,9 @@
         move = "e2-e4",
         fen = chessboard.fen,
       }) {
-        log("storeMove", move, chessboard.id);
-        chessboard.updateFENonScreen();
+        console.log("MAGIC FUNCTIONS:", new Error().stack);
+        log("storeMove", move, fen);
+        // chessboard.updateFENonScreen();
         // -------------------------------------------------- callAPI
         CHESS.APIRT.callAPI({
           action: "CHESSMOVE",
@@ -336,7 +331,7 @@
       // ================================================== undoMove
       undoMove() {
         log("UNDO MOVE"); //todo test
-        this.chessboard.recordMoveInDatabase({ move: "undomove" });
+        this.chessboard.dispatchChessMove({ move: "undomove" });
         // -------------------------------------------------- dispatch undoMove
         this.dispatch({
           root: document,

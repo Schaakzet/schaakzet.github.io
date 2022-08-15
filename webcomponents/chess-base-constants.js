@@ -167,7 +167,7 @@ Object.assign(CHESS, {
   createBoardElement: ({ tag = CHESS.__WC_CHESS_BOARD__, props = {}, attrs = [] }) => {
     const chessboard = document.createElement(tag);
     chessboard.id = props.id;
-    //! WE PROBABLY CAN"T SET FENB HERE, BECAUSE IT IS NOT IN THE DOM
+    //! WE PROBABLY CAN'T SET FEN HERE, BECAUSE IT IS NOT IN THE DOM
     attrs.map(([name, value]) => chessboard.setAttribute(name, value));
     return chessboard;
   },
