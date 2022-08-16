@@ -2,24 +2,50 @@
 
 Roads Technology SchaakZet project
 
-Repo: https://github.com/schaakzet/schaakzet.github.io
+---
+### Repository
+[schaakzet.github.io](https://github.com/schaakzet/schaakzet.github.io)
 
-###
+---
 
-- HTML & CSS design : https://jsfiddle.net/RvdSf/fx1bvqgm/
-- Create long CSS with JavaScipt : https://jsfiddle.net/RvdSf/kz97ao0t/
-- Position pieces in start position with FEN notation
+### Documentation
+- [Forsyth–Edwards Notation (FEN)](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)
+- [Mermaid Diagrams](https://mermaid-js.github.io)
 
-### To do vanaf maandag 15-08-2022:
+---
 
-1. Flow van chess-match.
-2. Maar 1x Game Progress updaten.
-3. Roqueren helemaal uitzoeken.
-4. setTimeouts minimaliseren.
-5. Mooier design chess-match divs (Rob).
-6. Laatste kleine bugs (Marc).
-7. Consistentie/ refactoring (Marc).
+### Data Store
 
-### Programmeren door Marc & Sandro
+```mermaid
+erDiagram
+      MATCH ||--o{ MATCHMOVE : one-to-many
+      MATCH {
+            string id
+      }
+      MATCHMOVE {
+            int id
+            string match_id
+            string move
+            string fen
+      }
+```
 
-- Ma 15-08-2022: Sandro:
+---
+### Web Components
+
+#### ``<chess-board>``
+
+```mermaid
+classDiagram
+      class ChessBoard {
+            array capturedBlackPieces
+            array capturedWhitePieces
+            array chessMoves
+            bool  doingCastling
+      }
+
+      chessboard <|-- ChessBoard
+      chessboard: +String id
+      chessboard: +Boolean record = record moves in chess_match database
+      chessboard: +String fen
+```
