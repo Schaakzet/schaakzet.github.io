@@ -354,7 +354,7 @@
         showboardsIn = console.error("%c Cant test move on same board yet, it removes any captured pieces", "background:red;color:yellow"), // a DOM element where all possible moves for this piece are shown
         matchboard = this.chessboard, // the board where the disabled squares/moves are shown
       }) {
-        console.warn("TESTBOARD DIV", showboardsIn);
+        console.warn("666-DE disableCheckMakingMoves", showboardsIn);
         this.moves.forEach((to) => {
           // loop all possible moves
           let testboard;
@@ -365,7 +365,7 @@
               CHESS.createBoardElement({
                 props: {
                   id: CHESS.__TESTBOARD_FOR_MOVES__,
-                  fen: matchboard.fen,
+                  //fen: matchboard.fen, //! MOVED THE FEN SETTER TO SETTIMEOUT BELOW
                 },
               })
             );
@@ -373,13 +373,15 @@
             // force a hidden board if user did not supply a DOM container to place all possible move/boards into
           }
           setTimeout(() => {
+            testboard.fen = matchboard.fen; //! SET CORRECT FEN
             // not sure we need the setTimeout, but it seems to be needed to make sure the board is created before we try to move the piece
             testboard.trymove({
               from: this.at, //
               to, // all moves from this.moves
               testboard,
             });
-            testboard.remove();
+            //! use code to remove mini testboard:
+            //! testboard.remove();
           }, 0);
         });
         // showboardsIn.style.display = "none";

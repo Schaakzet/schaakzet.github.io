@@ -165,13 +165,9 @@ Object.assign(CHESS, {
 
   // ======================================================== CHESS.createBoardElement
   createBoardElement: ({ tag = CHESS.__WC_CHESS_BOARD__, props = {}, attrs = [] }) => {
-    console.warn("TAG:", tag, "PROPS:", props);
     const chessboard = document.createElement(tag);
     chessboard.id = props.id;
-    console.warn("SET PROPS FEN:", props.fen);
-    setTimeout(() => {
-      chessboard.fen = props.fen;
-    }, 10);
+    //! WE PROBABLY CAN'T SET FEN HERE, BECAUSE IT IS NOT IN THE DOM
     attrs.map(([name, value]) => chessboard.setAttribute(name, value));
     return chessboard;
   },

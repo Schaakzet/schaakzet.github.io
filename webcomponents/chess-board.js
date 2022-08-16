@@ -140,7 +140,7 @@
                         // should never happen, but just in case
                         console.error("FEN ERROR! after move", move);
                       }
-                    }, 3000);
+                    }, 400);
                   } else {
                     this.fen = fen;
                   }
@@ -361,11 +361,12 @@
           console.warn("changePlayer turn:", this.playerturn, "player:", this.player, this.fen);
         }
       }
-      // ======================================================== <chess-board>.recordMoveInDatabase
-      recordMoveInDatabase({
+      // ======================================================== <chess-board>.dispatchChessMove
+      // Listeners: Captured Pieces, Game Progress
+      dispatchChessMove({
         fromSquare = false, // <chess-square> from which piece was moved
         toSquare = false, // <chess-square> to which piece was moved
-        move, // e2-e4  d7xh8  O-O-O
+        move, // "startgame" e2-e4  d7xh8  O-O-O
       }) {
         if (this.record && this.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
           // emit Event to <chess-match> which records all moves in database
@@ -380,7 +381,6 @@
               fen: this.fen,
             },
           });
-        } else {
         }
       }
       // ======================================================== <chess-board>.addChessMove
@@ -400,7 +400,7 @@
 
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
-        // console.warn("this.player:", this.player, "movePiece", chessPiece, square);
+        console.warn("movePiece FEN", this.fen);
         if (isString(chessPiece)) {
           chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
         }
@@ -443,13 +443,19 @@
             if (fromSquare) fromSquare.clear();
             chessPiece.animateFinished(); // do <chess-piece> CSS stuff after animation finished
 
+            console.warn("PLAYER & TURN:", this.player, this.playerturn);
+            const move = fromSquare.at + moveType + toSquare.at;
+            console.warn("chessPiece, from, to, move", chessPiece, fromSquare, toSquare, move);
+
             const /* function */ save2chessMoves = () => {
-                this.addChessMove({
-                  chessPiece, //
-                  fromSquare, //
-                  toSquare, //
-                  fen: lastFEN, //
-                });
+                if (this.player === this.playerturn)
+                  this.addChessMove({
+                    chessPiece, //
+                    fromSquare, //
+                    toSquare, //
+                    lastFEN, //
+                    move,
+                  });
               };
 
             save2chessMoves(); // save every move, including castling king AND rook
@@ -473,25 +479,25 @@
                 this.lastMove.fen = savedFEN;
 
                 this.changePlayer();
-                this.recordMoveInDatabase({
-                  fromSquare,
-                  toSquare,
-                  move: this.doingCastling, //record castling type "O-O"  "O-O-O"
-                });
+                if (this.player === this.playerturn) {
+                  this.closest("chess-match").storeMove({
+                    move: this.doingCastling, // record castling type "O-O"  "O-O-O"
+                  });
+                }
+                this.dispatchChessMove({ fromSquare, toSquare, move });
 
                 this.doingCastling = false;
               }
             } else {
               // regular move
               this.changePlayer();
-              console.error("Player:", this.player);
-              if (this.player) {
-                this.recordMoveInDatabase({
-                  fromSquare,
-                  toSquare,
-                  move: fromSquare.at + moveType + toSquare.at, // O-O-O
+              if (this.player === this.playerturn) {
+                this.closest("chess-match").storeMove({
+                  chessboard: this,
+                  move: fromSquare.at + moveType + toSquare.at, // record regular move "e2-e4" "e4xd5"
                 });
               }
+              this.dispatchChessMove({ fromSquare, toSquare, move });
             }
 
             this.play(); // play all moves left in the queue
@@ -510,6 +516,7 @@
         let chessMoves = this.chessMoves;
         // remove lastmove CSS color from previous move
         if (chessMoves.length) {
+          console.error("Last chessMoves", chessMoves);
           let { fromSquare, toSquare } = chessMoves.slice(-2)[0];
           if (fromSquare) fromSquare.classList.remove("lastmove");
           else console.warn("fromSquare is undefined");
@@ -531,7 +538,7 @@
       }
       // ======================================================== <chess-board>.lastMove
       get lastMove() {
-        if (this.chessMoves && this.chessMoves.length) {
+        if (this.chessMoves.length) {
           return this.chessMoves.slice(-1)[0];
         }
       }
@@ -574,6 +581,7 @@
       }
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
+        console.log("MAGIC FUNCTIONS:", new Error().stack);
         console.warn("Set fen START");
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
         // console.log("%c set fen: ", "background:orange", fenString);
@@ -612,13 +620,12 @@
             // enpassant
             if (enpassant && enpassant !== "-") this.enPassantPosition = enpassant;
           }
-          if (document.querySelector("#fen")) document.querySelector("#fen").value = fenString;
         } else {
           console.warn("NOT set fen, No this.squares");
           // when the constructor runs on document.createElement, the squares are not set yet.
         }
         // }, 100);
-        this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
+        // this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
         this.classList.remove("game_over");
 
         // only analyze the board when there are squares on the board.
@@ -690,7 +697,7 @@
         // join
         fenString = fenParts.join(" ");
         console.warn("get fen fenString: ", fenString);
-        console.warn("this.innerHTML", this.innerHTML);
+        // console.warn("this.innerHTML", this.innerHTML);
         return fenString;
       } // get fen()
       // ======================================================== <chess-board>.record GETTER
@@ -729,15 +736,21 @@
         to, // "e3"
         matchboard = this, // the <chess-board> the user is playing
       }) {
-        console.warn("trymove, getPiece", this.getPiece(from), from);
-        this.getPiece(from).movePieceTo(to, false); // move piece without animation
-        if (CHESS.doAnalysis && CHESS.analysis(this, "checkcheck")) {
-          matchboard.markIllegalMove(to);
+        let testPiece = this.getPiece(from);
+        if (testPiece) {
+          console.warn("666 trymove", testPiece.is, from, "->", to);
+          testPiece.movePieceTo(to, false); // move piece without animation
+          if (CHESS.doAnalysis && CHESS.analysis(this, "checkcheck")) {
+            matchboard.markIllegalMove(to);
+          }
+        } else {
+          console.error("trymove Error: no Piece on:", from);
         }
         //this.fen = savedfen;
       }
       // ======================================================== <chess-board>.markIllegalMove
       markIllegalMove(at) {
+        console.log("666-DE MarkIllegalMove", at);
         this.getSquare(at).highlight(CHESS.__MOVETYPE_ILLEGAL__);
         this.pieceClicked.moves = this.pieceClicked.moves.filter((move) => move !== this.getSquare(at).at);
       }
