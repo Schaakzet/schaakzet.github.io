@@ -10,6 +10,8 @@ Repo: https://github.com/schaakzet/schaakzet.github.io
 * Create long CSS with JavaScipt : https://jsfiddle.net/RvdSf/kz97ao0t/
 * Position pieces in start position with FEN notation
 
+---
+
 ### To do vanaf maandag 15-11-2021:
 1. TurnWhite, TurnBlack met boolean.
 2. Schaakmat. End of game. Wit of zwart gewonnen bericht. 
@@ -21,7 +23,9 @@ Repo: https://github.com/schaakzet/schaakzet.github.io
 8. Move back. 
 9. Enter FEN-position.
 
-### Programmeren door Marc & Sandro
+---
+
+### Programmeren door Sandro
 
 * Code woensdag 3 november. Gekopieerd naar v04.js!!! \* set fen() {code}
 
@@ -38,12 +42,44 @@ Repo: https://github.com/schaakzet/schaakzet.github.io
 
 * Code woensdag 24 november + maandag 29 november. potentialMoves beperken tot je tegen een stuk aanloopt of vijandig stuk slaan. Pion moves verwerken. v08.js!!!
 
-# Web Components
+---
 
-## ``<chess-board>``
+### Documentation
+- [Forsyth–Edwards Notation (FEN)](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)
+- [Mermaid Diagrams](https://mermaid-js.github.io)
+
+---
+
+### Data Store
+
+```mermaid
+erDiagram
+      MATCH ||--o{ MATCHMOVE : one-to-many
+      MATCH {
+            string id
+      }
+      MATCHMOVE {
+            int id
+            string match_id
+            string move
+            string fen
+      }
+```
+
+---
+### Web Components
+
+#### ``<chess-board>``
 
 ```mermaid
 classDiagram
+      class ChessBoard {
+            array capturedBlackPieces
+            array capturedWhitePieces
+            array chessMoves
+            bool  doingCastling
+      }
+
       chessboard <|-- ChessBoard
       chessboard: +String id
       chessboard: +Boolean record = record moves in chess_match database
