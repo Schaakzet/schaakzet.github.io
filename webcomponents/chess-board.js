@@ -389,12 +389,14 @@
         fromSquare,
         toSquare,
         fen,
+        move,
       }) {
         this.chessMoves.push({
           chessPiece,
           fromSquare: this.getSquare(fromSquare),
           toSquare: this.getSquare(toSquare),
           fen,
+          move,
         });
       }
 
@@ -453,7 +455,7 @@
                     chessPiece, //
                     fromSquare, //
                     toSquare, //
-                    lastFEN, //
+                    fen: lastFEN, //
                     move,
                   });
               };
@@ -511,9 +513,12 @@
           CHESS.analysis(this, CHESS.__ANALYSIS_AFTER__);
         }
 
-        setTimeout(() => {
-          this.initPlayerTurn();
-        }, 1000);
+        if (this.id !== "testboard") {
+          setTimeout(() => {
+            this.initPlayerTurn();
+          }, 1000);
+        }
+
         this.setMessage("");
       }
       // ======================================================== <chess-board>.showLastMoveOnBoard
@@ -586,7 +591,7 @@
       }
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
-        console.log("MAGIC FUNCTIONS:", new Error().stack);
+        // console.log("MAGIC FUNCTIONS:", new Error().stack);
         console.warn("Set fen START");
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
         // console.log("%c set fen: ", "background:orange", fenString);

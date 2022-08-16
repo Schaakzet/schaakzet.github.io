@@ -294,7 +294,7 @@
         move = "e2-e4",
         fen = chessboard.fen,
       }) {
-        console.log("MAGIC FUNCTIONS:", new Error().stack);
+        // console.log("MAGIC FUNCTIONS:", new Error().stack);
         log("storeMove", move, fen);
         // chessboard.updateFENonScreen();
         // -------------------------------------------------- callAPI
