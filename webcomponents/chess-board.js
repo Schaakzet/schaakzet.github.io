@@ -314,7 +314,6 @@
       }
       // ======================================================== <chess-board>.clearAttributes
       clearAttributes() {
-        console.error("clearAttributes");
         for (const square of this.squares) {
           this.getSquare(square).clearAttributes();
         }
@@ -343,6 +342,7 @@
       }
       // ======================================================== <chess-board>.initPlayerTurn
       initPlayerTurn() {
+        console.warn("initPlayerTurn chessboard", this);
         delete this.pieceClicked;
         this.initAnalysis();
         this.highlightOff();
@@ -458,11 +458,6 @@
                   });
               };
 
-            save2chessMoves(); // save every move, including castling king AND rook
-
-            if (!this.doingCastling) {
-              CHESS.analysis(this, CHESS.__ANALYSIS_MAIN__);
-            }
             if (this.doingCastling) {
               if (chessPiece.isKing) {
                 // this.recordMoveInDatabase({
@@ -479,25 +474,29 @@
                 this.lastMove.fen = savedFEN;
 
                 this.changePlayer();
-                if (this.player === this.playerturn) {
+                if (this.player !== this.playerturn && this.id !== "testboard") {
                   this.closest("chess-match").storeMove({
+                    chessboard: this,
                     move: this.doingCastling, // record castling type "O-O"  "O-O-O"
+                    fen: this.fen,
                   });
+                  this.dispatchChessMove({ fromSquare, toSquare, move });
                 }
-                this.dispatchChessMove({ fromSquare, toSquare, move });
-
                 this.doingCastling = false;
               }
             } else {
               // regular move
+              save2chessMoves();
+
               this.changePlayer();
-              if (this.player === this.playerturn) {
+              if (this.player !== this.playerturn && this.id !== "testboard") {
                 this.closest("chess-match").storeMove({
                   chessboard: this,
                   move: fromSquare.at + moveType + toSquare.at, // record regular move "e2-e4" "e4xd5"
+                  fen: this.fen,
                 });
+                this.dispatchChessMove({ fromSquare, toSquare, move });
               }
-              this.dispatchChessMove({ fromSquare, toSquare, move });
             }
 
             this.play(); // play all moves left in the queue
@@ -508,7 +507,13 @@
         if (animated) chessPiece.animateTo(square).then(movedPiece);
         else movedPiece();
 
-        this.initPlayerTurn();
+        if (this.doAnalysis && this.id !== "testboard") {
+          CHESS.analysis(this, CHESS.__ANALYSIS_AFTER__);
+        }
+
+        setTimeout(() => {
+          this.initPlayerTurn();
+        }, 1000);
         this.setMessage("");
       }
       // ======================================================== <chess-board>.showLastMoveOnBoard
@@ -533,7 +538,7 @@
       initAnalysis() {
         // console.error("initAnalysis");
         if (this.doAnalysis) {
-          CHESS.analysis(this, CHESS.__ANALYSIS_MAIN__);
+          CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
         }
       }
       // ======================================================== <chess-board>.lastMove
@@ -630,9 +635,9 @@
 
         // only analyze the board when there are squares on the board.
         this.debuginfo();
-        if (this.doAnalysis && this.id !== "testboard") {
-          CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
-        }
+        // if (this.doAnalysis && this.id !== "testboard") {
+        //   CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
+        // }
         console.error("SET FEN END!!!", this);
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
@@ -755,6 +760,11 @@
         this.pieceClicked.moves = this.pieceClicked.moves.filter((move) => move !== this.getSquare(at).at);
       }
 
+      // ======================================================== <chess-board>.remove
+      delete() {
+        this.remove();
+        console.log("TESTBOARD REMOVED");
+      }
       // ============================================================ <chess-board>.player on board
       get player() {
         return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__);
