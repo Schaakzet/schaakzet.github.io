@@ -10,7 +10,13 @@ Roads Technology SchaakZet project
 
 ### Documentation
 - [Forsyth–Edwards Notation (FEN)](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)
+- [Algebraic Notation](https://en.wikipedia.org/wiki/Algebraic_notation_(chess))
+
+---
+
+### Tools
 - [Mermaid Diagrams](https://mermaid-js.github.io)
+- [ESLint](https://eslint.org)
 
 ---
 
