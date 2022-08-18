@@ -293,7 +293,7 @@
         // return reference to <chess-square at=" [position] ">
         if (square) {
           let squareElement = square;
-          if (isString(square)) squareElement = this.queryBoard(`[${window.CHESS.__WC_ATTRIBUTE_AT__}=${square}]`);
+          if (window.isString(square)) squareElement = this.queryBoard(`[${window.CHESS.__WC_ATTRIBUTE_AT__}=${square}]`);
           // console.error("square element:", squareElement);
           if (!squareElement) console.warn(square, "is not a valid square");
           return squareElement;
@@ -408,7 +408,7 @@
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
         console.warn("movePiece FEN", this.fen);
-        if (isString(chessPiece)) {
+        if (window.isString(chessPiece)) {
           chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
         }
         if (!chessPiece) {
@@ -520,7 +520,7 @@
         else movedPiece();
 
         if (this.doAnalysis && this.id !== "testboard") {
-          CHESS.analysis(this, CHESS.__ANALYSIS_AFTER__);
+          window.CHESS.analysis(this, window.CHESS.__ANALYSIS_AFTER__);
         }
 
         if (this.id !== "testboard") {
@@ -571,7 +571,7 @@
       }
       // ======================================================== <chess-board>.findPieceSquare
       findPieceSquare(piece) {
-        if (isString(piece)) {
+        if (window.isString(piece)) {
           const selector = window.CHESS.__WC_CHESS_SQUARE__ + `[${window.CHESS.__WC_ATTRIBUTE_PIECENAME__}="${piece}"]`;
           return this.querySelector(selector);
         } else {

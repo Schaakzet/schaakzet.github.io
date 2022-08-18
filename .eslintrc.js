@@ -1,4 +1,6 @@
+// https://eslint.org/docs/latest/user-guide/configuring
 module.exports = {
+    // https://eslint.org/docs/latest/user-guide/configuring/language-options#specifying-environments
     "env": {
         "browser": true,
         "node": true
@@ -10,8 +12,9 @@ module.exports = {
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
+    // https://eslint.org/docs/latest/user-guide/configuring/rules
     "rules": {
-        "semi": ["error", "always"],
-        "quotes": ["warn", "double"]
+        "semi": ["error", "always"],        // https://eslint.org/docs/latest/rules/semi
+        "quotes": ["warn", "double"]        // https://eslint.org/docs/latest/rules/quotes
     }
 };

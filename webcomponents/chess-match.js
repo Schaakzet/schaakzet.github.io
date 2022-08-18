@@ -93,14 +93,14 @@
               let {
                 tournament_id,
                 wp_user_black,
-                player_white, // for now a new match is always created by the white player
+                player_white,   // for now a new match is always created by the white player
                 wp_user_white,
                 player_black,
                 starttime,
                 endtime,
                 fen,
                 result,
-                match_guid, // matchGUID assigned by database
+                match_guid,     // matchGUID assigned by database
               } = rows[0];
 
               log("createMatch", match_guid);

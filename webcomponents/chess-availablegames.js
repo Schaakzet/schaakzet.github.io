@@ -52,7 +52,18 @@
             if (rows.length) {
               // --------------------------------------------- create matches DOM elements
               let matches = rows.map((match_row) => {
-                let { tournament_id, wp_user_white, wp_user_black, player_white, player_black, starttime, endtime, fen, result, match_guid } = match_row;
+                let { 
+                  tournament_id, 
+                  wp_user_white,  // INT           - user id in the wp_user WordPress table
+                  wp_user_black,  // INT           - user id in the wp_user WordPress table
+                  player_white,   // VARCHAR(64)   - name of the player
+                  player_black,   // VARCHAR(64)   - name of the player
+                  starttime,      // TIMESTAMP     - when the match started - default set by database
+                  endtime,        // TIMESTAMP     - when the match ended - default NULL set by database
+                  fen,            // VARCHAR(64)   - FEN string of the chessboard, default set by database
+                  result,         // VARCHAR(64)   - match result, default "" set by database
+                  match_guid 
+                } = match_row;
 
                 // ------------------------------------------------- callAPI READ
                 let gameButtons = "";

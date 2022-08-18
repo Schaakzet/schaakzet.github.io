@@ -146,7 +146,7 @@
       // ======================================================== <chess-piece>.sameColorAsPiece
       sameColorAsPiece(piece) {
         // piece can be <chess-piece> or "black" or "white"
-        return this.color == (isString(piece) ? piece : piece.color);
+        return this.color == (window.isString(piece) ? piece : piece.color);
       }
       // ======================================================== <chess-piece>.potentialMoves
       potentialMoves() {

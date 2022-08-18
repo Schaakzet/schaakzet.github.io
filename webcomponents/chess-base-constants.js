@@ -201,7 +201,7 @@ const translateSquare = (square, file_offset, rank_offset) => {
 // create a lookup Map ONCE to lookup BOTH letters OR piecename
 // "R" -> "wit-toren"
 // "wit-toren" -> "R"
-let FENMap = new Map(); // see MDN Map documentation
+let FENMap = new window.Map(); // see MDN Map documentation
 let FENletters = "RNBQKPrnbqkp".split(""); // create an array of letters
 window.CHESS.__PLAYER_COLORS__.forEach((color) =>
 window.CHESS.__PIECE_NAMES__.forEach((name) => {
