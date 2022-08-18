@@ -15,8 +15,11 @@ Roads Technology SchaakZet project
 ---
 
 ### Tools
-- [Mermaid Diagrams](https://mermaid-js.github.io)
-- [ESLint](https://eslint.org)
+- [Mermaid Diagrams](https://mermaid-js.github.io) -- Used for drawing the diagrams in the readme file.
+- [SourceTree](https://www.sourcetreeapp.com) -- Used for interaction with git.
+- [npm](https://docs.npmjs.com) -- Used for package (dependency) management.
+- [CSpell](https://cspell.org) -- Used for spelling check on code.
+- [ESLint](https://eslint.org) -- Used for javascript code analysis.
 
 ---
 
