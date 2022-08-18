@@ -7,12 +7,12 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   const kingSquare = /* function */ (color) => $chessboard.kingSquare(color);
   const movePiece = /* function */ (piece, to) => $chessboard.movePiece(piece, to);
 
-  if (type == CHESS.__ANALYSIS_PRE__) {
+  if (type == window.CHESS.__ANALYSIS_PRE__) {
     console.log("analyze pre");
     analyzeWholeBoard();
   }
 
-  if (type == CHESS.__ANALYSIS_MAIN__) {
+  if (type == window.CHESS.__ANALYSIS_MAIN__) {
     analyzeWholeBoard();
     enPassantPosition();
     castling();
@@ -32,21 +32,21 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
     console.log("Analysis PROMOTION");
     if ($chessboard.lastMove) {
       let lastMovedPiece = $chessboard.lastMove.toSquare.piece;
-      if (lastMovedPiece.isPawnAtEnd && $chessboard.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
+      if (lastMovedPiece.isPawnAtEnd && $chessboard.id !== window.CHESS.__TESTBOARD_FOR_MOVES__) {
         const chosenPiece = String(prompt("Kies een stuk (toets letter in): Q, N, R, B.")); // pass parameter
-        let newPiece = lastMovedPiece.color + CHESS.__PIECE_SEPARATOR__;
+        let newPiece = lastMovedPiece.color + window.CHESS.__PIECE_SEPARATOR__;
         switch (chosenPiece.toLowerCase()) {
           case "q":
-            newPiece += CHESS.__PIECE_QUEEN__;
+            newPiece += window.CHESS.__PIECE_QUEEN__;
             break;
           case "n":
-            newPiece += CHESS.__PIECE_KNIGHT__;
+            newPiece += window.CHESS.__PIECE_KNIGHT__;
             break;
           case "r":
-            newPiece += CHESS.__PIECE_ROOK__;
+            newPiece += window.CHESS.__PIECE_ROOK__;
             break;
           case "b":
-            newPiece += CHESS.__PIECE_BISHOP__;
+            newPiece += window.CHESS.__PIECE_BISHOP__;
             break;
           default:
             newPiece = false;
@@ -78,10 +78,10 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
             $chessboard.doingCastling = castlingLongShort;
             movePiece(getPiece(getSquare(from)), to);
           };
-        if (fromSquare.at == CHESS.__SQUARE_WHITE_KING_START__) {
+        if (fromSquare.at == window.CHESS.__SQUARE_WHITE_KING_START__) {
           if (toSquare.at == "c1") moveRook("a1", "d1", __LONGCASTLING__);
           else if (toSquare.at == "g1") moveRook("h1", "f1", __SHORTCASTLING__);
-        } else if (fromSquare.at == CHESS.__SQUARE_BLACK_KING_START__) {
+        } else if (fromSquare.at == window.CHESS.__SQUARE_BLACK_KING_START__) {
           if (toSquare.at == "c8") moveRook("a8", "d8", __LONGCASTLING__);
           else if (toSquare.at == "g8") moveRook("h8", "f8", __SHORTCASTLING__);
         }
@@ -159,8 +159,8 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== isValidGameBoard
   function isValidGameBoard() {
     const _kingSquare = /* function */ (color) => kingSquare(color); // get king, but without warning
-    const whiteKing = _kingSquare(CHESS.__PLAYER_WHITE__);
-    const blackKing = _kingSquare(CHESS.__PLAYER_BLACK__);
+    const whiteKing = _kingSquare(window.CHESS.__PLAYER_WHITE__);
+    const blackKing = _kingSquare(window.CHESS.__PLAYER_BLACK__);
     return whiteKing && blackKing;
   }
 
@@ -244,7 +244,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== negatingCheck
   function negatingCheck(color) {
     if (isValidGameBoard()) {
-      const horse = (color) => color + CHESS.__PIECE_SEPARATOR__ + CHESS.__PIECE_KNIGHT__;
+      const horse = (color) => color + window.CHESS.__PIECE_SEPARATOR__ + window.CHESS.__PIECE_KNIGHT__;
       const _kingSquare = kingSquare(color);
       if (_kingSquare && _kingSquare.isAttacked) {
         if (_kingSquare.attackers.length == 1) {
@@ -253,7 +253,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
           const attackingPieceSquare = /* function */ (color) => attackingPiece(color).square;
           // Capture Attacking Piece --- Works only for one attacking piece, because if we get more, you can capture only one.
           if (attackingPieceSquare(color).isAttacked) {
-            log("You can take the checking piece", attackingPiece(color).is, "with", attackingPieceSquare(color).getAttribute(CHESS.__WC_ATTRIBUTE_ATTACKEDBY__));
+            log("You can take the checking piece", attackingPiece(color).is, "with", attackingPieceSquare(color).getAttribute(window.CHESS.__WC_ATTRIBUTE_ATTACKEDBY__));
             return true;
           }
           if (attackingPiece(color)) {
@@ -295,7 +295,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       if (checkCanBeNegated) {
         log("You can get out of check.");
       } else {
-        log("Checkmate", `${CHESS.otherPlayer(color)}`);
+        log("Checkmate", `${window.CHESS.otherPlayer(color)}`);
         gameOver("Checkmate", color);
       }
     }
@@ -343,7 +343,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== gameOver
   function gameOver(mate, color) {
     if (mate == "Checkmate") {
-      $chessboard.setMessage(`Game over. ${CHESS.otherPlayer(color)} heeft gewonnen.`);
+      $chessboard.setMessage(`Game over. ${window.CHESS.otherPlayer(color)} heeft gewonnen.`);
       $chessboard.classList.add("game_over");
       setTimeout(endOfGame, 3000);
     } else if (mate == "Stalemate") {

@@ -1,7 +1,7 @@
-CHESS.APIRT = CHESS.APIRT || {};
+window.CHESS.APIRT = window.CHESS.APIRT || {};
 
 // add constants
-Object.assign(CHESS.APIRT, {
+Object.assign(window.CHESS.APIRT, {
   __API_RECORDS__: "//schaakzet.nl/api/crud/index.php/records/",
   __API_SCHAAKZET__: "//schaakzet.nl/api/chessgame.php/?action=",
   __API_MATCHES__: "//schaakzet.nl/api/chessgame.php",
@@ -15,9 +15,9 @@ Object.assign(CHESS.APIRT, {
 
   // ================================================== deleteMatchByGUID
   deleteMatchByGUID: (guid) => {
-    fetch(CHESS.APIRT.__API_SCHAAKZET__ + "DELETEMATCH" + "&match_guid=" + guid, {
+    fetch(window.CHESS.APIRT.__API_SCHAAKZET__ + "DELETEMATCH" + "&match_guid=" + guid, {
       method: "GET",
-      headers: CHESS.APIRT.__API_HEADERS__,
+      headers: window.CHESS.APIRT.__API_HEADERS__,
     });
   },
   // ================================================== callAPI
@@ -37,11 +37,11 @@ Object.assign(CHESS.APIRT, {
     let options = {
       method,
       //mode: "no-cors",
-      headers: CHESS.APIRT.__API_HEADERS__,
+      headers: window.CHESS.APIRT.__API_HEADERS__,
       body: JSON.stringify(body),
     };
     // -------------------------------------------------- build URI
-    let uri = CHESS.APIRT.__API_MATCHES__ + "?c=" + new Date() / 1;
+    let uri = window.CHESS.APIRT.__API_MATCHES__ + "?c=" + new Date() / 1;
     if (method == "GET") {
       uri += "&action=" + body.action;
 
@@ -83,7 +83,7 @@ Object.assign(CHESS.APIRT, {
     player_black = "", // player black name
     callback,
   }) {
-    CHESS.APIRT.callAPI({
+    window.CHESS.APIRT.callAPI({
       action: "CREATE",
       body: {
         player_white: player_white,
@@ -96,11 +96,11 @@ Object.assign(CHESS.APIRT, {
   // ================================================== undoChessMove
   undoChessMove({ id, callback }) {
     let body = { id: this.match_guid };
-    CHESS.APIRT.callAPI("delete", body, callback);
+    window.CHESS.APIRT.callAPI("delete", body, callback);
   },
 
   // ================================================== deleteStartboard
   deleteStartboards({ callback }) {
-    CHESS.APIRT.callAPI("deleteStartboards", {}, callback);
+    window.CHESS.APIRT.callAPI("deleteStartboards", {}, callback);
   },
 });

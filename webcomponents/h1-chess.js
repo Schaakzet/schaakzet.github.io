@@ -1,6 +1,6 @@
 customElements.define(
   "h1-chess",
-  class extends CHESS.ChessBaseElement {
+  class extends window.CHESS.ChessBaseElement {
     connectedCallback() {
       super.connectedCallback();
       //console.log([...document.scripts].map((x) => x.src));

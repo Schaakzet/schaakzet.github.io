@@ -1,4 +1,9 @@
 !(function () {
+
+  // The purpose of "use strict" is to indicate that the code should be executed in "strict mode".
+  // With strict mode, you can not, for example, use undeclared variables.
+  "use strict";
+
   // TODO these constants should be moved to a config file, are also in chess-matches.js
   const CSS_Boards = /* css */ `#boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,15vh));gap:1em}`;
   const DIV_Boards = /* html */ `<div id="boards"></div>`;
@@ -6,7 +11,7 @@
   // ********************************************************** <chess-boards>
   customElements.define(
     "chess-boards",
-    class extends CHESS.ChessBaseElement {
+    class extends window.CHESS.ChessBaseElement {
       constructor() {
         super().attachShadow({ mode: "open" }).innerHTML = `<style>${CSS_Boards}</style>${DIV_Boards}`;
       }
@@ -22,7 +27,7 @@
             fen = fen.trim();
             if (fen == "") return false;
             else
-              return CHESS.createBoardElement({
+              return window.CHESS.createBoardElement({
                 props: {
                   id: "b" + idx,
                   fen,

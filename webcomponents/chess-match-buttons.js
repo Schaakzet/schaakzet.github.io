@@ -1,6 +1,6 @@
 customElements.define(
   "chess-match-buttons",
-  class extends CHESS.ChessBaseElement {
+  class extends window.CHESS.ChessBaseElement {
     connectedCallback() {
       super.connectedCallback();
       this.style = "display: block; padding-bottom: 18px";

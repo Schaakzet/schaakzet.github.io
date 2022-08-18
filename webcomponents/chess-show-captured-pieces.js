@@ -2,14 +2,14 @@
   // ********************************************************** IIFE
   customElements.define(
     "chess-show-captured-pieces",
-    class extends CHESS.ChessBaseElement {
+    class extends window.CHESS.ChessBaseElement {
       connectedCallback() {
         super.connectedCallback();
         this.render();
 
         document.addEventListener("restartMatch", (evt) => this.clear());
         document.addEventListener("undoMove", (evt) => this.deleteMove(evt.detail));
-        document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.processMoves(evt.detail));
+        document.addEventListener(window.CHESS.__STORECHESSMOVE__, (evt) => this.processMoves(evt.detail));
       }
 
       render() {
@@ -49,7 +49,7 @@
         let color = detail.chessboard.getAttribute("playerturn");
         let { capturedWhitePieces, capturedBlackPieces } = detail.chessboard;
         if (lastSquare.piece) {
-          if (color == CHESS.__PLAYER_BLACK__) {
+          if (color == window.CHESS.__PLAYER_BLACK__) {
             capturedWhitePieces.pop();
           } else {
             capturedBlackPieces.pop();

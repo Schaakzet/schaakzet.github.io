@@ -1,4 +1,9 @@
 !(function () {
+
+  // The purpose of "use strict" is to indicate that the code should be executed in "strict mode".
+  // With strict mode, you can not, for example, use undeclared variables.
+  "use strict";
+
   // <chess-match> encapsulates <chess-board>
   // manages players
   // communicates with server
@@ -11,7 +16,7 @@
   // ********************************************************** define <chess-match>
   customElements.define(
     "chess-match",
-    class extends CHESS.ChessBaseElement {
+    class extends window.CHESS.ChessBaseElement {
       // todo create shadowDOM?
       // ================================================== connectedCallback
       connectedCallback() {
@@ -19,7 +24,7 @@
         this.render();
 
         setTimeout(() => {
-          let match_guid = localStorage.getItem(CHESS.__MATCH_GUID__);
+          let match_guid = localStorage.getItem(window.CHESS.__MATCH_GUID__);
           if (match_guid) {
             this.resumeMatch(match_guid);
           } else {
@@ -69,14 +74,14 @@
       // ================================================== createMatch
       createMatch() {
         console.warn("createMatch");
-        ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(window.location.search).get("id") || this.getRandomID(1000);
-        ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(window.location.search).get("name") || prompt("Enter your Displayname", "Anonymous");
-        localStorage.setItem("wp_user", ROADSTECHNOLOGY.CHESS.id);
-        localStorage.setItem("player", ROADSTECHNOLOGY.CHESS.displayname);
-        let { id, displayname } = ROADSTECHNOLOGY.CHESS;
+        window.ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(window.location.search).get("id") || this.getRandomID(1000);
+        window.ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(window.location.search).get("name") || prompt("Enter your Displayname", "Anonymous");
+        localStorage.setItem("wp_user", window.ROADSTECHNOLOGY.CHESS.id);
+        localStorage.setItem("player", window.ROADSTECHNOLOGY.CHESS.displayname);
+        let { id, displayname } = window.ROADSTECHNOLOGY.CHESS;
         if (confirm("Do you want to start a new match as player white?")) {
           // -------------------------------------------------- callAPI
-          CHESS.APIRT.callAPI({
+          window.CHESS.APIRT.callAPI({
             action: "CREATE",
             body: {
               wp_user_white: id, // user WordPress wp_user.id
@@ -87,9 +92,9 @@
               // todo test for database failure, no rows
               let {
                 tournament_id,
-                wp_user_white,
                 wp_user_black,
                 player_white, // for now a new match is always created by the white player
+                wp_user_white,
                 player_black,
                 starttime,
                 endtime,
@@ -121,11 +126,11 @@
       // ================================================== setPlayerTitles()
       setPlayerTitles(p1, p2 = "<i>To Be Announced</i>", wp_user_white, wp_user_black) {
         const match_playernames = this.querySelector(".match_playernames");
+        function preventEmptyName(name) {
+          if (!name || name == "") return "<i>onbekend</i>";
+          return name;
+        }
         if (match_playernames) {
-          function preventEmptyName(name) {
-            if (!name || name == "") return "<i>onbekend</i>";
-            return name;
-          }
           match_playernames.innerHTML = `Match ${preventEmptyName(p1)} (${wp_user_white}) vs ${preventEmptyName(p2)} (${wp_user_black})`;
         }
       }
@@ -145,31 +150,31 @@
         }
         // -------------------------------------------------- init variables
         let {
-          tournament_id,
-          wp_user_white, // WordPress wp_user.id
-          wp_user_black, // WordPress wp_user.id
+          // tournament_id, -- Can be added at a later time
+          wp_user_white,    // WordPress wp_user.id
+          wp_user_black,    // WordPress wp_user.id
           player_white,
           player_black,
-          starttime,
-          endtime,
-          fen, // FEN string from database table Matches
-          result,
-          match_guid,
+          // starttime,     -- Can be added at a later time
+          // endtime,       -- Can be added at a later time
+          fen,              // FEN string from database table Matches
+          // result,        -- Can be added at a later time
+          // match_guid,    -- Can be added at a later time
         } = matchesRow;
         // -------------------------------------------------- determine current player
-        ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(document.location.search).get("id") || ROADSTECHNOLOGY.CHESS.id || localStorage.getItem("wp_user");
-        ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(document.location.search).get("name") || ROADSTECHNOLOGY.CHESS.displayname || localStorage.getItem("player");
+        window.ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(document.location.search).get("id") || window.ROADSTECHNOLOGY.CHESS.id || localStorage.getItem("wp_user");
+        window.ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(document.location.search).get("name") || window.ROADSTECHNOLOGY.CHESS.displayname || localStorage.getItem("player");
 
-        console.error(ROADSTECHNOLOGY.CHESS);
+        console.error(window.ROADSTECHNOLOGY.CHESS);
 
-        let { id, displayname } = ROADSTECHNOLOGY.CHESS;
+        let { id, displayname } = window.ROADSTECHNOLOGY.CHESS;
 
         // let playerName = prompt(`Match: ${player_white} VS ${player_black} Enter your previous display name`);
 
         console.log("assignPlayerByMatchesRow");
-        if (ROADSTECHNOLOGY.CHESS.displayname == player_white) {
+        if (window.ROADSTECHNOLOGY.CHESS.displayname == player_white) {
           consoleLog("WHITE");
-          this.chessboard.player = CHESS.__PLAYER_WHITE__;
+          this.chessboard.player = window.CHESS.__PLAYER_WHITE__;
           console.warn(this.chessboard, this.chessboard.player);
           // this.updateProgressFromDatabase({ match_guid });
           this.updatePlayers({
@@ -179,7 +184,7 @@
           });
         } else {
           consoleLog("BLACK");
-          this.chessboard.player = CHESS.__PLAYER_BLACK__;
+          this.chessboard.player = window.CHESS.__PLAYER_BLACK__;
           // this.updateProgressFromDatabase({ match_guid });
           this.updatePlayers({
             ...matchesRow, // all of matchesRow
@@ -198,7 +203,7 @@
         console.warn("resumeMatch", match_guid);
         this.chessboard.resume(match_guid);
         // -------------------------------------------------- callAPI
-        CHESS.APIRT.callAPI({
+        window.CHESS.APIRT.callAPI({
           action: "READ",
           body: { id: match_guid },
           // -------------------------------------------------- callback
@@ -206,17 +211,17 @@
             if (rows.length) {
               this.assignPlayerByMatchesRow(rows[0]);
             } else {
-              localStorage.removeItem(CHESS.__MATCH_GUID__);
+              localStorage.removeItem(window.CHESS.__MATCH_GUID__);
               this.createMatch();
             }
           },
         });
       }
       // ================================================== startMatch_send_startgame_to_database
-      startMatch_send_startgame_to_database(id = localStorage.getItem(CHESS.__MATCH_GUID__)) {
+      startMatch_send_startgame_to_database(id = localStorage.getItem(window.CHESS.__MATCH_GUID__)) {
         // ask database if there are matchmoves entries
         // only if there are no matchmoves entries, then start game
-        CHESS.APIRT.callAPI({
+        window.CHESS.APIRT.callAPI({
           action: "MOVES", // vraag moves van deze match_guid
           body: { id },
           callback: ({ rows }) => {
@@ -233,14 +238,22 @@
       // ================================================== updateProgressFromDatabase
       updateProgressFromDatabase({
         rows = false, // if false then call database again with match_guid
-        match_guid = localStorage.getItem(CHESS.__MATCH_GUID__),
+        match_guid = localStorage.getItem(window.CHESS.__MATCH_GUID__),
       }) {
         let chessboard = this.chessboard;
         function processRows(rows) {
           console.warn("Update progress from ", rows.length, "database rows");
           rows.forEach((row) => {
-            let { matchmoves_id, match_guid, fromsquare, tosquare, move, fen, tournament_id } = row;
-            if (move != "startgame" && move != "undomove" && CHESS.ChessBaseElement.evtCounter == 1) {
+            let { 
+              matchmoves_id, 
+              match_guid, 
+              fromsquare, 
+              tosquare, 
+              move, 
+              fen, 
+              tournament_id 
+            } = row;
+            if (move != "startgame" && move != "undomove" && window.CHESS.ChessBaseElement.evtCounter == 1) {
               chessboard.addChessMove({
                 chessPiece: chessboard.getPiece(tosquare), // database does not know which piece it is
                 //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
@@ -257,7 +270,7 @@
 
         if (rows) processRows(rows);
         else
-          CHESS.APIRT.callAPI({
+          window.CHESS.APIRT.callAPI({
             action: "MOVES",
             body: { id: match_guid },
             callback: ({ rows }) => processRows(rows),
@@ -271,7 +284,7 @@
         player_white,
         player_black,
       }) {
-        CHESS.APIRT.callAPI({
+        window.CHESS.APIRT.callAPI({
           action: "UPDATE",
           body: {
             match_guid, // GUID
@@ -298,7 +311,7 @@
         log("storeMove", move, fen);
         // chessboard.updateFENonScreen();
         // -------------------------------------------------- callAPI
-        CHESS.APIRT.callAPI({
+        window.CHESS.APIRT.callAPI({
           action: "CHESSMOVE",
           body: {
             id: chessboard.id, // GUID
@@ -317,7 +330,7 @@
         log("initGame", match_guid);
         this.chessboard.id = match_guid;
         this.chessboard.fen = undefined; // set start FEN
-        localStorage.setItem(CHESS.__MATCH_GUID__, match_guid);
+        localStorage.setItem(window.CHESS.__MATCH_GUID__, match_guid);
       }
       // ================================================== myFEN
       myFEN() {
@@ -325,7 +338,7 @@
       }
       // ================================================== removeMatch
       removeMatch() {
-        localStorage.removeItem(CHESS.__MATCH_GUID__);
+        localStorage.removeItem(window.CHESS.__MATCH_GUID__);
         location.reload();
       }
       // ================================================== undoMove
@@ -364,9 +377,9 @@
       forceBlackPlayer() {
         this.updatePlayers({
           match_guid: this.chessboard.id,
-          wp_user_white: ROADSTECHNOLOGY.CHESS.id,
+          wp_user_white: window.ROADSTECHNOLOGY.CHESS.id,
           wp_user_black: this.getRandomID(),
-          player_white: ROADSTECHNOLOGY.CHESS.displayname,
+          player_white: window.ROADSTECHNOLOGY.CHESS.displayname,
           player_black: "FORCED BLACK PLAYER",
         });
       }

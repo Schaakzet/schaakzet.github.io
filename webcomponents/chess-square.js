@@ -7,11 +7,11 @@
    <chess-square defendedby="Qf5" attackedby="nc5"> Web Component
    */
   customElements.define(
-    CHESS.__WC_CHESS_SQUARE__,
-    class extends CHESS.ChessBaseSquarePieceElement {
+    window.CHESS.__WC_CHESS_SQUARE__,
+    class extends window.CHESS.ChessBaseSquarePieceElement {
       // ======================================================== <chess-square>.observedAttributes
       static get observedAttributes() {
-        return [CHESS.__WC_ATTRIBUTE_PIECENAME__];
+        return [window.CHESS.__WC_ATTRIBUTE_PIECENAME__];
       }
 
       // ======================================================== <chess-square>.constructor
@@ -32,7 +32,7 @@
       }
       // ======================================================== <chess-square>.handleFirstClick
       handleFirstClick() {
-        if (this.hasAttribute(CHESS.__WC_ATTRIBUTE_PIECENAME__)) {
+        if (this.hasAttribute(window.CHESS.__WC_ATTRIBUTE_PIECENAME__)) {
           this.chessboard.highlightOff();
           this.piece.potentialMoves(this.at);
           console.error("moves 1", this.piece.moves);
@@ -59,7 +59,7 @@
       }
       // ======================================================== <chess-square>.piece
       get piece() {
-        return this.querySelector(CHESS.__WC_CHESS_PIECE__) || false;
+        return this.querySelector(window.CHESS.__WC_CHESS_PIECE__) || false;
       }
       set piece(v) {
         // TODO: process as string or element
@@ -71,11 +71,11 @@
       }
       // ======================================================== <chess-square>.addPiece
       addPiece(piece = console.error("No piece defined!")) {
-        piece = piece || CHESS.__FEN_WHITE_KING__; // default value for undefined piece
+        piece = piece || window.CHESS.__FEN_WHITE_KING__; // default value for undefined piece
         let name;
         if (isString(piece)) {
-          name = piece.length == 1 ? CHESS.convertFEN(piece) : piece;
-          piece = document.createElement(CHESS.__WC_CHESS_PIECE__); // create <chess-piece is="wit-koning">
+          name = piece.length == 1 ? window.CHESS.convertFEN(piece) : piece;
+          piece = document.createElement(window.CHESS.__WC_CHESS_PIECE__); // create <chess-piece is="wit-koning">
           piece.is = name;
         } else {
           name = piece.is;
@@ -97,23 +97,23 @@
       }
       // ======================================================== <chess-square>.attacks
       attackedBy(chessPiece) {
-        this.addAttribute(CHESS.__WC_ATTRIBUTE_ATTACKEDBY__, this.attackers, chessPiece);
+        this.addAttribute(window.CHESS.__WC_ATTRIBUTE_ATTACKEDBY__, this.attackers, chessPiece);
       }
       get attackers() {
-        return this.getAttributeArray(CHESS.__WC_ATTRIBUTE_ATTACKEDBY__);
+        return this.getAttributeArray(window.CHESS.__WC_ATTRIBUTE_ATTACKEDBY__);
       }
       get isAttacked() {
         return this.attackers.length > 0;
       }
       // ======================================================== <chess-square>.defend
       defendedBy(chessPiece) {
-        this.addAttribute(CHESS.__WC_ATTRIBUTE_DEFENDEDBY__, this.defenders, chessPiece);
+        this.addAttribute(window.CHESS.__WC_ATTRIBUTE_DEFENDEDBY__, this.defenders, chessPiece);
       }
       get isDefended() {
         return this.defenders.length > 0;
       }
       get defenders() {
-        return this.getAttributeArray(CHESS.__WC_ATTRIBUTE_DEFENDEDBY__); // = ["Qe3","na4","Rf5"]
+        return this.getAttributeArray(window.CHESS.__WC_ATTRIBUTE_DEFENDEDBY__); // = ["Qe3","na4","Rf5"]
       }
       isDefendedBy(color) {
         // return TRUE/FALSE if this square is defended by a piece of the given color
@@ -125,11 +125,11 @@
       }
       // ======================================================== <chess-square>.movesFrom
       movesFrom(chessPiece) {
-        this.addAttribute(CHESS.__WC_ATTRIBUTE_MOVESFROM__, this.movers, chessPiece);
+        this.addAttribute(window.CHESS.__WC_ATTRIBUTE_MOVESFROM__, this.movers, chessPiece);
       }
 
       get movers() {
-        return this.getAttributeArray(CHESS.__WC_ATTRIBUTE_MOVESFROM__);
+        return this.getAttributeArray(window.CHESS.__WC_ATTRIBUTE_MOVESFROM__);
       }
       // ======================================================== <chess-square>.translate
       translate(x_move, y_move) {
@@ -155,10 +155,10 @@
           // pick a state string from definedstates "x" , "p" , "-"
           this.style.border =
             {
-              [CHESS.__ATTACK_PIECE__]: "5px solid red",
-              [CHESS.__EMPTY_SQUARE__]: "5px solid green",
-              [CHESS.__PROTECT_PIECE__]: "5px solid orange", // todo: implement
-              [CHESS.__MOVETYPE_ILLEGAL__]: "2px dashed red",
+              [window.CHESS.__ATTACK_PIECE__]: "5px solid red",
+              [window.CHESS.__EMPTY_SQUARE__]: "5px solid green",
+              [window.CHESS.__PROTECT_PIECE__]: "5px solid orange", // todo: implement
+              [window.CHESS.__MOVETYPE_ILLEGAL__]: "2px dashed red",
             }[state] || undefined_state;
         } else {
           this.style.border = "";
@@ -167,23 +167,23 @@
       }
       // ======================================================== <chess-square>.clear
       clear() {
-        this.removeAttribute(CHESS.__WC_ATTRIBUTE_PIECENAME__); // Removes from Square
+        this.removeAttribute(window.CHESS.__WC_ATTRIBUTE_PIECENAME__); // Removes from Square
         this.style.border = "";
         this.innerHTML = ""; // Removes from board
         this.clearAttributes();
       }
       // ======================================================== <chess-square>.clearAttributes
       clearAttributes() {
-        this.removeAttribute(CHESS.__WC_ATTRIBUTE_ATTACKEDBY__);
-        this.removeAttribute(CHESS.__WC_ATTRIBUTE_DEFENDEDBY__);
-        this.removeAttribute(CHESS.__WC_ATTRIBUTE_MOVESFROM__);
+        this.removeAttribute(window.CHESS.__WC_ATTRIBUTE_ATTACKEDBY__);
+        this.removeAttribute(window.CHESS.__WC_ATTRIBUTE_DEFENDEDBY__);
+        this.removeAttribute(window.CHESS.__WC_ATTRIBUTE_MOVESFROM__);
       }
       // ======================================================== <chess-square>.pieceName
       get pieceName() {
-        return this.getAttribute(CHESS.__WC_ATTRIBUTE_PIECENAME__) || "";
+        return this.getAttribute(window.CHESS.__WC_ATTRIBUTE_PIECENAME__) || "";
       }
       set pieceName(pieceName) {
-        this.setAttribute(CHESS.__WC_ATTRIBUTE_PIECENAME__, pieceName);
+        this.setAttribute(window.CHESS.__WC_ATTRIBUTE_PIECENAME__, pieceName);
         return pieceName;
       }
       // ======================================================== <chess-square>.capturePieceBy
@@ -209,7 +209,7 @@
       }
       // ======================================================== <chess-square>.isMovesFrom
       isMovesFrom(color) {
-        //CHESS.__PLAYER_WHITE__
+        //window.CHESS.__PLAYER_WHITE__
         //this.movers = ["Pg2, qh4"]
         return (
           this.movers.filter(([fen, file, rank]) => {
@@ -220,6 +220,6 @@
         ); // true/false
       } // <chess-square>.isMovesFrom
     } // <chess-square>
-  ); //defineElement(CHESS.__WC_CHESS_SQUARE__)
+  ); //defineElement(window.CHESS.__WC_CHESS_SQUARE__)
   // ********************************************************** end IIFE
 })();

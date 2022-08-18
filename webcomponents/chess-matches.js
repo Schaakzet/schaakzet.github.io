@@ -1,11 +1,16 @@
 !(function () {
+
+  // The purpose of "use strict" is to indicate that the code should be executed in "strict mode".
+  // With strict mode, you can not, for example, use undeclared variables.
+  "use strict";
+
   const CSS_Boards = /* css */ `#boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,120px));gap:1em}`;
   const DIV_Boards = /* html */ `<div id="boards"></div>`;
 
   // ********************************************************** <chess-matches>
   customElements.define(
     "chess-matches",
-    class extends CHESS.ChessBaseElement {
+    class extends window.CHESS.ChessBaseElement {
       constructor() {
         super().attachShadow({ mode: "open" }).innerHTML = `<style>${CSS_Boards}</style>${DIV_Boards}`;
       }
@@ -22,13 +27,13 @@
       }
       // ======================================================== <chess-matches>.read_matches
       read_matches() {
-        CHESS.APIRT.callAPI({
+        window.CHESS.APIRT.callAPI({
           action: "READ",
           body: { where: "ALLGAMES" },
           callback: ({ rows }) => {
             console.error("Returned matches", rows);
             const setMainBoard = (match_guid, fen) => {
-              let chessboard = document.querySelector(CHESS.__WC_CHESS_BOARD__);
+              let chessboard = document.querySelector(window.CHESS.__WC_CHESS_BOARD__);
               chessboard.id = match_guid;
               chessboard.fen = fen;
               chessboard.style.pointerEvents = "none";
@@ -53,7 +58,7 @@
                 }) => {
                   // ------------------------------------------------- create miniboard
                   // set miniboard variable, so it can be use inside its code
-                  let miniboard = CHESS.createBoardElement({
+                  let miniboard = window.CHESS.createBoardElement({
                     props: {
                       id: match_guid,
                       fen,
@@ -95,7 +100,7 @@
       } // render()
       // ======================================================== <chess-matches>.deleteStartboards
       deleteStartboards() {
-        CHESS.deleteStartboards({
+        window.CHESS.deleteStartboards({
           callback: (result) => {
             console.log("All startposition boards removed", result);
           },

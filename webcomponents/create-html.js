@@ -7,7 +7,7 @@ Will trigger an eventName with detailValue when clicked.
 */
 customElements.define(
   "create-html",
-  class extends CHESS.ChessBaseElement {
+  class extends window.CHESS.ChessBaseElement {
     connectedCallback() {
       super.connectedCallback();
       setTimeout(() => {

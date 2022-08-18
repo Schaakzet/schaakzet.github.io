@@ -150,21 +150,34 @@ window.CHESS = Object.assign(
     __KINGMOVES__: [[[0, 1]], [[1, 1]], [[1, 0]], [[1, -1]], [[0, -1]], [[-1, -1]], [[-1, 0]], [[-1, 1]]],
   }
 );
-Object.assign(CHESS, {
-  __PIECE_WHITE_PAWN__: CHESS.__PLAYER_WHITE__ + CHESS.__PIECE_SEPARATOR__ + CHESS.__PIECE_PAWN__,
-  __PIECE_BLACK_PAWN__: CHESS.__PLAYER_BLACK__ + CHESS.__PIECE_SEPARATOR__ + CHESS.__PIECE_PAWN__,
+Object.assign(window.CHESS, {
+  __PIECE_WHITE_PAWN__: window.CHESS.__PLAYER_WHITE__ + window.CHESS.__PIECE_SEPARATOR__ + window.CHESS.__PIECE_PAWN__,
+  __PIECE_BLACK_PAWN__: window.CHESS.__PLAYER_BLACK__ + window.CHESS.__PIECE_SEPARATOR__ + window.CHESS.__PIECE_PAWN__,
 
-  __PLAYER_COLORS__: [CHESS.__PLAYER_WHITE__, CHESS.__PLAYER_BLACK__],
-  __PIECE_NAMES__: [CHESS.__PIECE_ROOK__, CHESS.__PIECE_KNIGHT__, CHESS.__PIECE_BISHOP__, CHESS.__PIECE_QUEEN__, CHESS.__PIECE_KING__, CHESS.__PIECE_PAWN__],
-  __QUEENMOVES__: [...CHESS.__BISHOPMOVES__, ...CHESS.__ROOKMOVES__],
+  __PLAYER_COLORS__: [
+    window.CHESS.__PLAYER_WHITE__, 
+    window.CHESS.__PLAYER_BLACK__
+  ],
+  __PIECE_NAMES__: [
+    window.CHESS.__PIECE_ROOK__, 
+    window.CHESS.__PIECE_KNIGHT__, 
+    window.CHESS.__PIECE_BISHOP__, 
+    window.CHESS.__PIECE_QUEEN__, 
+    window.CHESS.__PIECE_KING__, 
+    window.CHESS.__PIECE_PAWN__
+  ],
+  __QUEENMOVES__: [
+    ...window.CHESS.__BISHOPMOVES__, 
+    ...window.CHESS.__ROOKMOVES__
+  ],
 });
 
 // ********************************************************** Helper functions
-Object.assign(CHESS, {
-  otherPlayer: (color) => (color == CHESS.__PLAYER_WHITE__ ? CHESS.__PLAYER_BLACK__ : CHESS.__PLAYER_WHITE__),
+Object.assign(window.CHESS, {
+  otherPlayer: (color) => (color == window.CHESS.__PLAYER_WHITE__ ? window.CHESS.__PLAYER_BLACK__ : window.CHESS.__PLAYER_WHITE__),
 
   // ======================================================== CHESS.createBoardElement
-  createBoardElement: ({ tag = CHESS.__WC_CHESS_BOARD__, props = {}, attrs = [] }) => {
+  createBoardElement: ({ tag = window.CHESS.__WC_CHESS_BOARD__, props = {}, attrs = [] }) => {
     const chessboard = document.createElement(tag);
     chessboard.id = props.id;
     //! WE PROBABLY CAN'T SET FEN HERE, BECAUSE IT IS NOT IN THE DOM
@@ -174,7 +187,7 @@ Object.assign(CHESS, {
 });
 
 // ********************************************************** CHESS Analysis constants
-Object.assign(CHESS, {
+Object.assign(window.CHESS, {
   __ANALYSIS_PRE__: "pre_analysis",
   __ANALYSIS_MAIN__: "main_analysis",
 });
@@ -190,15 +203,15 @@ const translateSquare = (square, file_offset, rank_offset) => {
 // "wit-toren" -> "R"
 let FENMap = new Map(); // see MDN Map documentation
 let FENletters = "RNBQKPrnbqkp".split(""); // create an array of letters
-CHESS.__PLAYER_COLORS__.forEach((color) =>
-  CHESS.__PIECE_NAMES__.forEach((name) => {
-    let piece = color + CHESS.__PIECE_SEPARATOR__ + name;
+window.CHESS.__PLAYER_COLORS__.forEach((color) =>
+window.CHESS.__PIECE_NAMES__.forEach((name) => {
+    let piece = color + window.CHESS.__PIECE_SEPARATOR__ + name;
     let letter = FENletters.shift(); // remove first letter from array
     FENMap.set(piece, letter);
     FENMap.set(letter, piece);
   })
 );
-Object.assign(CHESS, {
+Object.assign(window.CHESS, {
   convertFEN: (name) => FENMap.get(name), // return R or wit-toren
 });
 

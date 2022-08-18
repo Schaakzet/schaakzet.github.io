@@ -1,11 +1,16 @@
 !(function () {
+
+  // The purpose of "use strict" is to indicate that the code should be executed in "strict mode".
+  // With strict mode, you can not, for example, use undeclared variables.
+  "use strict";
+  
   /***********************************************************************/
   customElements.define(
-    CHESS.__WC_CHESS_BOARD__,
-    class extends CHESS.ChessBaseSquarePieceElement {
+    window.CHESS.__WC_CHESS_BOARD__,
+    class extends window.CHESS.ChessBaseSquarePieceElement {
       // ======================================================== <chess-board>.observedAttributes
       static get observedAttributes() {
-        return [CHESS.__WC_ATTRIBUTE_FEN__];
+        return [window.CHESS.__WC_ATTRIBUTE_FEN__];
       }
       // ======================================================== <chess-board>.constructor
       constructor() {
@@ -25,11 +30,11 @@
         super.connectedCallback();
         // when this Component is added to the DOM, create the board with FEN and Arrays.
         // <chess-square> and <chess-piece> are loaded ASYNC, so we need to wait for them to be defined before creating the board
-        customElements.whenDefined(CHESS.__WC_CHESS_SQUARE__).then(() => {
-          customElements.whenDefined(CHESS.__WC_CHESS_PIECE__).then(() => {
+        customElements.whenDefined(window.CHESS.__WC_CHESS_SQUARE__).then(() => {
+          customElements.whenDefined(window.CHESS.__WC_CHESS_PIECE__).then(() => {
             const templateInHTML = this.getAttribute("template");
             const isMatchBoard = this.record;
-            const hasFENAttribute = this.hasAttribute(CHESS.__WC_ATTRIBUTE_FEN__);
+            const hasFENAttribute = this.hasAttribute(window.CHESS.__WC_ATTRIBUTE_FEN__);
 
             this.createboard(templateInHTML);
 
@@ -46,7 +51,7 @@
             // }
 
             window.addEventListener("resize", (e) => this.resizeCheck(e));
-            if (this.id !== CHESS.__TESTBOARD_FOR_MOVES__) this.listenOnMatchID();
+            if (this.id !== window.CHESS.__TESTBOARD_FOR_MOVES__) this.listenOnMatchID();
 
             // this.initPlayerTurn();
 
@@ -104,7 +109,7 @@
       }
       // ======================================================== <chess-board>.attributeChangedCallback
       attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue && oldValue !== newValue && name == CHESS.__WC_ATTRIBUTE_FEN__) {
+        if (oldValue && oldValue !== newValue && name == window.CHESS.__WC_ATTRIBUTE_FEN__) {
           this.fen = newValue;
         }
       }
@@ -120,7 +125,7 @@
             if (this.id == match_guid) {
               if (move == "startgame") {
                 // ----------------------------- startgame
-                if (!this.hasAttribute("player")) this.player = CHESS.__PLAYER_WHITE__;
+                if (!this.hasAttribute("player")) this.player = window.CHESS.__PLAYER_WHITE__;
                 this.updatePlayerBlack(match_guid);
               } else if (move == "undomove") {
                 this.undoMove();
@@ -146,7 +151,7 @@
                   }
                 }
               } else {
-                this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, this.fen);
+                this.setAttribute(window.CHESS.__WC_ATTRIBUTE_FEN__, this.fen);
               }
             }
           };
@@ -164,7 +169,7 @@
       }
       // ======================================================== <chess-board>.readGUID
       updatePlayerBlack(match_guid) {
-        CHESS.APIRT.callAPI({
+        window.CHESS.APIRT.callAPI({
           action: "READ",
           body: { id: match_guid },
           callback: ({ rows }) => {
@@ -208,12 +213,12 @@
         if (templ) {
           this.append(templ.content.cloneNode(true));
         } else {
-          this.innerHTML = CHESS.chessboard_innerHTML;
+          this.innerHTML = window.CHESS.chessboard_innerHTML;
         }
 
         // instead of 'const' store the variables on the <chess-board> so ALL code can use it (in 2022)
-        this.files = CHESS.__FILES__; // ["a", "b", "c", "d", "e", "f", "g", "h"]; // Kolommen
-        this.ranks = CHESS.__RANKS__.reverse(); // ["8", "7", "6", "5", "4", "3", "2", "1"]; // Rijen
+        this.files = window.CHESS.__FILES__; // ["a", "b", "c", "d", "e", "f", "g", "h"]; // Kolommen
+        this.ranks = window.CHESS.__RANKS__.reverse(); // ["8", "7", "6", "5", "4", "3", "2", "1"]; // Rijen
         this.squares = [];
 
         let gridareasHTML = "";
@@ -225,10 +230,10 @@
             const square = this.files[file] + this.ranks[rank]; // "a8"
             this.squares.push(square);
 
-            gridareasHTML += `[${CHESS.__WC_ATTRIBUTE_AT__}="${square}"] { grid-area: ${square} }`;
+            gridareasHTML += `[${window.CHESS.__WC_ATTRIBUTE_AT__}="${square}"] { grid-area: ${square} }`;
 
-            let fieldClass = fieldColor ? CHESS.__CLASSNAME_WHITESQUARE__ : CHESS.__CLASSNAME_BLACKSQUARE__;
-            chess_squaresHTML += `<${CHESS.__WC_CHESS_SQUARE__} class="${fieldClass}" ${CHESS.__WC_ATTRIBUTE_AT__}="${square}"></${CHESS.__WC_CHESS_SQUARE__}>`;
+            let fieldClass = fieldColor ? window.CHESS.__CLASSNAME_WHITESQUARE__ : window.CHESS.__CLASSNAME_BLACKSQUARE__;
+            chess_squaresHTML += `<${window.CHESS.__WC_CHESS_SQUARE__} class="${fieldClass}" ${window.CHESS.__WC_ATTRIBUTE_AT__}="${square}"></${window.CHESS.__WC_CHESS_SQUARE__}>`;
             if (file < 7) fieldColor = !fieldColor; // alternate fieldColor white/black/white/black
           }
         }
@@ -278,7 +283,7 @@
       }
       // ======================================================== <chess-board>.setMessage
       setMessage(msg) {
-        if (this.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
+        if (this.id !== window.CHESS.__TESTBOARD_FOR_MOVES__) {
           document.getElementById("message").innerText = msg;
         }
       }
@@ -288,7 +293,7 @@
         // return reference to <chess-square at=" [position] ">
         if (square) {
           let squareElement = square;
-          if (isString(square)) squareElement = this.queryBoard(`[${CHESS.__WC_ATTRIBUTE_AT__}=${square}]`);
+          if (isString(square)) squareElement = this.queryBoard(`[${window.CHESS.__WC_ATTRIBUTE_AT__}=${square}]`);
           // console.error("square element:", squareElement);
           if (!squareElement) console.warn(square, "is not a valid square");
           return squareElement;
@@ -308,7 +313,7 @@
       addPiece(name, at) {
         //if piecename is one FEN letter
         if (name && at) {
-          name = CHESS.convertFEN(name);
+          name = window.CHESS.convertFEN(name);
           return this.getSquare(at).addPiece(name);
         }
       }
@@ -357,7 +362,7 @@
       // ======================================================== <chess-board>.changePlayer
       changePlayer() {
         if (this.player) {
-          this.playerturn = CHESS.otherPlayer(this.playerturn); // todo Naar FEN
+          this.playerturn = window.CHESS.otherPlayer(this.playerturn); // todo Naar FEN
           console.warn("changePlayer turn:", this.playerturn, "player:", this.player, this.fen);
         }
       }
@@ -368,11 +373,11 @@
         toSquare = false, // <chess-square> to which piece was moved
         move, // "startgame" e2-e4  d7xh8  O-O-O
       }) {
-        if (this.record && this.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
+        if (this.record && this.id !== window.CHESS.__TESTBOARD_FOR_MOVES__) {
           // emit Event to <chess-match> which records all moves in database
           this.dispatch({
             root: document,
-            name: CHESS.__STORECHESSMOVE__,
+            name: window.CHESS.__STORECHESSMOVE__,
             detail: {
               chessboard: this, // chessboard.record TRUE/FALSE if the move will be recorded
               fromsquare: fromSquare && fromSquare.at,
@@ -411,28 +416,28 @@
         const /* function */ movedPiece = () => {
             let fromSquare = chessPiece.square;
             let toSquare = this.getSquare(square);
-            let moveType = toSquare.piece ? CHESS.__MOVETYPE_CAPTURE__ : CHESS.__MOVETYPE_MOVE__;
+            let moveType = toSquare.piece ? window.CHESS.__MOVETYPE_CAPTURE__ : window.CHESS.__MOVETYPE_MOVE__;
             //console.error(square, fromSquare, moveType, toSquare);
             const lastFEN = this.fen;
 
             // Clear en Passant pawn and add to capturedPiece
             if (this.lastMove && toSquare.at == this.enPassantPosition && chessPiece.isPawn) {
               this.lastMove.toSquare.capturePieceBy(chessPiece);
-              moveType = CHESS.__MOVETYPE_CAPTURE__;
+              moveType = window.CHESS.__MOVETYPE_CAPTURE__;
               console.log("We had En Passant. Clear piece.");
               this.lastMove.toSquare.clear();
             }
 
             // Strike rook, clean castlingArray
             if (toSquare.piece.isRook) {
-              if (toSquare.at == CHESS.__SQUARE_BOTTOM_LEFT__) {
-                this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_WHITE_QUEEN__);
-              } else if (toSquare.at == CHESS.__SQUARE_BOTTOM_RIGHT__) {
-                this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_WHITE_KING__);
-              } else if (toSquare.at == CHESS.__SQUARE_TOP_LEFT__) {
-                this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_BLACK_QUEEN__);
-              } else if (toSquare.at == CHESS.__SQUARE_TOP_RIGHT__) {
-                this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_BLACK_KING__);
+              if (toSquare.at == window.CHESS.__SQUARE_BOTTOM_LEFT__) {
+                this.castlingArray = this.castlingArray.filter((item) => item !== window.CHESS.__FEN_WHITE_QUEEN__);
+              } else if (toSquare.at == window.CHESS.__SQUARE_BOTTOM_RIGHT__) {
+                this.castlingArray = this.castlingArray.filter((item) => item !== window.CHESS.__FEN_WHITE_KING__);
+              } else if (toSquare.at == window.CHESS.__SQUARE_TOP_LEFT__) {
+                this.castlingArray = this.castlingArray.filter((item) => item !== window.CHESS.__FEN_BLACK_QUEEN__);
+              } else if (toSquare.at == window.CHESS.__SQUARE_TOP_RIGHT__) {
+                this.castlingArray = this.castlingArray.filter((item) => item !== window.CHESS.__FEN_BLACK_KING__);
               }
             }
             // Capture Piece => capturePieceBy
@@ -461,7 +466,7 @@
             save2chessMoves(); // save every move, including castling king AND rook
 
             if (!this.doingCastling) {
-              CHESS.analysis(this, CHESS.__ANALYSIS_MAIN__);
+              window.CHESS.analysis(this, window.CHESS.__ANALYSIS_MAIN__);
             }
             if (this.doingCastling) {
               if (chessPiece.isKing) {
@@ -533,7 +538,7 @@
       initAnalysis() {
         // console.error("initAnalysis");
         if (this.doAnalysis) {
-          CHESS.analysis(this, CHESS.__ANALYSIS_MAIN__);
+          window.CHESS.analysis(this, window.CHESS.__ANALYSIS_MAIN__);
         }
       }
       // ======================================================== <chess-board>.lastMove
@@ -552,7 +557,7 @@
       // ======================================================== <chess-board>.findPieceSquare
       findPieceSquare(piece) {
         if (isString(piece)) {
-          const selector = CHESS.__WC_CHESS_SQUARE__ + `[${CHESS.__WC_ATTRIBUTE_PIECENAME__}="${piece}"]`;
+          const selector = window.CHESS.__WC_CHESS_SQUARE__ + `[${window.CHESS.__WC_ATTRIBUTE_PIECENAME__}="${piece}"]`;
           return this.querySelector(selector);
         } else {
           return piece.square; // <chess-piece>.square getter
@@ -560,11 +565,11 @@
       }
       // ======================================================== <chess-board>.kingSquare
       kingSquare(
-        color = this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__), // get default color from <chess-board player="..."
+        color = this.getAttribute(window.CHESS.__WC_ATTRIBUTE_PLAYERTURN__), // get default color from <chess-board player="..."
         showwarning = false,
         warning = /* function */ () => console.warn("No king on the board!") // optional warning function
       ) {
-        const king = color + CHESS.__PIECE_SEPARATOR__ + CHESS.__PIECE_KING__;
+        const king = color + window.CHESS.__PIECE_SEPARATOR__ + window.CHESS.__PIECE_KING__;
         const square = this.findPieceSquare(king);
         return square || (showwarning && warning());
       }
@@ -576,8 +581,8 @@
       documentation() {
         // documentatie van class Methods en Properties in console.log
         this.docs(this);
-        this.docs(this.querySelector(CHESS.__WC_CHESS_SQUARE__));
-        this.docs(this.querySelector(CHESS.__WC_CHESS_PIECE__));
+        this.docs(this.querySelector(window.CHESS.__WC_CHESS_SQUARE__));
+        this.docs(this.querySelector(window.CHESS.__WC_CHESS_PIECE__));
       }
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
@@ -585,7 +590,12 @@
         console.warn("Set fen START");
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
         // console.log("%c set fen: ", "background:orange", fenString);
-        this.castlingArray = [CHESS.__FEN_WHITE_KING__, CHESS.__FEN_WHITE_QUEEN__, CHESS.__FEN_BLACK_KING__, CHESS.__FEN_BLACK_QUEEN__]; // Halen we uit FEN
+        this.castlingArray = [
+          window.CHESS.__FEN_WHITE_KING__, 
+          window.CHESS.__FEN_WHITE_QUEEN__, 
+          window.CHESS.__FEN_BLACK_KING__, 
+          window.CHESS.__FEN_BLACK_QUEEN__
+        ]; // Halen we uit FEN
 
         //! THIS WILL TRIGGER set fen again: this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
         // make sure we don't run before the board exists, because attributeChangedCallback runs early
@@ -610,9 +620,9 @@
             // player
             if (player) {
               if (player == "b") {
-                this.playerturn = CHESS.__PLAYER_BLACK__;
+                this.playerturn = window.CHESS.__PLAYER_BLACK__;
               } else {
-                this.playerturn = CHESS.__PLAYER_WHITE__;
+                this.playerturn = window.CHESS.__PLAYER_WHITE__;
               }
             }
             // castling "KQkq" becomes this.castlingArray = ["K", "Q", "k", "q"]
@@ -631,7 +641,7 @@
         // only analyze the board when there are squares on the board.
         this.debuginfo();
         if (this.doAnalysis && this.id !== "testboard") {
-          CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
+          window.CHESS.analysis(this, window.CHESS.__ANALYSIS_PRE__);
         }
         console.error("SET FEN END!!!", this);
       } // set fen
@@ -649,7 +659,7 @@
               const square = this.files[file] + this.ranks[rank]; // "a8"
               const piece = this.getPiece(square);
               if (piece) {
-                const fenPiece = CHESS.convertFEN(piece.is);
+                const fenPiece = window.CHESS.convertFEN(piece.is);
                 if (emptySquareCount != 0) {
                   fen = fen + emptySquareCount;
                   emptySquareCount = 0;
@@ -671,7 +681,7 @@
         fenParts.push(fen);
         // player
         let player = "-";
-        if (this.playerturn == CHESS.__PLAYER_WHITE__) {
+        if (this.playerturn == window.CHESS.__PLAYER_WHITE__) {
           player = "w";
         } else {
           player = "b";
@@ -702,7 +712,7 @@
       } // get fen()
       // ======================================================== <chess-board>.record GETTER
       get record() {
-        return this.hasAttribute(CHESS.__WC_ATTRIBUTE_RECORD__);
+        return this.hasAttribute(window.CHESS.__WC_ATTRIBUTE_RECORD__);
       }
       // ======================================================== <chess-board>.play
       play(moves = this._doingmoremoves) {
@@ -740,7 +750,7 @@
         if (testPiece) {
           console.warn("666 trymove", testPiece.is, from, "->", to);
           testPiece.movePieceTo(to, false); // move piece without animation
-          if (CHESS.doAnalysis && CHESS.analysis(this, "checkcheck")) {
+          if (window.CHESS.doAnalysis && window.CHESS.analysis(this, "checkcheck")) {
             matchboard.markIllegalMove(to);
           }
         } else {
@@ -751,17 +761,17 @@
       // ======================================================== <chess-board>.markIllegalMove
       markIllegalMove(at) {
         console.log("666-DE MarkIllegalMove", at);
-        this.getSquare(at).highlight(CHESS.__MOVETYPE_ILLEGAL__);
+        this.getSquare(at).highlight(window.CHESS.__MOVETYPE_ILLEGAL__);
         this.pieceClicked.moves = this.pieceClicked.moves.filter((move) => move !== this.getSquare(at).at);
       }
 
       // ============================================================ <chess-board>.player on board
       get player() {
-        return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__);
+        return this.getAttribute(window.CHESS.__WC_ATTRIBUTE_PLAYER__);
       }
 
       set player(value) {
-        this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__, value);
+        this.setAttribute(window.CHESS.__WC_ATTRIBUTE_PLAYER__, value);
       }
 
       // ============================================================ <chess-board>.setPlayerAndFEN
@@ -772,10 +782,10 @@
       // ============================================================ <chess-board>.playerturn = current player
       // wie er aan zet is
       get playerturn() {
-        return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__);
+        return this.getAttribute(window.CHESS.__WC_ATTRIBUTE_PLAYERTURN__);
       }
       set playerturn(v) {
-        this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__, v);
+        this.setAttribute(window.CHESS.__WC_ATTRIBUTE_PLAYERTURN__, v);
       }
       // ============================================================ <chess-board>.updateFENonScreen
       updateFENonScreen() {
@@ -785,7 +795,7 @@
       // ============================================================ <chess-board>.debuginfo
       debuginfo() {
         let debuginfo = document.getElementById("chessboard_debuginfo");
-        if (debuginfo && this.id != CHESS.__TESTBOARD_FOR_MOVES__) debuginfo.innerHTML = `GUID: ${this.id}   __ FEN: ${this.fen}`;
+        if (debuginfo && this.id != window.CHESS.__TESTBOARD_FOR_MOVES__) debuginfo.innerHTML = `GUID: ${this.id}   __ FEN: ${this.fen}`;
       }
     } // class ChessBoard
   ); // end of class definition

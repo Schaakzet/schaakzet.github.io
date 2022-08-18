@@ -1,4 +1,9 @@
 !(function () {
+
+  // The purpose of "use strict" is to indicate that the code should be executed in "strict mode".
+  // With strict mode, you can not, for example, use undeclared variables.
+  "use strict";
+
   // <chess-match> encapsulates <chess-board>
   // manages players
   // communicates with server
@@ -11,7 +16,7 @@
   // ********************************************************** define <chess-match>
   customElements.define(
     "chess-availablegames",
-    class extends CHESS.ChessBaseElement {
+    class extends window.CHESS.ChessBaseElement {
       connectedCallback() {
         super.connectedCallback();
         this.render();
@@ -37,7 +42,7 @@
       // ================================================== get_availableGames
       get_availableGames(where) {
         // ------------------------------------------------- callAPI READ
-        CHESS.APIRT.callAPI({
+        window.CHESS.APIRT.callAPI({
           action: "READ",
           body: {
             where,
