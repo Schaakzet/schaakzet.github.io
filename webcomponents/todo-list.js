@@ -1,6 +1,6 @@
 customElements.define(
   "todo-list",
-  class extends CHESS.ChessBaseElement {
+  class extends window.CHESS.ChessBaseElement {
     connectedCallback() {
       super.connectedCallback();
       setTimeout(() => {

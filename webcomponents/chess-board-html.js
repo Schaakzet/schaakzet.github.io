@@ -1,10 +1,15 @@
 !(function () {
+
+  // The purpose of "use strict" is to indicate that the code should be executed in "strict mode".
+  // With strict mode, you can not, for example, use undeclared variables.
+  "use strict";
+  
   // ********************************************************** CSS and HTML for <chess-board>
   function squareStateCSS(playerColor) {
     const playerColors = ["lightbrown", "lightbrown"];
-    const squareColor = playerColor == CHESS.__PLAYER_WHITE__ ? playerColors[0] : playerColors[1];
-    const otherPlayer = CHESS.otherPlayer(playerColor);
-    const attackedState = CHESS.__ATTACK_PIECE__;
+    const squareColor = playerColor == window.CHESS.__PLAYER_WHITE__ ? playerColors[0] : playerColors[1];
+    const otherPlayer = window.CHESS.otherPlayer(playerColor);
+    const attackedState = window.CHESS.__ATTACK_PIECE__;
     const selector =
       `chess-board[playerturn="${playerColor}"] ` + // if playerColor
       `chess-square[piece*="${otherPlayer}"]:not([state="${attackedState}"])`; // if piece is not captured
@@ -22,8 +27,8 @@
 
   const chessboardSTYLES =
     /*html*/ `<style id="chessboard_definition">` +
-    squareStateCSS(CHESS.__PLAYER_WHITE__) +
-    squareStateCSS(CHESS.__PLAYER_BLACK__) +
+    squareStateCSS(window.CHESS.__PLAYER_WHITE__) +
+    squareStateCSS(window.CHESS.__PLAYER_BLACK__) +
     /*css*/ `chess-board {
       --width: var(--chess_board_resized_width, 100%);
       aspect-ratio: 1 / 1;

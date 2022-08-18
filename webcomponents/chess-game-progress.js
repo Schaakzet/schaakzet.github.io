@@ -1,12 +1,17 @@
 !(function () {
+
+  // The purpose of "use strict" is to indicate that the code should be executed in "strict mode".
+  // With strict mode, you can not, for example, use undeclared variables.
+  "use strict";
+  
   // ********************************************************** IIFE
   customElements.define(
     "chess-game-progress",
-    class extends CHESS.ChessBaseElement {
+    class extends window.CHESS.ChessBaseElement {
       connectedCallback() {
         super.connectedCallback();
         this.render();
-        document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.addMove(evt.detail));
+        document.addEventListener(window.CHESS.__STORECHESSMOVE__, (evt) => this.addMove(evt.detail));
         document.addEventListener("restartMatch", (evt) => this.clear());
       }
       clear() {

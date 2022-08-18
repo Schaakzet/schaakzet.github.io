@@ -1,19 +1,19 @@
 // ********************************************************** Chess BaseElement for <chess-board>,<chess-square>,<chess-piece>
-CHESS.ChessBaseSquarePieceElement = class extends CHESS.ChessBaseElement {
+window.CHESS.ChessBaseSquarePieceElement = class extends window.CHESS.ChessBaseElement {
     constructor(){
         super();
     }
     // ======================================================== <chess-*>.at
     // returns square location "b8"
     get at() {
-      if (this.localName == CHESS.__WC_CHESS_PIECE__) {
-        return this.square.getAttribute(CHESS.__WC_ATTRIBUTE_AT__);
+      if (this.localName == window.CHESS.__WC_CHESS_PIECE__) {
+        return this.square.getAttribute(window.CHESS.__WC_ATTRIBUTE_AT__);
       } else {
-        return this.getAttribute(CHESS.__WC_ATTRIBUTE_AT__);
+        return this.getAttribute(window.CHESS.__WC_ATTRIBUTE_AT__);
       }
     }
     set at(at) {
-      if (this.localName == CHESS.__WC_CHESS_PIECE__) {
+      if (this.localName == window.CHESS.__WC_CHESS_PIECE__) {
         this.chessboard.movePiece(this, at);
       } else {
         console.error("Can't set at on", this);
@@ -37,11 +37,11 @@ CHESS.ChessBaseSquarePieceElement = class extends CHESS.ChessBaseElement {
     }
     // ======================================================== <chess-*>.chessboard
     get chessboard() {
-      return this.closest(CHESS.__WC_CHESS_BOARD__);
+      return this.closest(window.CHESS.__WC_CHESS_BOARD__);
     }
     // ======================================================== <chess-*>.square
     get square() {
-      return this.closest(CHESS.__WC_CHESS_SQUARE__);
+      return this.closest(window.CHESS.__WC_CHESS_SQUARE__);
     }
   };
   

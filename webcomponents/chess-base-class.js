@@ -1,6 +1,6 @@
 // ********************************************************** ChessBaseElement
 // one BaseClass for all to be created Custom Elements/Web Components
-CHESS.ChessBaseElement = class extends HTMLElement {
+window.CHESS.ChessBaseElement = class extends HTMLElement {
   // ======================================================== constructor
   constructor() {
     super();
@@ -20,15 +20,15 @@ CHESS.ChessBaseElement = class extends HTMLElement {
   // ======================================================== BaseElement.docs
   // List methods and properties of a Component in the console
   docs(obj) {
+    function log(name, arr) {
+      arr = arr.filter((x) => x != "constructor");
+      console.warn(`%c ${obj.nodeName} ${name}:`, "background:gold", arr.join(", "));
+    }
     if (obj) {
-      let proto = Reflect.getPrototypeOf(obj);
+      let proto = window.Reflect.getPrototypeOf(obj);
       let methods = [];
       let props = [];
-      function log(name, arr) {
-        arr = arr.filter((x) => x != "constructor");
-        console.warn(`%c ${obj.nodeName} ${name}:`, "background:gold", arr.join(", "));
-      }
-      Reflect.ownKeys(proto).forEach((key) => {
+      window.Reflect.ownKeys(proto).forEach((key) => {
         try {
           if (typeof proto[key] == "function") methods.push(key);
         } catch (e) {
@@ -75,7 +75,7 @@ CHESS.ChessBaseElement = class extends HTMLElement {
 
     // subscribe to a server Event Source,
     // it sends an update for every made matchmove recorded in the database
-    const API = CHESS.APIRT.__API_MATCHMOVES_EVENTSOURCE__;
+    const API = window.CHESS.APIRT.__API_MATCHMOVES_EVENTSOURCE__;
     log("init", API);
 
     try {
@@ -115,9 +115,9 @@ CHESS.ChessBaseElement = class extends HTMLElement {
   }
   // ======================================================== BaseElement.resumeChessGame
   resumeChessGame(evt) {
-    let { id, displayname } = ROADSTECHNOLOGY.CHESS;
+    let { id, displayname } = window.ROADSTECHNOLOGY.CHESS;
 
-    localStorage.setItem(CHESS.__MATCH_GUID__, evt.detail.data);
+    localStorage.setItem(window.CHESS.__MATCH_GUID__, evt.detail.data);
     location.assign(`match.html?id=${id}&name=${displayname}` /* , "_blank" */);
 
     // this.chessboard.fen = fen;

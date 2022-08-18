@@ -1,4 +1,9 @@
 !(function () {
+  
+  // The purpose of "use strict" is to indicate that the code should be executed in "strict mode".
+  // With strict mode, you can not, for example, use undeclared variables.
+  "use strict";
+
   if (window.CHESS) {
     console.error("Don't load schaakzet.js again!");
     return; // prevent loading again

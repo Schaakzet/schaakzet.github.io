@@ -3,4 +3,4 @@ window.isString = (value) => typeof value === "string" || value instanceof Strin
 
 console.todo = function(...args){
     console.log("%c TODO: ", "background:red;color:yellow", ...args);
-}
+};

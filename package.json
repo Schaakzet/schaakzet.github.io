@@ -1,0 +1,39 @@
+{
+  "name": "roads-technology-schaakzet",
+  "description": "Roads Technology SchaakZet project",
+  "private": true,
+  "homepage": "https://schaakzet.github.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Schaakzet/schaakzet.github.io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Schaakzet/schaakzet.github.io/issues"
+  },
+  "contributors": [
+    {
+      "name" : "Danny Engelman",
+      "email" : "danny@engelman.nl"
+    },
+    {
+      "name" : "Sandro",
+      "email" : "sandro@creative-sources.nl"
+    },
+    {
+      "name" : "Rob van der Schaaf",
+      "email" : "r.vanderschaaf@ziggo.nl"
+    },
+    {
+      "name" : "Bart Pietersma",
+      "email" : "bolleboos@gmail.com"
+    },
+    {
+      "name" : "Marc Nolte",
+      "email" : "marc.nolte@roads-technology.nl"
+    }
+  ],
+  "devDependencies": {
+    "cspell": "^6.6.1",
+    "eslint": "^8.22.0"
+  }
+}
