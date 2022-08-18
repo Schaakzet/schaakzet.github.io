@@ -189,7 +189,7 @@ Object.assign(window.CHESS, {
 // ********************************************************** CHESS Analysis constants
 Object.assign(window.CHESS, {
   __ANALYSIS_PRE__: "pre_analysis",
-  __ANALYSIS_MAIN__: "main_analysis",
+  __ANALYSIS_AFTER__: "after_analysis",
 });
 
 // ********************************************************** Square functions

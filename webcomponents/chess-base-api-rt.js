@@ -64,6 +64,7 @@ Object.assign(window.CHESS.APIRT, {
     fetch(uri, options)
       .then((response) => response.json())
       .then((json_response) => {
+        console.log("JSON Response:", json_response);
         let rowcount = json_response.rows.length;
         if (rowcount == 1) {
           log(`fetched ${body.action} ${body.where || ""}:`, { ROW: json_response.rows[0] });

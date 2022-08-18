@@ -319,7 +319,6 @@
       }
       // ======================================================== <chess-board>.clearAttributes
       clearAttributes() {
-        console.error("clearAttributes");
         for (const square of this.squares) {
           this.getSquare(square).clearAttributes();
         }
@@ -348,6 +347,7 @@
       }
       // ======================================================== <chess-board>.initPlayerTurn
       initPlayerTurn() {
+        console.warn("initPlayerTurn chessboard", this);
         delete this.pieceClicked;
         this.initAnalysis();
         this.highlightOff();
@@ -394,12 +394,14 @@
         fromSquare,
         toSquare,
         fen,
+        move,
       }) {
         this.chessMoves.push({
           chessPiece,
           fromSquare: this.getSquare(fromSquare),
           toSquare: this.getSquare(toSquare),
           fen,
+          move,
         });
       }
 
@@ -458,7 +460,7 @@
                     chessPiece, //
                     fromSquare, //
                     toSquare, //
-                    lastFEN, //
+                    fen: lastFEN, //
                     move,
                   });
               };
@@ -484,25 +486,29 @@
                 this.lastMove.fen = savedFEN;
 
                 this.changePlayer();
-                if (this.player === this.playerturn) {
+                if (this.player !== this.playerturn && this.id !== "testboard") {
                   this.closest("chess-match").storeMove({
+                    chessboard: this,
                     move: this.doingCastling, // record castling type "O-O"  "O-O-O"
+                    fen: this.fen,
                   });
+                  this.dispatchChessMove({ fromSquare, toSquare, move });
                 }
-                this.dispatchChessMove({ fromSquare, toSquare, move });
-
                 this.doingCastling = false;
               }
             } else {
               // regular move
+              save2chessMoves();
+
               this.changePlayer();
-              if (this.player === this.playerturn) {
+              if (this.player !== this.playerturn && this.id !== "testboard") {
                 this.closest("chess-match").storeMove({
                   chessboard: this,
                   move: fromSquare.at + moveType + toSquare.at, // record regular move "e2-e4" "e4xd5"
+                  fen: this.fen,
                 });
+                this.dispatchChessMove({ fromSquare, toSquare, move });
               }
-              this.dispatchChessMove({ fromSquare, toSquare, move });
             }
 
             this.play(); // play all moves left in the queue
@@ -513,7 +519,16 @@
         if (animated) chessPiece.animateTo(square).then(movedPiece);
         else movedPiece();
 
-        this.initPlayerTurn();
+        if (this.doAnalysis && this.id !== "testboard") {
+          CHESS.analysis(this, CHESS.__ANALYSIS_AFTER__);
+        }
+
+        if (this.id !== "testboard") {
+          setTimeout(() => {
+            this.initPlayerTurn();
+          }, 1000);
+        }
+
         this.setMessage("");
       }
       // ======================================================== <chess-board>.showLastMoveOnBoard
@@ -538,7 +553,7 @@
       initAnalysis() {
         // console.error("initAnalysis");
         if (this.doAnalysis) {
-          window.CHESS.analysis(this, window.CHESS.__ANALYSIS_MAIN__);
+          window.CHESS.analysis(this, window.CHESS.__ANALYSIS_PRE__);
         }
       }
       // ======================================================== <chess-board>.lastMove
@@ -586,7 +601,7 @@
       }
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
-        console.log("MAGIC FUNCTIONS:", new Error().stack);
+        // console.log("MAGIC FUNCTIONS:", new Error().stack);
         console.warn("Set fen START");
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
         // console.log("%c set fen: ", "background:orange", fenString);
@@ -640,9 +655,9 @@
 
         // only analyze the board when there are squares on the board.
         this.debuginfo();
-        if (this.doAnalysis && this.id !== "testboard") {
-          window.CHESS.analysis(this, window.CHESS.__ANALYSIS_PRE__);
-        }
+        // if (this.doAnalysis && this.id !== "testboard") {
+        //   window.CHESS.analysis(this, window.CHESS.__ANALYSIS_PRE__);
+        // }
         console.error("SET FEN END!!!", this);
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
@@ -765,6 +780,11 @@
         this.pieceClicked.moves = this.pieceClicked.moves.filter((move) => move !== this.getSquare(at).at);
       }
 
+      // ======================================================== <chess-board>.remove
+      delete() {
+        this.remove();
+        console.log("TESTBOARD REMOVED");
+      }
       // ============================================================ <chess-board>.player on board
       get player() {
         return this.getAttribute(window.CHESS.__WC_ATTRIBUTE_PLAYER__);

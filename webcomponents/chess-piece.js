@@ -386,7 +386,7 @@
               testboard,
             });
             //! use code to remove mini testboard:
-            //! testboard.remove();
+            testboard.delete();
           }, 0);
         });
         // showboardsIn.style.display = "none";
