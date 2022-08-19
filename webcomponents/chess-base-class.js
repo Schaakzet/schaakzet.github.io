@@ -99,7 +99,8 @@ CHESS.ChessBaseElement = class extends HTMLElement {
           // console.clear();
           log("Received", evt.data);
           const receivedData = JSON.parse(evt.data); //! TODO this can be data for multiple matches!
-          if (window.evtCounter == 1)
+          console.warn("receivedData", receivedData);
+          if (window.evtCounter == 1 || newMove)
             root.dispatch({
               name: receivedData.match_guid, // event name is the match_guid
               detail: receivedData,
