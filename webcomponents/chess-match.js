@@ -235,12 +235,16 @@
         rows = false, // if false then call database again with match_guid
         match_guid = localStorage.getItem(CHESS.__MATCH_GUID__),
       }) {
+        console.error("ROWS:", rows);
         let chessboard = this.chessboard;
         function processRows(rows) {
+          let evtCounter = window.evtCounter;
+          console.error("evtCounter", evtCounter);
           console.warn("Update progress from ", rows.length, "database rows");
           rows.forEach((row) => {
             let { matchmoves_id, match_guid, fromsquare, tosquare, move, fen, tournament_id } = row;
-            if (move != "startgame" && move != "undomove" && CHESS.ChessBaseElement.evtCounter == 1) {
+            if (move != "startgame" && move != "undomove" && evtCounter == 1) {
+              console.error("adding chessMove", move);
               chessboard.addChessMove({
                 chessPiece: chessboard.getPiece(tosquare), // database does not know which piece it is
                 //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
@@ -249,7 +253,7 @@
                 fen,
                 move,
               });
-              console.warn("processRows from&to Square:", fromsquare, tosquare);
+              chessboard.dispatchChessMove({ fromsquare, tosquare, move });
             }
           });
           chessboard.showLastMoveOnBoard();

@@ -71,7 +71,7 @@ CHESS.ChessBaseElement = class extends HTMLElement {
       console.log(`%c EventSource ${args.shift()} `, "background:blue;color:white", ...args);
     }
 
-    this.evtCounter = 0;
+    window.evtCounter = 0;
 
     // subscribe to a server Event Source,
     // it sends an update for every made matchmove recorded in the database
@@ -86,7 +86,8 @@ CHESS.ChessBaseElement = class extends HTMLElement {
           // this.updateProgressFromDatabase({ match_guid: localStorage.getItem(CHESS.__MATCH_GUID__) });
         }
         this.EVERROR = false;
-        this.evtCounter += 1;
+        window.evtCounter++;
+        console.warn("window.evtCounter:", window.evtCounter);
       };
       evtSource.onerror = (evt) => {
         this.EVERROR = true;
@@ -98,7 +99,7 @@ CHESS.ChessBaseElement = class extends HTMLElement {
           // console.clear();
           log("Received", evt.data);
           const receivedData = JSON.parse(evt.data); //! TODO this can be data for multiple matches!
-          if (this.evtCounter == 1)
+          if (window.evtCounter == 1)
             root.dispatch({
               name: receivedData.match_guid, // event name is the match_guid
               detail: receivedData,
