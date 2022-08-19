@@ -256,9 +256,7 @@
       }
       // ======================================================== <chess-board>.border
       set border(on = false) {
-        if (on) {
-        } else {
-        }
+        // Danny and Rob need to implement this.
       }
       get border() {
         return this.hasAttribute("border");
