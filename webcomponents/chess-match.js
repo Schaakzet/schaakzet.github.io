@@ -243,7 +243,9 @@
           console.warn("Update progress from ", rows.length, "database rows");
           rows.forEach((row) => {
             let { matchmoves_id, match_guid, fromsquare, tosquare, move, fen, tournament_id } = row;
-            if (move != "startgame" && move != "undomove" && evtCounter == 1) {
+            let moves = (chessboard.moves = []);
+            moves.push(move);
+            if (move != "startgame" && move != "undomove" && (window.evtCounter == 1 || !moves.includes(move))) {
               console.error("adding chessMove", move);
               chessboard.addChessMove({
                 chessPiece: chessboard.getPiece(tosquare), // database does not know which piece it is
