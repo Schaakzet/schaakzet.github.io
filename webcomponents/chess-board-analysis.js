@@ -34,7 +34,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
       let lastMovedPiece = $chessboard.lastMove.toSquare.piece;
       if (lastMovedPiece.isPawnAtEnd && $chessboard.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
         const chosenPiece = String(prompt("Kies een stuk (toets letter in): Q, N, R, B.")); // pass parameter
-        let newPiece = lastMovedPiece.color + CHESS.__PIECE_SEPARATOR__;
+        let newPiece = lastMovedPiece.color + "-";
         switch (chosenPiece.toLowerCase()) {
           case "q":
             newPiece += CHESS.__PIECE_QUEEN__;
@@ -240,7 +240,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   // ======================================================== negatingCheck
   function negatingCheck(color) {
     if (isValidGameBoard()) {
-      const horse = (color) => color + CHESS.__PIECE_SEPARATOR__ + CHESS.__PIECE_KNIGHT__;
+      const horse = (color) => color + "-" + CHESS.__PIECE_KNIGHT__;
       const _kingSquare = kingSquare(color);
       if (_kingSquare && _kingSquare.isAttacked) {
         if (_kingSquare.attackers.length == 1) {

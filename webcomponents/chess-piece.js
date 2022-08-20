@@ -41,8 +41,9 @@
       }
       // ======================================================== <chess-piece>.color
       get color() {
-        const indexStreepje = this.is.indexOf(CHESS.__PIECE_SEPARATOR__);
+        const indexStreepje = this.is.indexOf("-");
         return this.is.slice(0, indexStreepje);
+        //! return this.is.split("-")[0]
       }
       // ======================================================== <chess-piece>.isWhite
       get isWhite() {
@@ -58,11 +59,11 @@
       }
       // ======================================================== <chess-piece>.isWhitePawn
       get isWhitePawn() {
-        return this.is == CHESS.__PLAYER_WHITE__ + CHESS.__PIECE_SEPARATOR__ + CHESS.__PIECE_PAWN__;
+        return this.is == CHESS.__PLAYER_WHITE__ + "-" + CHESS.__PIECE_PAWN__;
       }
       // ======================================================== <chess-piece>.isWhitePawn
       get isBlackPawn() {
-        return this.is == CHESS.__PLAYER_BLACK__ + CHESS.__PIECE_SEPARATOR__ + CHESS.__PIECE_PAWN__;
+        return this.is == CHESS.__PLAYER_BLACK__ + "-" + CHESS.__PIECE_PAWN__;
       }
       // ======================================================== <chess-piece>.isPiece
       isPiece(name) {

@@ -572,7 +572,7 @@
         showwarning = false,
         warning = /* function */ () => console.warn("No king on the board!") // optional warning function
       ) {
-        const king = color + CHESS.__PIECE_SEPARATOR__ + CHESS.__PIECE_KING__;
+        const king = color + "-" + CHESS.__PIECE_KING__;
         const square = this.findPieceSquare(king);
         return square || (showwarning && warning());
       }
