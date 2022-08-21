@@ -425,15 +425,13 @@
 
             // Strike rook, clean castlingArray
             if (toSquare.piece.isRook) {
-              if (toSquare.at == CHESS.__SQUARE_BOTTOM_LEFT__) {
-                this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_WHITE_QUEEN__);
-              } else if (toSquare.at == CHESS.__SQUARE_BOTTOM_RIGHT__) {
-                this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_WHITE_KING__);
-              } else if (toSquare.at == CHESS.__SQUARE_TOP_LEFT__) {
-                this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_BLACK_QUEEN__);
-              } else if (toSquare.at == CHESS.__SQUARE_TOP_RIGHT__) {
-                this.castlingArray = this.castlingArray.filter((item) => item !== CHESS.__FEN_BLACK_KING__);
-              }
+              const removeFENletter = {
+                a1: "Q",
+                h1: "K",
+                a8: "q",
+                h8: "k",
+              }[toSquare.at];
+              this.castlingArray = this.castlingArray.filter((item) => item !== removeFENletter);
             }
             // Capture Piece => capturePieceBy
             toSquare.capturePieceBy(chessPiece);
@@ -593,7 +591,7 @@
         console.warn("Set fen START");
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
         // console.log("%c set fen: ", "background:orange", fenString);
-        this.castlingArray = [CHESS.__FEN_WHITE_KING__, CHESS.__FEN_WHITE_QUEEN__, CHESS.__FEN_BLACK_KING__, CHESS.__FEN_BLACK_QUEEN__]; // Halen we uit FEN
+        this.castlingArray = ["K", "Q", "k", "q"];
 
         //! THIS WILL TRIGGER set fen again: this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
         // make sure we don't run before the board exists, because attributeChangedCallback runs early

@@ -71,7 +71,7 @@
       }
       // ======================================================== <chess-square>.addPiece
       addPiece(piece = console.error("No piece defined!")) {
-        piece = piece || CHESS.__FEN_WHITE_KING__; // default value for undefined piece
+        piece = piece || "K"; // default value for undefined piece
         let name;
         if (isString(piece)) {
           name = piece.length == 1 ? CHESS.convertFEN(piece) : piece;

@@ -33,12 +33,6 @@
       // chess constants
       __FILES__: "abcdefgh".split(""),
       __RANKS__: "12345678".split(""),
-      __SQUARE_TOP_LEFT__: "a8",
-      __SQUARE_TOP_RIGHT__: "h8",
-      __SQUARE_BOTTOM_LEFT__: "a1",
-      __SQUARE_BOTTOM_RIGHT__: "h1",
-      __SQUARE_WHITE_KING_START__: "e1",
-      __SQUARE_BLACK_KING_START__: "e8",
 
       __PROTECT_PIECE__: "p", // used to highlight the moves a chesspiece can make
       __ATTACK_PIECE__: "x", // used to highlight the moves a chesspiece can make
@@ -62,13 +56,6 @@
       __MATCH_GUID__: "match_guid",
 
       __MOVEPIECE_ANIMATION_DURATION__: 500,
-      // ********************************************************** FEN
-      __FEN_WHITE_KING__: "K",
-      __FEN_BLACK_KING__: "k",
-      __FEN_WHITE_TOWER__: "R",
-      __FEN_BLACK_TOWER__: "r",
-      __FEN_WHITE_QUEEN__: "Q",
-      __FEN_BLACK_QUEEN__: "q",
 
       // ********************************************************** translate moves for all pieces */
       __HORSEMOVES__: [[[2, 1]], [[2, -1]], [[-2, 1]], [[-2, -1]], [[1, 2]], [[1, -2]], [[-1, 2]], [[-1, -2]]],

@@ -237,36 +237,36 @@
         if (isKing) {
           // ROQUEREN
           const _potentialMovesArray = this.moves;
-          const longWhiteRook = $chessboard.getPiece(CHESS.__SQUARE_BOTTOM_LEFT__);
-          const shortWhiteRook = $chessboard.getPiece(CHESS.__SQUARE_BOTTOM_RIGHT__);
-          const longBlackRook = $chessboard.getPiece(CHESS.__SQUARE_TOP_LEFT__);
-          const shortBlackRook = $chessboard.getPiece(CHESS.__SQUARE_TOP_RIGHT__);
+          const longWhiteRook = $chessboard.getPiece("a1");
+          const shortWhiteRook = $chessboard.getPiece("h1");
+          const longBlackRook = $chessboard.getPiece("a8");
+          const shortBlackRook = $chessboard.getPiece("h8");
           const playerColor = $chessboard.player;
           const castlingArray = $chessboard.castlingArray;
 
-          function isCastling(castlingLetter, typeOfRook, rookSquareName) {
-            return (
-              typeOfRook.isRook && //
-              castlingArray.includes(castlingLetter) && //
-              typeOfRook.moves && //
-              typeOfRook.moves.includes(rookSquareName) //
-            );
-          }
+          const /*function*/ isCastling = (castlingLetter, typeOfRook, rookSquareName) => {
+              return (
+                typeOfRook.isRook && //
+                castlingArray.includes(castlingLetter) && //
+                typeOfRook.moves && //
+                typeOfRook.moves.includes(rookSquareName) //
+              );
+            };
 
-          const longWhiteCastling = isCastling(CHESS.__FEN_WHITE_QUEEN__, longWhiteRook, "d1");
-          const shortWhiteCastling = isCastling(CHESS.__FEN_WHITE_KING__, shortWhiteRook, "f1");
-          const longBlackCastling = isCastling(CHESS.__FEN_BLACK_QUEEN__, longBlackRook, "d8");
-          const shortBlackCastling = isCastling(CHESS.__FEN_BLACK_KING__, shortBlackRook, "f8");
+          const longWhiteCastling = isCastling("Q", longWhiteRook, "d1");
+          const shortWhiteCastling = isCastling("K", shortWhiteRook, "f1");
+          const longBlackCastling = isCastling("q", longBlackRook, "d8");
+          const shortBlackCastling = isCastling("k", shortBlackRook, "f8");
 
           function castlingInterrupt(color, offset) {
             // True: Castling interrupted
-            let kingPosition = $chessboard.getSquare(color == CHESS.__PLAYER_WHITE__ ? CHESS.__SQUARE_WHITE_KING_START__ : CHESS.__SQUARE_BLACK_KING_START__);
+            let kingPosition = $chessboard.getSquare(color == CHESS.__PLAYER_WHITE__ ? "e1" : "e8"); // white or black king
 
-            let checkInterrupt = (i) => {
-              let squareName = kingPosition.translate(i, 0);
-              let squareElement = $chessboard.getSquare(squareName);
-              if (squareElement.isDefendedBy(CHESS.otherPlayer(color)) || kingPosition.attackers.length) return true;
-            };
+            let /*function*/ checkInterrupt = (i) => {
+                let squareName = kingPosition.translate(i, 0);
+                let squareElement = $chessboard.getSquare(squareName);
+                if (squareElement.isDefendedBy(CHESS.otherPlayer(color)) || kingPosition.attackers.length) return true;
+              };
 
             if (offset < 0) {
               for (let i = -1; i >= offset; i--) return checkInterrupt(i);
