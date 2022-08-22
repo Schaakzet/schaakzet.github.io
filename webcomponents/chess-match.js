@@ -272,7 +272,7 @@
         const isNewMove = !moves.includes(move);
         moves.push(move);
         if (isValidMove && isNewMove) {
-          if (logDetail > 0) log("updateProgressRow : adding chessMove", move);
+          if (logDetail > 0) log("updateProgressRow : adding chessMove", move, "isUpdating:", this.chessboard.isUpdating);
           this.chessboard.addChessMove({
             chessPiece: this.chessboard.getPiece(tosquare), // database does not know which piece it is
             //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
@@ -283,14 +283,28 @@
           });
           if (logDetail > 1) log(move, fromsquare, tosquare);
           //chessboard.dispatchChessMove({ fromsquare, tosquare, move });
-          this.chessboard.dispatch({
-            name: match_guid, // eventListener is in <chess-board>.listenOnMatchID
-            detail: {
-              match_guid,
-              fen,
+
+          //! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+          if (this.chessboard.isUpdating) {
+            console.error("BOARD isUpdating! CALL GUID LISTENER HERE? Or just set FEN", fen);
+            this.chessboard.fen = fen;
+            this.chessboard.dispatchChessMove({
+              fromSquare: fromsquare, //! WHY DO THE NAMES NOT MATCH????
+              toSquare: tosquare,
               move,
-            },
-          });
+            });
+          } else {
+            //! MOVE IS MADE BY A PLAYER
+            this.chessboard.dispatch({
+              name: match_guid, // eventListener is in <chess-board>.listenOnMatchID
+              detail: {
+                match_guid,
+                fen,
+                move,
+              },
+            });
+          }
+          //! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         } else {
           switch (move) {
             case CHESS.APIRT.__STARTGAME__:
@@ -318,14 +332,13 @@
             });
             this.chessboard.showLastMoveOnBoard();
 
-            //! ****************************************************************
+            //! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
             //! FORCE isUpdating to false AFTER all moves are added to the board
             setTimeout(() => {
               console.error("end of processDatabaseRows in setTimeout");
               this.chessboard.isUpdating = false;
             });
-            //! ****************************************************************
-
+            //! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
           };
 
         if (rows) processDatabaseRows(rows);

@@ -86,8 +86,7 @@
         cancelable,
       },
     }) {
-      if (logDetail > 0) log(`${root.localName||root.nodeName} dispatch:`,name, detail);
-      root.dispatchEvent(
+      if (logDetail > 0) log(`${root.localName||"no localName"} dispatch:`,{[name]:detail});      root.dispatchEvent(
         new CustomEvent(name, {
           ...options, //
           detail,
