@@ -2,15 +2,34 @@
   // <chess-match> encapsulates <chess-board>
   // manages players
   // communicates with server
-  function log(...args) {
-    console.log("%c chess-match ", "background:green;color:yellow", ...args);
+
+  const __COMPONENT_NAME__ = "chess-match";
+
+  // ********************************************************** logging
+
+  // the amount of console.logs displayed in this component
+  let logDetailComponent = 0; //! -1=no logs 0=use global setting >0=custom setting
+  let logComponent = window.CHESS.log[__COMPONENT_NAME__];
+  let logDetail = logDetailComponent || logComponent.detail;
+
+  function log() {
+    console.logColor &&
+      console.logColor(
+        {
+          name: __COMPONENT_NAME__,
+          background: "teal",
+          ...logComponent,
+          stacktrace: true,
+        },
+        ...arguments
+      );
   }
 
   // ********************************************************** CSS for Full Screen
   const CSS_Match = /* css */ `:fullscreen {background-color: beige}`;
   // ********************************************************** define <chess-match>
   customElements.define(
-    "chess-match",
+    __COMPONENT_NAME__,
     class extends CHESS.ChessBaseElement {
       // todo create shadowDOM?
       // ================================================== connectedCallback
@@ -68,7 +87,7 @@
 
       // ================================================== createMatch
       createMatch() {
-        console.warn("createMatch");
+        if (logDetail > 0) log("createMatch");
         ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(window.location.search).get("id") || this.getRandomID(1000);
         ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(window.location.search).get("name") || prompt("Enter your Displayname", "Anonymous");
         localStorage.setItem("wp_user", ROADSTECHNOLOGY.CHESS.id);
@@ -98,7 +117,7 @@
                 match_guid, // matchGUID assigned by database
               } = rows[0];
 
-              log("createMatch", match_guid);
+              if (logDetail > 0) log("callback createMatch", match_guid);
               this.setPlayerTitles(player_white, player_black, wp_user_white, wp_user_black);
               this.initGame(match_guid);
             },
@@ -141,6 +160,7 @@
           let backgroundColor = playerColor === "WHITE" ? "background:white;color:black" : "background:black;color:white";
           console.groupCollapsed(`%c resumeMatch %c player: ${playerColor} `, "background:lightgreen", backgroundColor, fen);
           log(matchesRow);
+          log(this);
           console.groupEnd();
         }
         // -------------------------------------------------- init variables
@@ -160,17 +180,17 @@
         ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(document.location.search).get("id") || ROADSTECHNOLOGY.CHESS.id || localStorage.getItem("wp_user");
         ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(document.location.search).get("name") || ROADSTECHNOLOGY.CHESS.displayname || localStorage.getItem("player");
 
-        console.error(ROADSTECHNOLOGY.CHESS);
+        if (logDetail > 1) log("User:", ROADSTECHNOLOGY.CHESS);
 
         let { id, displayname } = ROADSTECHNOLOGY.CHESS;
 
         // let playerName = prompt(`Match: ${player_white} VS ${player_black} Enter your previous display name`);
 
-        console.log("assignPlayerByMatchesRow");
+        if (logDetail > 0) log("assignPlayerByMatchesRow");
         if (ROADSTECHNOLOGY.CHESS.displayname == player_white) {
           consoleLog("WHITE");
           this.chessboard.player = CHESS.__PLAYER_WHITE__;
-          console.warn(this.chessboard, this.chessboard.player);
+          if (logDetail > 0) log("chessboard.player", this.chessboard.player);
           // this.updateProgressFromDatabase({ match_guid });
           this.updatePlayers({
             ...matchesRow, // all of matchesRow
@@ -195,7 +215,7 @@
       // ================================================== resumeMatch
       // Gets match_guid, FEN, players and their name & (color)
       resumeMatch(match_guid) {
-        console.warn("resumeMatch", match_guid);
+        if (logDetail > 0) log("resumeMatch", match_guid);
         this.chessboard.resume(match_guid);
         // -------------------------------------------------- callAPI
         CHESS.APIRT.callAPI({
@@ -235,18 +255,18 @@
         rows = false, // if false then call database again with match_guid
         match_guid = localStorage.getItem(CHESS.__MATCH_GUID__),
       }) {
-        console.error("ROWS:", rows);
+        if (logDetail > 1) log("ROWS:", rows);
         let chessboard = this.chessboard;
         function processRows(rows) {
           let evtCounter = window.evtCounter;
-          console.error("evtCounter", evtCounter);
-          console.warn("Update progress from ", rows.length, "database rows");
+          if (logDetail > 1) log("evtCounter", evtCounter);
+          if (logDetail > 1) log("Update progress from ", rows.length, "database rows");
           rows.forEach((row) => {
             let { matchmoves_id, match_guid, fromsquare, tosquare, move, fen, tournament_id } = row;
             let moves = (chessboard.moves = []);
             moves.push(move);
             if (move != "startgame" && move != "undomove" && (window.evtCounter == 1 || !moves.includes(move))) {
-              console.error("adding chessMove", move);
+              if (logDetail > 1) log("adding chessMove", move);
               chessboard.addChessMove({
                 chessPiece: chessboard.getPiece(tosquare), // database does not know which piece it is
                 //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
@@ -300,8 +320,8 @@
         move = "e2-e4",
         fen = chessboard.fen,
       }) {
-        // console.log("MAGIC FUNCTIONS:", new Error().stack);
-        log("storeMove", move, fen);
+        if (logDetail > 2) log("callstack", new Error().stack);
+        if (logDetail > 0) log("storeMove", move, fen);
         // chessboard.updateFENonScreen();
         // -------------------------------------------------- callAPI
         CHESS.APIRT.callAPI({
