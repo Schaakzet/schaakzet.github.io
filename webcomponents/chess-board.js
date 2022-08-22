@@ -124,6 +124,7 @@
       // ======================================================== <chess-board>.attributeChangedCallback
       attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue && oldValue !== newValue && name == CHESS.__WC_ATTRIBUTE_FEN__) {
+          CHESS.log.fen(this, "attributeChanged", newValue);
           this.fen = newValue;
         }
       }
@@ -137,7 +138,7 @@
             // ----------------------------- get data from EventSource, moves and board state
             let { match_guid, fen, move } = evt.detail;
             if (this.id == match_guid) {
-              if (move == "startgame") {
+              if (move == CHESS.APIRT.__STARTGAME__) {
                 // ----------------------------- startgame
                 if (!this.hasAttribute("player")) this.player = CHESS.__PLAYER_WHITE__;
                 this.updatePlayerBlack(match_guid);
@@ -151,14 +152,12 @@
                   if (logDetail > 0) log("Implement Castling listenOnMatchID");
                 } else {
                   if (movetype == "-" || movetype == "x") {
-                    let [from, to] = move.split(movetype);
                     setTimeout(() => {
-                      this.movePiece(from, to); // Changes this.fen, so FEN ERROR!
+                      this.movePiece(...move.split(movetype)); // from , to
+                      if (logDetail > 1) log("FENs move:", move, "\nthis.fen:\t", this.fen, "\nfen:\t\t", fen);
                     });
-                    //if (from == "e3") debugger;
-                    if (logDetail > 1) log("FENs:", this.fen, fen);
-                  } else {
                   }
+                  CHESS.log.fen(this, "listenOnMatchID", fen);
                   this.fen = fen;
                 }
               } else {
@@ -200,6 +199,10 @@
           this.listenOnMatchID();
         } else this.removeAttribute("id");
         this.debuginfo();
+      }
+      // ======================================================== <chess-board>.isTestboard
+      get isTestboard() {
+        return this.id == CHESS.__TESTBOARD_FOR_MOVES__;
       }
       // ======================================================== <chess-board>.database_id
       get database_id() {
@@ -394,6 +397,8 @@
               fen: this.fen,
             },
           });
+        } else {
+          log("NOT dispatching STORECHESSMOVE");
         }
       }
       // ======================================================== <chess-board>.addChessMove
@@ -415,13 +420,23 @@
 
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
-        log("movePiece", chessPiece, square, this.fen);
+        log(
+          "movePiece",
+          "id:"+this.id.substring(0, 10), //
+          "chessPiece:",
+          isString(chessPiece) ? chessPiece : chessPiece.is,
+          "square:",
+          square,
+          "fen:",
+          this.fen
+        );
         if (isString(chessPiece)) {
-          chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
-        }
-        if (!chessPiece) {
-          log("Er staat geen chesspiece op:", square);
-          return;
+          square = chessPiece;
+          chessPiece = this.getPiece(square); // convert "e2" to chessPiece IN e2
+          if (!chessPiece) {
+            log("Er staat geen chesspiece op:", square);
+            return;
+          }
         }
         const movedPiece = () => {
           let fromSquare = chessPiece.square;
@@ -471,7 +486,7 @@
           };
 
           const /*function*/ store_Dispatch_Move = (move) => {
-              if (this.player !== this.playerturn && this.id !== "testboard") {
+              if (this.player !== this.playerturn && !this.isTestboard) {
                 this.closest("chess-match").storeMove({
                   chessboard: this,
                   move,
@@ -516,11 +531,11 @@
         if (animated) chessPiece.animateTo(square).then(movedPiece);
         else movedPiece();
 
-        if (this.doAnalysis && this.id !== "testboard") {
+        if (this.doAnalysis && !this.isTestboard) {
           CHESS.analysis(this, CHESS.__ANALYSIS_AFTER__);
         }
 
-        if (this.id !== "testboard") {
+        if (!this.isTestboard) {
           setTimeout(() => {
             this.initPlayerTurn();
           }, 1000);
@@ -598,9 +613,7 @@
       }
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
-        // console.log("MAGIC FUNCTIONS:", new Error().stack);
-        console.log(fenString);
-        if (logDetail > 1) log("Set fen START");
+        if (logDetail > 2) log("Set fen START\t", fenString);
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
         this.castlingArray = ["K", "Q", "k", "q"];
 
@@ -647,10 +660,10 @@
 
         // only analyze the board when there are squares on the board.
         this.debuginfo();
-        // if (this.doAnalysis && this.id !== "testboard") {
+        // if (this.doAnalysis && !this.isTestboard) {
         //   CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
         // }
-        if (logDetail > 1) log("SET FEN END!!!", this);
+        if (logDetail > 2) log("set fen END\t", fenString);
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
       get fen() {
@@ -713,7 +726,7 @@
         fenParts.push(enpassant);
         // join
         fenString = fenParts.join(" ");
-        if (logDetail > 1) log("get fen fenString: ", fenString);
+        if (logDetail > 2) log("return fen:\t", fenString);
         // console.warn("this.innerHTML", this.innerHTML);
         return fenString;
       } // get fen()
@@ -755,7 +768,7 @@
       }) {
         let testPiece = this.getPiece(from);
         if (testPiece) {
-          console.warn("666 trymove", testPiece.is, from, "->", to);
+          if (logDetail > 2) log("trymove", testPiece.is, from, "->", to);
           testPiece.movePieceTo(to, false); // move piece without animation
           if (CHESS.doAnalysis && CHESS.analysis(this, "checkcheck")) {
             matchboard.markIllegalMove(to);
@@ -787,7 +800,9 @@
 
       // ============================================================ <chess-board>.setPlayerAndFEN
       setPlayerAndFEN(player, fen) {
+        if (logDetail > 0) log("setPlayerAndFEN", player, fen);
         this.player = player;
+        CHESS.log.fen(this, "setPlayerAndFEN", fen);
         this.fen = fen;
       }
       // ============================================================ <chess-board>.playerturn = current player

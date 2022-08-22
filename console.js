@@ -38,15 +38,24 @@
             } catch (e) {
               // catch <anonymous>
             }
-            let POEP = uri || logline;
-            linenr = POEP.split("?")[POEP.includes("?") ? 1 : 0].split(":")[1];
+            // -------------------------------------------------- get linenr
+            let lineStr = uri || logline;
+            if (lineStr.includes("?")) {
+            } else {
+              lineStr = logline;
+            }
+            if (!logline.startsWith("log")) {
+              let urlParams = lineStr.split("?")[1];
+              linenr = linenr || urlParams.split(":")[1];
+            }
+            // -------------------------------------------------- return line
             return {
               funcname,
               file,
               linenr,
             };
           })
-          .filter((x) => x && x.file && x.funcname !== "log");
+          .filter((x) => x && x.file && x.funcname !== "log" && x.funcname !== "consoleLog");
       } catch (e) {
         console.error("Overloading console error:", e, errorStack, [...args]);
       }
@@ -55,19 +64,25 @@
       let label = args.shift();
       let label2 = args.shift();
       let bgcolor = "gold";
+      let labelbackground = "gold";
       let color;
       let collapse;
 
       if (typeof label == "object") {
         bgcolor = label.background;
         collapse = label.stacktrace ? false : true;
+        color = label.color || contrastColor(bgcolor);
+        labelbackground = label.labelbackground || labelbackground;
         label = label.name;
-        color = contrastColor(bgcolor);
-        //console.warn(label, bgcolor, linenr);
       }
+      //console.warn(label, bgcolor, linenr);
       if (typeof label2 == "object") {
         args.unshift(label2);
         label2 = typeof label2;
+      }
+      if (typeof label2 == "string" && label2.includes("#")) {
+        bgcolor = label2.split("#")[1];
+        label2 = label2.split("#")[0];
       }
 
       let background0 = `background:beige;color:black;font-size:90%`;
@@ -79,7 +94,7 @@
         `%c ${linenr} %c ${label}${method} %c ${label2} `,
         background0,
         background1,
-        `background:gold;font-size:100%`, //first label color // linenr method
+        `background:${labelbackground};font-size:100%`, //first label color // linenr method
         //`background:${bgcolor.replaceAll("=", ":")}`, // second label color // label
         ...args, // all remaing args
       ];
@@ -100,3 +115,13 @@
     console.log(`%c ${label}`, "background:darkmagenta;color:white", ...args);
   };
 }
+
+// Custom stacktrace:
+// console.log(
+//   "StackTrace:",
+//   new Error().stack
+//     .split(" at ")
+//     .filter((line) => line.includes("?"))
+//     .map((line) => line.replace(`http://${location.host}/webcomponents/`,""))
+//     .join("")
+// );

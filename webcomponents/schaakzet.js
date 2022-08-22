@@ -23,6 +23,7 @@
     "app-base-functions", // generic functions
     "chess-base-constants", // required
     "chess-base-api-rt", // required for database API
+    "chess-eventsource", // required for EventSource API
     "chess-base-class", // required baseclass
     "chess-base-class-components", // required baseclass for <piece> <square> <board>
     "chess-board-analysis", // optional analysis

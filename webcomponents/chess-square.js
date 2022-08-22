@@ -51,9 +51,9 @@
         if (this.hasAttribute(CHESS.__WC_ATTRIBUTE_PIECENAME__)) {
           this.chessboard.highlightOff();
           this.piece.potentialMoves(this.at);
-          console.error("moves 1", this.piece.moves);
+          if (logDetail > 1) log("potenialMoves:", this.piece.moves);
           this.piece.potentialKingMoves(this.at);
-          console.error("moves 2", this.piece.moves);
+          if (logDetail > 1) log("+KingMoves", this.piece.moves);
           this.chessboard.pieceClicked = this.piece; // Hier wordt pieceClicked pas gedefinieerd.
           this.piece.disableCheckMakingMoves({
             showboardsIn: document.getElementById("TEST4CHECKBOARDS") || document.body,

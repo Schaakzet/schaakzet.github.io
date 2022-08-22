@@ -8,7 +8,7 @@
   // ********************************************************** logging
 
   // the amount of console.logs displayed in this component
-  let logDetailComponent = -1; //! -1=no logs 0=use global setting >0=custom setting
+  let logDetailComponent = 1; //! -1=no logs 0=use global setting >0=custom setting
   let logComponent = window.CHESS.log[__COMPONENT_NAME__];
   let logDetail = logDetailComponent || logComponent.detail;
 
@@ -17,9 +17,10 @@
       console.logColor(
         {
           name: __COMPONENT_NAME__,
-          background: "teal",
+          background: "lightgreen",
+          color: "black",
           ...logComponent,
-          stacktrace: true,
+          // stacktrace: true,
         },
         ...arguments
       );
@@ -32,7 +33,7 @@
     __COMPONENT_NAME__,
     class extends CHESS.ChessBaseElement {
       // todo create shadowDOM?
-      // ================================================== connectedCallback
+      // ================================================== <chess-match>.connectedCallback
       connectedCallback() {
         super.connectedCallback();
         this.render();
@@ -45,16 +46,16 @@
             this.createMatch(); // call back-end for match_guid, then this.initGame(match_guid)
           }
           this.addListeners();
-          this.listen2matchmoves();
+          this.listen2matchmoves(this);
         });
       }
-      // ================================================== get chessboard
+      // ================================================== <chess-match>. get chessboard
       get chessboard() {
         // todo find chessboard inside shadowDOM?
         if (this._chessboard) return this._chessboard;
         return (this._chessboard = document.querySelector("chess-board") || console.error("Missing chess-board"));
       }
-      // ================================================== render
+      // ================================================== <chess-match>.render
       render() {
         this.append(
           Object.assign(document.createElement("style"), {
@@ -78,14 +79,14 @@
           })
         );
       }
-      // ================================================== addListeners
+      // ================================================== <chess-match>.addListeners
       addListeners() {
         document.addEventListener("newGame", (evt) => this.createMatch(evt.detail));
         // handle game buttons
         this.addListeners = () => {}; // attach listeners only once
       }
 
-      // ================================================== createMatch
+      // ================================================== <chess-match>.createMatch
       createMatch() {
         if (logDetail > 0) log("createMatch");
         ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(window.location.search).get("id") || this.getRandomID(1000);
@@ -132,12 +133,12 @@
         }
       }
 
-      // ================================================== getRandomID()
+      // ================================================== <chess-match>.getRandomID()
       getRandomID(value) {
         return Math.floor(Math.random() * value);
       }
 
-      // ================================================== setPlayerTitles()
+      // ================================================== <chess-match>.setPlayerTitles()
       setPlayerTitles(p1, p2 = "<i>To Be Announced</i>", wp_user_white, wp_user_black) {
         const match_playernames = this.querySelector(".match_playernames");
         if (match_playernames) {
@@ -148,21 +149,25 @@
           match_playernames.innerHTML = `Match ${preventEmptyName(p1)} (${wp_user_white}) vs ${preventEmptyName(p2)} (${wp_user_black})`;
         }
       }
-      // ================================================== isSamePlayer
+      // ================================================== <chess-match>.isSamePlayer
       isSamePlayer(p1, p2) {
         return Number(p1) == Number(p2);
       }
-      // ================================================== assignPlayerByMatchesRow
+      // ================================================== <chess-match>.assignPlayerByMatchesRow
       assignPlayerByMatchesRow(matchesRow) {
         // todo : Check again whether this function does what it is supposed to do.
         // -------------------------------------------------- fancy console.log
         function consoleLog(playerColor) {
-          let backgroundColor = playerColor === "WHITE" ? "background:white;color:black" : "background:black;color:white";
-          console.groupCollapsed(`%c resumeMatch %c player: ${playerColor} `, "background:lightgreen", backgroundColor, fen);
-          log(matchesRow);
-          log(this);
+          console.groupCollapsed(
+            `%c resumeMatch %c player: ${playerColor} `, //
+            "background:lightgreen",
+            "background:" + (playerColor === "WHITE" ? "white;color:black" : "black;color:white") + ";font-size:130%",
+            fen
+          );
+          log("matchesRow", matchesRow);
           console.groupEnd();
         }
+        if (logDetail > 0) log("assignPlayerByMatchesRow", matchesRow);
         // -------------------------------------------------- init variables
         let {
           tournament_id,
@@ -186,7 +191,6 @@
 
         // let playerName = prompt(`Match: ${player_white} VS ${player_black} Enter your previous display name`);
 
-        if (logDetail > 0) log("assignPlayerByMatchesRow");
         if (ROADSTECHNOLOGY.CHESS.displayname == player_white) {
           consoleLog("WHITE");
           this.chessboard.player = CHESS.__PLAYER_WHITE__;
@@ -212,7 +216,7 @@
         this.chessboard.setPlayerAndFEN(this.chessboard.player, fen); // set attribute on <chess-board> set pieces on <chess-board>
       }
 
-      // ================================================== resumeMatch
+      // ================================================== <chess-match>.resumeMatch
       // Gets match_guid, FEN, players and their name & (color)
       resumeMatch(match_guid) {
         if (logDetail > 0) log("resumeMatch", match_guid);
@@ -232,7 +236,7 @@
           },
         });
       }
-      // ================================================== startMatch_send_startgame_to_database
+      // ================================================== <chess-match>.startMatch_send_startgame_to_database
       startMatch_send_startgame_to_database(id = localStorage.getItem(CHESS.__MATCH_GUID__)) {
         // ask database if there are matchmoves entries
         // only if there are no matchmoves entries, then start game
@@ -243,23 +247,34 @@
             let noMovesYet = rows.length == 0;
             if (noMovesYet) {
               // player BLACK tells player WHITE to start the game:
-              this.storeMove({ move: "startgame" });
+              this.storeMove({
+                move: CHESS.APIRT.__STARTGAME__, // "startgame"
+              });
             } else {
               this.updateProgressFromDatabase({ rows });
             }
           },
         });
       }
-      // ================================================== updateProgressRow
-      updateProgressRow({ matchmoves_id, match_guid, fromsquare, tosquare, move, fen, tournament_id }) {
-        let chessboard = this.chessboard;
+      // ================================================== <chess-match>.updateProgressRow
+      updateProgressRow({
+        matchmoves_id, //
+        match_guid,
+        fromsquare,
+        tosquare,
+        move,
+        fen,
+        tournament_id,
+      }) {
         if (logDetail > 1) log("row", move);
-        let moves = (chessboard.moves = []);
+        let moves = (this.chessboard.moves = []);
+        const isValidMove = !(move == CHESS.APIRT.__STARTGAME__ || move == CHESS.APIRT.__UNDOMOVE__);
+        const isNewMove = !moves.includes(move);
         moves.push(move);
-        if (move != "startgame" && move != "undomove" && (evtCounter == 1 || !moves.includes(move))) {
-          if (logDetail > 1) log("adding chessMove", move);
-          chessboard.addChessMove({
-            chessPiece: chessboard.getPiece(tosquare), // database does not know which piece it is
+        if (isValidMove && isNewMove) {
+          if (logDetail > 0) log("updateProgressRow : adding chessMove", move);
+          this.chessboard.addChessMove({
+            chessPiece: this.chessboard.getPiece(tosquare), // database does not know which piece it is
             //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
             fromSquare: fromsquare,
             toSquare: tosquare,
@@ -268,7 +283,7 @@
           });
           if (logDetail > 1) log(move, fromsquare, tosquare);
           //chessboard.dispatchChessMove({ fromsquare, tosquare, move });
-          chessboard.dispatch({
+          this.chessboard.dispatch({
             name: match_guid, // eventListener is in <chess-board>.listenOnMatchID
             detail: {
               match_guid,
@@ -276,6 +291,14 @@
               move,
             },
           });
+        } else {
+          switch (move) {
+            case CHESS.APIRT.__STARTGAME__:
+            case CHESS.APIRT.__UNDOMOVE__:
+              break;
+            default:
+              console.error("Invalid move", move, moves);
+          }
         }
       }
       // ================================================== updateProgressFromDatabase
@@ -285,25 +308,32 @@
       }) {
         if (logDetail > 1) log("ROWS:", rows);
 
-        let chessboard = this.chessboard;
-        const /*function*/ processRows = (rows) => {
-            let evtCounter = window.evtCounter;
-            if (logDetail > 1) log("evtCounter", evtCounter);
+        const /*function*/ processDatabaseRows = (rows) => {
             if (logDetail > 1) log("Update progress from ", rows.length, "database rows");
-            chessboard.fen = undefined; //! make sure we start with a start board
-            chessboard.isUpdating = true;
+            CHESS.log.fen(this, "processDatabaseRows", undefined);
+            this.chessboard.fen = undefined; //! make sure we start with a start board
+            this.chessboard.isUpdating = true;
             rows.forEach((row) => {
-              this.updateProgressRow(row);
+              this.updateProgressRow(row); //! all moves are forced to the next Event Loop
             });
-            chessboard.showLastMoveOnBoard();
+            this.chessboard.showLastMoveOnBoard();
+
+            //! ****************************************************************
+            //! FORCE isUpdating to false AFTER all moves are added to the board
+            setTimeout(() => {
+              console.error("end of processDatabaseRows in setTimeout");
+              this.chessboard.isUpdating = false;
+            });
+            //! ****************************************************************
+
           };
 
-        if (rows) processRows(rows);
+        if (rows) processDatabaseRows(rows);
         else
           CHESS.APIRT.callAPI({
             action: "MOVES",
             body: { id: match_guid },
-            callback: ({ rows }) => processRows(rows),
+            callback: ({ rows }) => processDatabaseRows(rows),
           });
       }
       // ================================================== updatePlayers
@@ -337,8 +367,9 @@
         move = "e2-e4",
         fen = chessboard.fen,
       }) {
-        log(move);
+        log("storeMove", move);
         if (chessboard.isUpdating) {
+          console.error("chessboard.isUpdating prevents storing moves");
           return;
         }
         if (logDetail > 2) log("callstack", new Error().stack);

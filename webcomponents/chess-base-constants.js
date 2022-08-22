@@ -7,11 +7,15 @@
       // add constants to CHESS object
       // ********************************************************** LOGGING Levels
       log: {
-        "api-rt": { detail: 0, stacktrace: true },
+        "BaseClass": { detail: 0, stacktrace: 0 },
+        "api-rt": { detail: 0, stacktrace: 0 },
         "chess-board": { detail: 0 },
         "chess-match": { detail: 0 },
         "chess-piece": { detail: 0 },
         "chess-square": { detail: 0 },
+        fen: (component, label, value) => {
+          console.logColor({ name: "SET FEN",background:"red" }, `${component.localName}.${label}`,value||"START FEN");
+        }, // log FEN mutations
       },
       // ********************************************************** HTML CSS
       // TODO: create as attribute and property on <chess-board> so user can select theme colors

@@ -7,6 +7,29 @@
       -► component:<chess-piece>
       -► component:<chess-board>
   */
+  const __COMPONENT_NAME__ = "BaseClass";
+
+  // ********************************************************** logging
+
+  // the amount of console.logs displayed in this component
+  let logDetailComponent = 1; //! -1=no logs 0=use global setting >0=custom setting
+  let logComponent = window.CHESS.log[__COMPONENT_NAME__];
+  let logDetail = logDetailComponent || logComponent.detail;
+
+  function log() {
+    console.logColor &&
+      console.logColor(
+        {
+          name: __COMPONENT_NAME__,
+          background: "royalblue",
+          color: "white",
+          labelbackground: "skyblue",
+          ...logComponent,
+          // stacktrace: true,
+        },
+        ...arguments
+      );
+  }
 
   // ********************************************************** ChessBaseElement
   // one BaseClass for all to be created Custom Elements/Web Components
@@ -63,7 +86,7 @@
         cancelable,
       },
     }) {
-      // console.warn("%c EventName:", "background:yellow", name, [detail]);
+      if (logDetail > 0) log(`${root.localName||root.nodeName} dispatch:`,name, detail);
       root.dispatchEvent(
         new CustomEvent(name, {
           ...options, //
@@ -75,83 +98,7 @@
     listen2matchmoves(
       root = this // disppatch matchid name event from this root (this = default)
     ) {
-      const logDetail = 2;
-      const __COMPONENT_NAME__ = "listen2matchmoves";
-      function log() {
-        console.logColor &&
-          console.logColor(
-            {
-              name: __COMPONENT_NAME__,
-              background: "blue",
-            },
-            ...arguments
-          );
-      }
-
-      //! oh boy Sandro introduces global variables
-      window.evtCounter = 0;
-
-      // subscribe to a server Event Source,
-      // it sends an update for every made matchmove recorded in the database
-      const API = CHESS.APIRT.__API_MATCHMOVES_EVENTSOURCE__;
-      log("init", API);
-
-      try {
-        const evtSource = new EventSource(API);
-        evtSource.onopen = () => {
-          if (this.EVERROR) {
-            console.warn("%c EventSource forced reload", "background:red;color:white");
-            // this.updateProgressFromDatabase({ match_guid: localStorage.getItem(CHESS.__MATCH_GUID__) });
-          }
-          this.EVERROR = false;
-          window.evtCounter++;
-          if (logDetail > 1) log("window.evtCounter:", window.evtCounter);
-        };
-        evtSource.onerror = (evt) => {
-          this.EVERROR = true;
-          //console.warn("%c EventSource error", "background:red;color:white", evt);
-        };
-        evtSource.onmessage = (evt) => {
-          // respond to the Event
-          if (evt.data) {
-            // console.clear();
-            log("Received", evt.data);
-            const receivedData = JSON.parse(evt.data); //! TODO this can be data for multiple matches!
-            let { fen, match_guid, move } = receivedData;
-
-            // function findToSquareInFEN(toSquare, fen) {
-            //   let file = toSquare[0]; // d
-            //   let rank = toSquare[1]; // 5
-            //   let fenString = fen.split(" ")[0];
-            //   let squareIndex = 0;
-            //   fenString.split("").forEach((fenLetter) => {
-            //     if (fenLetter !== "/") {
-            //       if (parseInt(fenLetter) > 0 && parseInt(fenLetter) < 9) {
-            //         // Als het 1 t/m 8 is...
-            //         squareIndex = squareIndex + Number(fenLetter);
-            //       }
-            //     }
-            //   });
-            // }
-            // let toSquare = receivedData.move.slice(-2); // d5
-            // let fen = this.chessboard.fen;
-
-            if (window.evtCounter == 1)
-              root.dispatch({
-                name: match_guid, // eventListener is in <chess-board>.listenOnMatchID
-                detail: {
-                  match_guid,
-                  fen,
-                  move,
-                },
-              });
-          } else {
-            log("EventSource Reset, with", evt);
-          }
-        };
-      } catch (e) {
-        console.error("Event Source error", API);
-      }
+      CHESS.EVENTSOURCE.initialize({ root });
     }
     // ======================================================== BaseElement.$createElement
     // generic createElement function

@@ -23,7 +23,7 @@
   // ********************************************************** logging
 
   // the amount of console.logs displayed in this component
-  let logDetailComponent = -1; //! -1=no logs 0=use global setting >0=custom setting
+  let logDetailComponent = 1; //! -1=no logs 0=use global setting >0=custom setting
   let logComponent = window.CHESS.log[__COMPONENT_NAME__];
   let logDetail = logDetailComponent || logComponent.detail;
 
@@ -32,7 +32,8 @@
       console.logColor(
         {
           name: __COMPONENT_NAME__,
-          background: "orangered",
+          background: "blue",
+          color:"white",
           ...logComponent,
         },
         ...arguments
@@ -44,6 +45,8 @@
 
   // add CHESS.APIRT.constants
   Object.assign(CHESS.APIRT, {
+    __STARTGAME__: "startgame",
+    __UNDOMOVE__: "undomove",
     __API_RECORDS__: __API__ + "crud/index.php/records/", //! old CRUD API, before Bart created our own
     __API_SCHAAKZET__: __API__ + __API_CHESSGAME__ + "/?action=",
     __API_MATCHES__: __API__ + __API_CHESSGAME__,
