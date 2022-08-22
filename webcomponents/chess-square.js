@@ -1,8 +1,24 @@
 // IIFE - Immediatly Invoked Function Expression, save from creating Global variables
 !(function () {
-  function log(...args) {
-    console.log("%c chess-match ", "background:purple;color:yellow", ...args);
+  const __COMPONENT_NAME__ = CHESS.__WC_CHESS_SQUARE__;
+  // ********************************************************** logging
+
+  // the amount of console.logs displayed in this component
+  let logDetailComponent = 4; //! -1=no logs 0=use global setting >0=custom setting
+  let logComponent = window.CHESS.log[__COMPONENT_NAME__];
+  let logDetail = logDetailComponent || logComponent.detail;
+  function log() {
+    console.logColor &&
+      console.logColor(
+        {
+          name: __COMPONENT_NAME__,
+          background: "purple",
+          ...logComponent,
+        },
+        ...arguments
+      );
   }
+
   /*************************************************************************
    <chess-square defendedby="Qf5" attackedby="nc5"> Web Component
    */

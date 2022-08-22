@@ -1,11 +1,33 @@
 // IIFE - Immediatly Invoked Function Expression, save from creating Global variables
 !(function () {
+  const __COMPONENT_NAME__ = CHESS.__WC_CHESS_PIECE__;
+  // ********************************************************** logging
+
+  // the amount of console.logs displayed in this component
+  let logDetailComponent = 4; //! -1=no logs 0=use global setting >0=custom setting
+  let logComponent = window.CHESS.log[__COMPONENT_NAME__];
+  let logDetail = logDetailComponent || logComponent.detail;
+
+  function log() {
+    console.logColor &&
+      console.logColor(
+        {
+          name: __COMPONENT_NAME__,
+          background: "indigo",
+          ...logComponent,
+        },
+        ...arguments
+      );
+  }
+
+  /***********************************************************************/
+
   // const HTML_ImageChessPiece = (name) => `<img src="https://schaakzet.github.io/img/${name}.png">`;
   const HTML_ImageChessPiece = (name) => `<img src="https://schaakzet.github.io/img/${name}.svg">`;
 
   // ********************************************************** <chess-piece is="wit-paard" at="D5"> Web Component
   customElements.define(
-    CHESS.__WC_CHESS_PIECE__,
+    __COMPONENT_NAME__,
     class extends CHESS.ChessBaseSquarePieceElement {
       // ======================================================== <chess-piece>.observedAttributes
       static get observedAttributes() {
@@ -14,11 +36,10 @@
       // ======================================================== <chess-piece>.attributeChangedCallback
       attributeChangedCallback(name, oldValue, newValue) {
         // if is attribute changed, render new image
-        //! use setTimeout to make sure chess-board has rendered, because attributeChangedCallback is called before render
-        setTimeout(() => {
+        //!! make sure chess-board has rendered, because attributeChangedCallback is called before render
+        customElements.whenDefined(CHESS.__WC_CHESS_BOARD__).then(() => {
           this.innerHTML = HTML_ImageChessPiece(newValue);
-          //console.log(this.chessboard)
-        }, 0);
+        });
       }
       // ======================================================== <chess-piece>.movePieceTo
       movePieceTo(at, animated = true) {
@@ -146,7 +167,7 @@
       }
       // ======================================================== <chess-piece>.potentialMoves
       potentialMoves() {
-        //console.warn("potentialMoves", this.is);
+        if (logDetail > 1) log("potentialMoves", this.is);
 
         // De array potentialMovesArray is alle mogelijkheden van possibleMove.
         let _potentialMovesArray = [];
@@ -193,7 +214,7 @@
         const pawnAttack = (piececolor, x, y) => {
           const _squareName = this.square.translate(x, y); // "d6"
           const _squareElement = this.chessboard.getSquare(_squareName);
-          // console.error("SN:", squareName, "SEL:", squareElement);
+          if (logDetail > 1) log("SN:", squareName, "SEL:", squareElement);
           if (_squareElement) {
             // Test of we binnen het bord zijn.
             if (_squareElement.piece) {
@@ -279,10 +300,12 @@
 
           function checkCastlingInterrupt(offset, squareName) {
             if (!castlingInterrupt(playerColor, offset)) {
-              // console.log("No castling interrupt", squareName);
+              if (logDetail > 1) log("No castling interrupt", squareName);
               square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
               _potentialMovesArray.push(squareName);
-            } else console.log("Castling not possible", squareName);
+            } else {
+              if (logDetail > 1) log("Castling not possible", squareName);
+            }
           }
 
           if (playerColor == CHESS.__PLAYER_WHITE__) {
@@ -340,7 +363,7 @@
         let { top: destTop, left: destLeft } = this.chessboard.getSquare(destinationSquare).getBoundingClientRect();
         this._savedposition = this.style.position;
         this.style.position = "absolute";
-        console.warn("animateTo", destinationSquare);
+        if (logDetail > 0) log("animateTo", destinationSquare);
         return this.animate([{ transform: `translateX(0px) translateY(0px)` }, { transform: `translateX(${destLeft - left}px) translateY(${destTop - top}px)` }], {
           duration: CHESS.__MOVEPIECE_ANIMATION_DURATION__,
           iterations: 1,
@@ -355,12 +378,12 @@
         showboardsIn = console.error("%c Cant test move on same board yet, it removes any captured pieces", "background:red;color:yellow"), // a DOM element where all possible moves for this piece are shown
         matchboard = this.chessboard, // the board where the disabled squares/moves are shown
       }) {
-        console.warn("666-DE disableCheckMakingMoves", showboardsIn);
+        if (logDetail > 1) log("666-DE disableCheckMakingMoves", showboardsIn);
         this.moves.forEach((to) => {
           // loop all possible moves
           let testboard;
           if (showboardsIn) {
-            console.warn("To:", to);
+            if (logDetail > 2) log("To:", to);
             // create a new testboard for every possible move
             testboard = showboardsIn.appendChild(
               CHESS.createBoardElement({

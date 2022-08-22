@@ -10,10 +10,9 @@
 
   // **********************************************************  CHESS.ChessBaseSquarePieceElement
   CHESS.ChessBaseSquarePieceElement = class extends CHESS.ChessBaseElement {
-    constructor() {
-      //! test: no need for a constructor with only a super() call
-      super();
-    }
+    // constructor() {
+    //   super(); //! empty constructor with only super() not required
+    // }
 
     // getters and setters for <chess-square> <chess-piece> <chess-board> Web Components
 

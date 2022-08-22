@@ -19,10 +19,24 @@
   const __API_TABLE_MATCHMOVES__ = "matchmoves";
 
   // custom log colors for this file
-  function log(...args) {
-    let label = args.shift(); // take first parameter as label
-    let color = label.includes("fetched") ? "green" : "red"; // color by label
-    console.log(`%c ${label} `, `background:gold;color:${color}`, ...args);
+  const __COMPONENT_NAME__ = "api-rt";
+  // ********************************************************** logging
+
+  // the amount of console.logs displayed in this component
+  let logDetailComponent = 0; //! -1=no logs 0=use global setting >0=custom setting
+  let logComponent = window.CHESS.log[__COMPONENT_NAME__];
+  let logDetail = logDetailComponent || logComponent.detail;
+
+  function log() {
+    console.logColor &&
+      console.logColor(
+        {
+          name: __COMPONENT_NAME__,
+          background: "orangered",
+          ...logComponent,
+        },
+        ...arguments
+      );
   }
 
   // ********************************************************** CHESS.APIRT
@@ -91,17 +105,17 @@
 
         delete options.body;
       }
-      log(`action=${action}`, body.where || body.id || body);
+      if (logDetail > 0) log(`action=${action}`, body.where || body.id || body);
       // -------------------------------------------------- fetch
       fetch(uri, options)
         .then((response) => response.json())
         .then((json_response) => {
-          log("JSON Response:", json_response);
+          if (logDetail > 1) log("JSON Response:", json_response);
           let rowcount = json_response.rows.length;
           if (rowcount == 1) {
-            log(`fetched ${body.action} ${body.where || ""}:`, { ROW: json_response.rows[0] });
+            if (logDetail > 1) log(`fetched ${body.action} ${body.where || ""}:`, { ROW: json_response.rows[0] });
           } else {
-            log(`fetched ${body.action} ${body.where || ""} ${rowcount} rows:`, json_response);
+            if (logDetail > 1) log(`fetched ${body.action} ${body.where || ""} ${rowcount} rows:`, json_response);
           }
           //!! execute callback function
           callback(json_response);

@@ -19,6 +19,7 @@
     })
   );
   loadScriptsWithDependencyOrder([
+    "../console",
     "app-base-functions", // generic functions
     "chess-base-constants", // required
     "chess-base-api-rt", // required for database API

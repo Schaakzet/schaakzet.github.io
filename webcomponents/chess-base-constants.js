@@ -5,6 +5,14 @@
     window.CHESS || {}, // create default CHESS object if not exists
     {
       // add constants to CHESS object
+      // ********************************************************** LOGGING Levels
+      log: {
+        "api-rt": { detail: 2, stacktrace: true },
+        "chess-board": { detail: 1 },
+        "chess-match": { detail: 1 },
+        "chess-piece": { detail: 1 },
+        "chess-square": { detail: 1 },
+      },
       // ********************************************************** HTML CSS
       // TODO: create as attribute and property on <chess-board> so user can select theme colors
       __CLASSNAME_WHITESQUARE__: "white_square",

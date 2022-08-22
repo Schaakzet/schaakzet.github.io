@@ -23,8 +23,15 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
     return isInCheck($chessboard.player);
   }
 
-  function log(...args) {
-    console.log("%c A ", "background:orange;", ...args);
+  function log() {
+    console.logColor &&
+      console.logColor(
+        {
+          name: "analysis",
+          background: "orange",
+        },
+        ...arguments
+      );
   }
 
   // ======================================================== promotion

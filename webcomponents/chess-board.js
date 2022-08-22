@@ -1,7 +1,27 @@
 !(function () {
+  const __COMPONENT_NAME__ = CHESS.__WC_CHESS_BOARD__;
+  // ********************************************************** logging
+  
+  // the amount of console.logs displayed in this component
+  let logDetailComponent = 0; //! -1=no logs 0=use global setting >0=custom setting
+  let logComponent = window.CHESS.log[__COMPONENT_NAME__];
+  let logDetail = logDetailComponent || logComponent.detail;
+
+  function log() {
+    console.logColor &&
+      console.logColor(
+        {
+          name: __COMPONENT_NAME__,
+          background: "green",
+          ...logComponent,
+        },
+        ...arguments
+      );
+  }
+
   /***********************************************************************/
   customElements.define(
-    CHESS.__WC_CHESS_BOARD__,
+    __COMPONENT_NAME__,
     class extends CHESS.ChessBaseSquarePieceElement {
       // ======================================================== <chess-board>.observedAttributes
       static get observedAttributes() {
@@ -67,12 +87,11 @@
           let bottomViewport = window.visualViewport.height;
           let widthViewport = window.visualViewport.width;
           let heightAdded = bottomViewport - bottom;
-          // console.todo("<chess-board>.resizeCheck, set board to fill container. bottom:", bottom, "vp:", bottomViewport, "height:", height, heightAdded);
           //if (bottom > window.visualViewport.height)  = window.visualViewport.height;
           let newWidth = ~~(height + heightAdded);
           let newHeight = newWidth;
 
-          let marginForTextMessage = 50;
+          let marginForTextMessage = 250; //! this forces a smaller board, was 50
 
           if (widthViewport < bottomViewport) {
             // portrait screen
@@ -129,12 +148,12 @@
                 let movetype = move[2];
                 if (move.includes("O-O")) {
                   //! todo roccade
-                  console.warn("Implement Castling listenOnMatchID");
+                  if (logDetail > 0) log("Implement Castling listenOnMatchID");
                 } else {
                   if (movetype == "-" || movetype == "x") {
                     let [from, to] = move.split(movetype);
                     this.movePiece(from, to); // Changes this.fen, so FEN ERROR!
-                    console.warn("FENs:", this.fen, fen);
+                    if (logDetail > 1) log("FENs:", this.fen, fen);
                     setTimeout(() => {
                       if (this.fen !== fen) {
                         // should never happen, but just in case
@@ -179,7 +198,7 @@
       }
       set id(v) {
         if (v) {
-          // console.log("666", "set id", v);
+          if (logDetail > 2) log("set id", v);
           this.setAttribute("id", v);
           this.listenOnMatchID();
         } else this.removeAttribute("id");
@@ -199,7 +218,6 @@
       }
       // ======================================================== <chess-board>.createboard
       createboard(name) {
-        console.warn("createboard => Pieces HTML:", this.innerHTML, "this:", this);
         let userHTMLpieces = this.innerHTML;
         this.innerHTML = ""; // delete all userPieces, we will put them in another layer later
 
@@ -287,8 +305,9 @@
         if (square) {
           let squareElement = square;
           if (isString(square)) squareElement = this.queryBoard(`[${CHESS.__WC_ATTRIBUTE_AT__}=${square}]`);
-          // console.error("square element:", squareElement);
-          if (!squareElement) console.warn(square, "is not a valid square");
+          if (!squareElement) {
+            if (logDetail > 0) log(square, "is not a valid square");
+          }
           return squareElement;
         }
       }
@@ -299,7 +318,6 @@
       // ======================================================== <chess-board>.getPiece
       getPiece(square) {
         const squareElement = this.getSquare(square);
-        // console.error("squareElement, squareElement.piece", squareElement, squareElement.piece);
         if (squareElement) return squareElement.piece;
       }
       // ======================================================== <chess-board>.addPiece
@@ -340,7 +358,7 @@
       }
       // ======================================================== <chess-board>.initPlayerTurn
       initPlayerTurn() {
-        console.warn("initPlayerTurn chessboard", this);
+        if (logDetail > 1) log("initPlayerTurn chessboard", this);
         delete this.pieceClicked;
         this.initAnalysis();
         this.highlightOff();
@@ -356,7 +374,7 @@
       changePlayer() {
         if (this.player) {
           this.playerturn = CHESS.otherPlayer(this.playerturn); // todo Naar FEN
-          console.warn("changePlayer turn:", this.playerturn, "player:", this.player, this.fen);
+          if (logDetail > 1) log("changePlayer turn:", this.playerturn, "player:", this.player, this.fen);
         }
       }
       // ======================================================== <chess-board>.dispatchChessMove
@@ -400,7 +418,7 @@
 
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
-        console.warn("movePiece FEN", this.fen);
+        if (logDetail > 1) log("movePiece FEN", this.fen);
         if (isString(chessPiece)) {
           chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
         }
@@ -412,14 +430,13 @@
             let fromSquare = chessPiece.square;
             let toSquare = this.getSquare(square);
             let moveType = toSquare.piece ? CHESS.__MOVETYPE_CAPTURE__ : CHESS.__MOVETYPE_MOVE__;
-            //console.error(square, fromSquare, moveType, toSquare);
             const lastFEN = this.fen;
 
             // Clear en Passant pawn and add to capturedPiece
             if (this.lastMove && toSquare.at == this.enPassantPosition && chessPiece.isPawn) {
               this.lastMove.toSquare.capturePieceBy(chessPiece);
               moveType = CHESS.__MOVETYPE_CAPTURE__;
-              console.log("We had En Passant. Clear piece.");
+              if (logDetail > 1) log("We had En Passant. Clear piece.");
               this.lastMove.toSquare.clear();
             }
 
@@ -441,9 +458,9 @@
             if (fromSquare) fromSquare.clear();
             chessPiece.animateFinished(); // do <chess-piece> CSS stuff after animation finished
 
-            console.warn("PLAYER & TURN:", this.player, this.playerturn);
+            if (logDetail > 1) log("PLAYER & TURN:", this.player, this.playerturn);
             const move = fromSquare.at + moveType + toSquare.at;
-            console.warn("chessPiece, from, to, move", chessPiece, fromSquare, toSquare, move);
+            if (logDetail > 1) log("chessPiece, from, to, move", chessPiece, fromSquare, toSquare, move);
 
             const /* function */ save2chessMoves = () => {
                 if (this.player === this.playerturn)
@@ -522,7 +539,7 @@
         let chessMoves = this.chessMoves;
         // remove lastmove CSS color from previous move
         if (chessMoves.length) {
-          console.error("Last chessMoves", chessMoves);
+          if (logDetail > 1) log("Last chessMoves", chessMoves);
           let { fromSquare, toSquare } = chessMoves.slice(-2)[0];
           if (fromSquare) fromSquare.classList.remove("lastmove");
           else console.warn("fromSquare is undefined");
@@ -588,9 +605,8 @@
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
         // console.log("MAGIC FUNCTIONS:", new Error().stack);
-        console.warn("Set fen START");
+        if (logDetail > 1) log("Set fen START");
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
-        // console.log("%c set fen: ", "background:orange", fenString);
         this.castlingArray = ["K", "Q", "k", "q"];
 
         //! THIS WILL TRIGGER set fen again: this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, fenString);
@@ -639,7 +655,7 @@
         // if (this.doAnalysis && this.id !== "testboard") {
         //   CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
         // }
-        console.error("SET FEN END!!!", this);
+        if (logDetail > 1) log("SET FEN END!!!", this);
       } // set fen
       // ======================================================== <chess-board>.fen SETTER/GETTER
       get fen() {
@@ -686,7 +702,7 @@
 
         // castling
         let castling = "";
-        console.warn("Castling Array", this.castlingArray);
+        if (logDetail > 1) log("Castling Array", this.castlingArray);
         if (this.castlingArray) {
           if (this.castlingArray.length) castling = this.castlingArray.join("");
           else castling = "-";
@@ -702,7 +718,7 @@
         fenParts.push(enpassant);
         // join
         fenString = fenParts.join(" ");
-        console.warn("get fen fenString: ", fenString);
+        if (logDetail > 1) log("get fen fenString: ", fenString);
         // console.warn("this.innerHTML", this.innerHTML);
         return fenString;
       } // get fen()
@@ -756,7 +772,7 @@
       }
       // ======================================================== <chess-board>.markIllegalMove
       markIllegalMove(at) {
-        console.log("666-DE MarkIllegalMove", at);
+        if (logDetail > 0) log("666-DE MarkIllegalMove", at);
         this.getSquare(at).highlight(CHESS.__MOVETYPE_ILLEGAL__);
         this.pieceClicked.moves = this.pieceClicked.moves.filter((move) => move !== this.getSquare(at).at);
       }
@@ -764,7 +780,6 @@
       // ======================================================== <chess-board>.remove
       delete() {
         this.remove();
-        console.log("TESTBOARD REMOVED");
       }
       // ============================================================ <chess-board>.player on board
       get player() {

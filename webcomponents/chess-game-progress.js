@@ -1,7 +1,26 @@
 !(function () {
-  // ********************************************************** IIFE
+  const __COMPONENT_NAME__ = "chess-game-progress";
+
+  // ********************************************************** logging
+  // the amount of console.logs displayed in this component
+  let logDetailComponent = 4; //! -1=no logs 0=use global setting >0=custom setting
+  let logComponent = window.CHESS.log[__COMPONENT_NAME__];
+  let logDetail = logDetailComponent || logComponent.detail;
+  function log() {
+    console.logColor &&
+      console.logColor(
+        {
+          name: __COMPONENT_NAME__,
+          background: "darkgoldenrod",
+          ...logComponent,
+        },
+        ...arguments
+      );
+  }
+
+  // ********************************************************** <chess-game-progress>
   customElements.define(
-    "chess-game-progress",
+    __COMPONENT_NAME__,
     class extends CHESS.ChessBaseElement {
       connectedCallback() {
         super.connectedCallback();
@@ -21,7 +40,7 @@
       }
 
       addMove(detail, nr = 1) {
-        console.log("addMove nr & evt.detail", nr, detail);
+        if (logDetail > 0) log("addMove nr & evt.detail", nr, detail);
         this.append(
           Object.assign(document.createElement("div"), {
             innerHTML: `${nr}. ${detail.move}`,

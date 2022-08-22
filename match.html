@@ -1,33 +1,39 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script src="./webcomponents/schaakzet.js"></script>
-    <script id="schaakzetplugin">
-      let ROADSTECHNOLOGY = {
-        CHESS: {
-          id: new URLSearchParams(document.location.search).get("id"),
-          displayname: new URLSearchParams(document.location.search).get("name"),
-        },
-      };
-      console.log(`%c WORDPRESS MOCK DATA: `, "background:red;color:white", ROADSTECHNOLOGY.CHESS);
-    </script>
-    <style>
-      chess-board[playerturn="zwart"][player="wit"],
-      chess-board[playerturn="wit"][player="zwart"] {
-        pointer-events: none;
-      }
 
-      chess-board[playerturn="zwart"] chess-piece[is*="wit"] img,
-      chess-board[playerturn="wit"] chess-piece[is*="zwart"] img {
-        opacity: 0.5;
-      }
-    </style>
-  </head>
+<head>
+  <script src="./webcomponents/schaakzet.js"></script>
+  <script id="schaakzetplugin">
+    let ROADSTECHNOLOGY = {
+      CHESS: {
+        id: new URLSearchParams(document.location.search).get("id"),
+        displayname: new URLSearchParams(document.location.search).get("name"),
+      },
+    };
+    console.log(`%c WORDPRESS MOCK DATA: `, "background:red;color:white", ROADSTECHNOLOGY.CHESS);
+  </script>
+  <style>
+    /* chess-match {
+      max-width: 700px;
+    } */
 
-  <body>
-    <main>
-      <chess-match playernames buttons></chess-match>
-    </main>
-    <footer></footer>
-  </body>
+    chess-board[playerturn="zwart"][player="wit"],
+    chess-board[playerturn="wit"][player="zwart"] {
+      pointer-events: none;
+    }
+
+    chess-board[playerturn="zwart"] chess-piece[is*="wit"] img,
+    chess-board[playerturn="wit"] chess-piece[is*="zwart"] img {
+      opacity: 0.5;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <chess-match playernames buttons></chess-match>
+  </main>
+  <footer></footer>
+</body>
+
 </html>
