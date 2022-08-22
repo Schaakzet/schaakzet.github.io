@@ -87,7 +87,7 @@
             ...arguments
           );
       }
-    
+
       //! oh boy Sandro introduces global variables
       window.evtCounter = 0;
 
@@ -117,12 +117,36 @@
             // console.clear();
             log("Received", evt.data);
             const receivedData = JSON.parse(evt.data); //! TODO this can be data for multiple matches!
-            console.warn("receivedData", receivedData);
-            if (window.evtCounter == 1 || newMove)
+            let { fen, match_guid, move } = receivedData;
+
+            // function findToSquareInFEN(toSquare, fen) {
+            //   let file = toSquare[0]; // d
+            //   let rank = toSquare[1]; // 5
+            //   let fenString = fen.split(" ")[0];
+            //   let squareIndex = 0;
+            //   fenString.split("").forEach((fenLetter) => {
+            //     if (fenLetter !== "/") {
+            //       if (parseInt(fenLetter) > 0 && parseInt(fenLetter) < 9) {
+            //         // Als het 1 t/m 8 is...
+            //         squareIndex = squareIndex + Number(fenLetter);
+            //       }
+            //     }
+            //   });
+            // }
+            // let toSquare = receivedData.move.slice(-2); // d5
+            // let fen = this.chessboard.fen;
+
+            if (window.evtCounter == 1)
               root.dispatch({
-                name: receivedData.match_guid, // event name is the match_guid
-                detail: receivedData,
+                name: match_guid, // eventListener is in <chess-board>.listenOnMatchID
+                detail: {
+                  match_guid,
+                  fen,
+                  move,
+                },
               });
+          } else {
+            log("EventSource Reset, with", evt);
           }
         };
       } catch (e) {

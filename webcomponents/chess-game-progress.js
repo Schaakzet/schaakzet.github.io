@@ -3,7 +3,7 @@
 
   // ********************************************************** logging
   // the amount of console.logs displayed in this component
-  let logDetailComponent = 4; //! -1=no logs 0=use global setting >0=custom setting
+  let logDetailComponent = -1; //! -1=no logs 0=use global setting >0=custom setting
   let logComponent = window.CHESS.log[__COMPONENT_NAME__];
   let logDetail = logDetailComponent || logComponent.detail;
   function log() {

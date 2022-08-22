@@ -8,12 +8,12 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
   const movePiece = /* function */ (piece, to) => $chessboard.movePiece(piece, to);
 
   if (type == CHESS.__ANALYSIS_PRE__) {
-    console.log("analyze pre");
+    // console.log("analyze pre");
     analyzeWholeBoard();
   }
 
   if (type == CHESS.__ANALYSIS_AFTER__) {
-    console.log("Analysis AFTER");
+    // console.log("Analysis AFTER");
     enPassantPosition();
     castling();
     promotion();
@@ -36,7 +36,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
 
   // ======================================================== promotion
   function promotion() {
-    console.log("Analysis PROMOTION");
+    // console.log("Analysis PROMOTION");
     if ($chessboard.lastMove) {
       let lastMovedPiece = $chessboard.lastMove.toSquare.piece;
       if (lastMovedPiece.isPawnAtEnd && $chessboard.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
@@ -71,7 +71,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
 
   // ======================================================== castling
   function castling() {
-    console.log("Analysis CASTLING");
+    // console.log("Analysis CASTLING");
     if ($chessboard.lastMove !== undefined) {
       let lastMovedPiece = $chessboard.lastMove.toSquare.piece;
       reduceCastlingArray($chessboard.lastMove.fromSquare.at);
@@ -84,10 +84,12 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
             $chessboard.doingCastling = castlingLongShort;
             movePiece(getPiece(getSquare(from)), to);
           };
-        if (fromSquare.at == "e1") { // white king
+        if (fromSquare.at == "e1") {
+          // white king
           if (toSquare.at == "c1") moveRook("a1", "d1", __LONGCASTLING__);
           else if (toSquare.at == "g1") moveRook("h1", "f1", __SHORTCASTLING__);
-        } else if (fromSquare.at == "e8") { // black king
+        } else if (fromSquare.at == "e8") {
+          // black king
           if (toSquare.at == "c8") moveRook("a8", "d8", __LONGCASTLING__);
           else if (toSquare.at == "g8") moveRook("h8", "f8", __SHORTCASTLING__);
         }
@@ -127,7 +129,7 @@ window.CHESS.analysis = /* function */ ($chessboard, type = "") => {
 
   // ======================================================== enPassantPosition
   function enPassantPosition() {
-    console.log("Analysis ENPASSANT");
+    // console.log("Analysis ENPASSANT");
     if ($chessboard.lastMove) {
       const { chessPiece, fromSquare, toSquare } = $chessboard.lastMove;
       if (chessPiece.isPawn && fromSquare.rankDistance(toSquare) == 2) {

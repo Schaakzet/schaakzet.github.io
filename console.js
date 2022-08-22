@@ -38,7 +38,8 @@
             } catch (e) {
               // catch <anonymous>
             }
-            linenr = (uri || logline).split("?")[1].split(":")[1];
+            let POEP = uri || logline;
+            linenr = POEP.split("?")[POEP.includes("?") ? 1 : 0].split(":")[1];
             return {
               funcname,
               file,
@@ -47,7 +48,7 @@
           })
           .filter((x) => x && x.file && x.funcname !== "log");
       } catch (e) {
-        console.error("Overloading console error:", e, errorStack);
+        console.error("Overloading console error:", e, errorStack, [...args]);
       }
       // override console.log("Hello:red;color=white", "World!") //! FIRST/ONLY colon : in string marks color!
 

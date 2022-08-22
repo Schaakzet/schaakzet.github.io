@@ -1,7 +1,7 @@
 !(function () {
   const __COMPONENT_NAME__ = CHESS.__WC_CHESS_BOARD__;
   // ********************************************************** logging
-  
+
   // the amount of console.logs displayed in this component
   let logDetailComponent = 0; //! -1=no logs 0=use global setting >0=custom setting
   let logComponent = window.CHESS.log[__COMPONENT_NAME__];
@@ -152,17 +152,14 @@
                 } else {
                   if (movetype == "-" || movetype == "x") {
                     let [from, to] = move.split(movetype);
-                    this.movePiece(from, to); // Changes this.fen, so FEN ERROR!
-                    if (logDetail > 1) log("FENs:", this.fen, fen);
                     setTimeout(() => {
-                      if (this.fen !== fen) {
-                        // should never happen, but just in case
-                        console.error("FEN ERROR! after move", move);
-                      }
-                    }, 400);
+                      this.movePiece(from, to); // Changes this.fen, so FEN ERROR!
+                    });
+                    //if (from == "e3") debugger;
+                    if (logDetail > 1) log("FENs:", this.fen, fen);
                   } else {
-                    this.fen = fen;
                   }
+                  this.fen = fen;
                 }
               } else {
                 this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, this.fen);
@@ -418,106 +415,103 @@
 
       // ======================================================== <chess-board>.movePiece
       movePiece(chessPiece, square, animated = true) {
-        if (logDetail > 1) log("movePiece FEN", this.fen);
+        log("movePiece", chessPiece, square, this.fen);
         if (isString(chessPiece)) {
           chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
         }
         if (!chessPiece) {
-          console.error("Er is geen chesspiece. Chesspiece = ", chessPiece);
+          log("Er staat geen chesspiece op:", square);
           return;
         }
-        const /* function */ movedPiece = () => {
-            let fromSquare = chessPiece.square;
-            let toSquare = this.getSquare(square);
-            let moveType = toSquare.piece ? CHESS.__MOVETYPE_CAPTURE__ : CHESS.__MOVETYPE_MOVE__;
-            const lastFEN = this.fen;
+        const movedPiece = () => {
+          let fromSquare = chessPiece.square;
+          let toSquare = this.getSquare(square);
+          let moveType = toSquare.piece ? CHESS.__MOVETYPE_CAPTURE__ : CHESS.__MOVETYPE_MOVE__;
+          const lastFEN = this.fen;
 
-            // Clear en Passant pawn and add to capturedPiece
-            if (this.lastMove && toSquare.at == this.enPassantPosition && chessPiece.isPawn) {
-              this.lastMove.toSquare.capturePieceBy(chessPiece);
-              moveType = CHESS.__MOVETYPE_CAPTURE__;
-              if (logDetail > 1) log("We had En Passant. Clear piece.");
-              this.lastMove.toSquare.clear();
-            }
+          // Clear en Passant pawn and add to capturedPiece
+          if (this.lastMove && toSquare.at == this.enPassantPosition && chessPiece.isPawn) {
+            this.lastMove.toSquare.capturePieceBy(chessPiece);
+            moveType = CHESS.__MOVETYPE_CAPTURE__;
+            if (logDetail > 1) log("We had En Passant. Clear piece.");
+            this.lastMove.toSquare.clear();
+          }
 
-            // Strike rook, clean castlingArray
-            if (toSquare.piece.isRook) {
-              const removeFENletter = {
-                a1: "Q",
-                h1: "K",
-                a8: "q",
-                h8: "k",
-              }[toSquare.at];
-              this.castlingArray = this.castlingArray.filter((item) => item !== removeFENletter);
-            }
-            // Capture Piece => capturePieceBy
-            toSquare.capturePieceBy(chessPiece);
+          // Strike rook, clean castlingArray
+          if (toSquare.piece.isRook) {
+            const removeFENletter = {
+              a1: "Q",
+              h1: "K",
+              a8: "q",
+              h8: "k",
+            }[toSquare.at];
+            this.castlingArray = this.castlingArray.filter((item) => item !== removeFENletter);
+          }
+          // Capture Piece => capturePieceBy
+          toSquare.capturePieceBy(chessPiece);
 
-            // movePiece
-            toSquare.addPiece(chessPiece);
-            if (fromSquare) fromSquare.clear();
-            chessPiece.animateFinished(); // do <chess-piece> CSS stuff after animation finished
+          // movePiece
+          toSquare.addPiece(chessPiece);
+          if (fromSquare) fromSquare.clear();
+          chessPiece.animateFinished(); // do <chess-piece> CSS stuff after animation finished
 
-            if (logDetail > 1) log("PLAYER & TURN:", this.player, this.playerturn);
-            const move = fromSquare.at + moveType + toSquare.at;
-            if (logDetail > 1) log("chessPiece, from, to, move", chessPiece, fromSquare, toSquare, move);
+          if (logDetail > 1) log("PLAYER & TURN:", this.player, this.playerturn);
+          const move = fromSquare.at + moveType + toSquare.at;
+          if (logDetail > 1) log("chessPiece, from, to, move", chessPiece, fromSquare, toSquare, move);
 
-            const /* function */ save2chessMoves = () => {
-                if (this.player === this.playerturn)
-                  this.addChessMove({
-                    chessPiece, //
-                    fromSquare, //
-                    toSquare, //
-                    fen: lastFEN, //
-                    move,
-                  });
-              };
+          const save2chessMoves = () => {
+            if (this.player === this.playerturn)
+              this.addChessMove({
+                chessPiece, //
+                fromSquare, //
+                toSquare, //
+                fen: lastFEN, //
+                move,
+              });
+          };
 
-            if (this.doingCastling) {
-              if (chessPiece.isKing) {
-                // this.recordMoveInDatabase({
-                //   fromSquare,
-                //   toSquare,
-                //   move: this.doingCastling, //record castling type "O-O"  "O-O-O"
-                // });
-              } else {
-                // Rook in castling mode
-                this.chessMoves.pop(); // delete rook move
-                let savedFEN = this.lastMove.fen;
-                this.chessMoves.pop(); // delete king move
-                save2chessMoves(); // save castling move
-                this.lastMove.fen = savedFEN;
-
-                this.changePlayer();
-                if (this.player !== this.playerturn && this.id !== "testboard") {
-                  this.closest("chess-match").storeMove({
-                    chessboard: this,
-                    move: this.doingCastling, // record castling type "O-O"  "O-O-O"
-                    fen: this.fen,
-                  });
-                  this.dispatchChessMove({ fromSquare, toSquare, move });
-                }
-                this.doingCastling = false;
-              }
-            } else {
-              // regular move
-              save2chessMoves();
-
-              this.changePlayer();
+          const /*function*/ store_Dispatch_Move = (move) => {
               if (this.player !== this.playerturn && this.id !== "testboard") {
                 this.closest("chess-match").storeMove({
                   chessboard: this,
-                  move: fromSquare.at + moveType + toSquare.at, // record regular move "e2-e4" "e4xd5"
+                  move,
                   fen: this.fen,
                 });
                 this.dispatchChessMove({ fromSquare, toSquare, move });
               }
-            }
+            };
 
-            this.play(); // play all moves left in the queue
-            this.showLastMoveOnBoard();
-            return chessPiece;
-          }; // end movedPiece function
+          if (this.doingCastling) {
+            if (chessPiece.isKing) {
+              // this.recordMoveInDatabase({
+              //   fromSquare,
+              //   toSquare,
+              //   move: this.doingCastling, //record castling type "O-O"  "O-O-O"
+              // });
+            } else {
+              // Rook in castling mode
+              this.chessMoves.pop(); // delete rook move
+              let savedFEN = this.lastMove.fen;
+              this.chessMoves.pop(); // delete king move
+              save2chessMoves(); // save castling move
+              this.lastMove.fen = savedFEN;
+
+              this.changePlayer();
+              store_Dispatch_Move(this.doingCastling);
+              this.doingCastling = false;
+            }
+          } else {
+            // regular move
+            save2chessMoves();
+
+            this.changePlayer();
+            store_Dispatch_Move(fromSquare.at + moveType + toSquare.at);
+          }
+
+          this.play(); // play all moves left in the queue
+          this.showLastMoveOnBoard();
+          return chessPiece;
+        }; // end movedPiece function
 
         if (animated) chessPiece.animateTo(square).then(movedPiece);
         else movedPiece();
@@ -605,6 +599,7 @@
       // ======================================================== <chess-board>.fen SETTER/GETTER
       set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
         // console.log("MAGIC FUNCTIONS:", new Error().stack);
+        console.log(fenString);
         if (logDetail > 1) log("Set fen START");
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
         this.castlingArray = ["K", "Q", "k", "q"];
@@ -702,7 +697,7 @@
 
         // castling
         let castling = "";
-        if (logDetail > 1) log("Castling Array", this.castlingArray);
+        //if (logDetail > 1) log("Castling Array", 666);
         if (this.castlingArray) {
           if (this.castlingArray.length) castling = this.castlingArray.join("");
           else castling = "-";

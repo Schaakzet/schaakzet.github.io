@@ -4,7 +4,7 @@
   // ********************************************************** logging
 
   // the amount of console.logs displayed in this component
-  let logDetailComponent = 4; //! -1=no logs 0=use global setting >0=custom setting
+  let logDetailComponent = 0; //! -1=no logs 0=use global setting >0=custom setting
   let logComponent = window.CHESS.log[__COMPONENT_NAME__];
   let logDetail = logDetailComponent || logComponent.detail;
 
@@ -214,7 +214,7 @@
         const pawnAttack = (piececolor, x, y) => {
           const _squareName = this.square.translate(x, y); // "d6"
           const _squareElement = this.chessboard.getSquare(_squareName);
-          if (logDetail > 1) log("SN:", squareName, "SEL:", squareElement);
+          if (logDetail > 1) log("SN:", _squareName, "SEL:", _squareElement);
           if (_squareElement) {
             // Test of we binnen het bord zijn.
             if (_squareElement.piece) {

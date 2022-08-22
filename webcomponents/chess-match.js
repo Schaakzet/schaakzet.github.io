@@ -8,7 +8,7 @@
   // ********************************************************** logging
 
   // the amount of console.logs displayed in this component
-  let logDetailComponent = 0; //! -1=no logs 0=use global setting >0=custom setting
+  let logDetailComponent = -1; //! -1=no logs 0=use global setting >0=custom setting
   let logComponent = window.CHESS.log[__COMPONENT_NAME__];
   let logDetail = logDetailComponent || logComponent.detail;
 
@@ -250,36 +250,53 @@
           },
         });
       }
+      // ================================================== updateProgressRow
+      updateProgressRow({ matchmoves_id, match_guid, fromsquare, tosquare, move, fen, tournament_id }) {
+        let chessboard = this.chessboard;
+        if (logDetail > 1) log("row", move);
+        let moves = (chessboard.moves = []);
+        moves.push(move);
+        if (move != "startgame" && move != "undomove" && (evtCounter == 1 || !moves.includes(move))) {
+          if (logDetail > 1) log("adding chessMove", move);
+          chessboard.addChessMove({
+            chessPiece: chessboard.getPiece(tosquare), // database does not know which piece it is
+            //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
+            fromSquare: fromsquare,
+            toSquare: tosquare,
+            fen,
+            move,
+          });
+          if (logDetail > 1) log(move, fromsquare, tosquare);
+          //chessboard.dispatchChessMove({ fromsquare, tosquare, move });
+          chessboard.dispatch({
+            name: match_guid, // eventListener is in <chess-board>.listenOnMatchID
+            detail: {
+              match_guid,
+              fen,
+              move,
+            },
+          });
+        }
+      }
       // ================================================== updateProgressFromDatabase
       updateProgressFromDatabase({
         rows = false, // if false then call database again with match_guid
         match_guid = localStorage.getItem(CHESS.__MATCH_GUID__),
       }) {
         if (logDetail > 1) log("ROWS:", rows);
+
         let chessboard = this.chessboard;
-        function processRows(rows) {
-          let evtCounter = window.evtCounter;
-          if (logDetail > 1) log("evtCounter", evtCounter);
-          if (logDetail > 1) log("Update progress from ", rows.length, "database rows");
-          rows.forEach((row) => {
-            let { matchmoves_id, match_guid, fromsquare, tosquare, move, fen, tournament_id } = row;
-            let moves = (chessboard.moves = []);
-            moves.push(move);
-            if (move != "startgame" && move != "undomove" && (window.evtCounter == 1 || !moves.includes(move))) {
-              if (logDetail > 1) log("adding chessMove", move);
-              chessboard.addChessMove({
-                chessPiece: chessboard.getPiece(tosquare), // database does not know which piece it is
-                //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
-                fromSquare: fromsquare,
-                toSquare: tosquare,
-                fen,
-                move,
-              });
-              chessboard.dispatchChessMove({ fromsquare, tosquare, move });
-            }
-          });
-          chessboard.showLastMoveOnBoard();
-        }
+        const /*function*/ processRows = (rows) => {
+            let evtCounter = window.evtCounter;
+            if (logDetail > 1) log("evtCounter", evtCounter);
+            if (logDetail > 1) log("Update progress from ", rows.length, "database rows");
+            chessboard.fen = undefined; //! make sure we start with a start board
+            chessboard.isUpdating = true;
+            rows.forEach((row) => {
+              this.updateProgressRow(row);
+            });
+            chessboard.showLastMoveOnBoard();
+          };
 
         if (rows) processRows(rows);
         else
@@ -320,6 +337,10 @@
         move = "e2-e4",
         fen = chessboard.fen,
       }) {
+        log(move);
+        if (chessboard.isUpdating) {
+          return;
+        }
         if (logDetail > 2) log("callstack", new Error().stack);
         if (logDetail > 0) log("storeMove", move, fen);
         // chessboard.updateFENonScreen();

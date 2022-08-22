@@ -7,11 +7,11 @@
       // add constants to CHESS object
       // ********************************************************** LOGGING Levels
       log: {
-        "api-rt": { detail: 2, stacktrace: true },
-        "chess-board": { detail: 1 },
-        "chess-match": { detail: 1 },
-        "chess-piece": { detail: 1 },
-        "chess-square": { detail: 1 },
+        "api-rt": { detail: 0, stacktrace: true },
+        "chess-board": { detail: 0 },
+        "chess-match": { detail: 0 },
+        "chess-piece": { detail: 0 },
+        "chess-square": { detail: 0 },
       },
       // ********************************************************** HTML CSS
       // TODO: create as attribute and property on <chess-board> so user can select theme colors

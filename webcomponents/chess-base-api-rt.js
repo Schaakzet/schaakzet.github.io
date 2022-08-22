@@ -23,7 +23,7 @@
   // ********************************************************** logging
 
   // the amount of console.logs displayed in this component
-  let logDetailComponent = 0; //! -1=no logs 0=use global setting >0=custom setting
+  let logDetailComponent = -1; //! -1=no logs 0=use global setting >0=custom setting
   let logComponent = window.CHESS.log[__COMPONENT_NAME__];
   let logDetail = logDetailComponent || logComponent.detail;
 
@@ -111,7 +111,7 @@
         .then((response) => response.json())
         .then((json_response) => {
           if (logDetail > 1) log("JSON Response:", json_response);
-          let rowcount = json_response.rows.length;
+          let rowcount = json_response.rows?.length;
           if (rowcount == 1) {
             if (logDetail > 1) log(`fetched ${body.action} ${body.where || ""}:`, { ROW: json_response.rows[0] });
           } else {

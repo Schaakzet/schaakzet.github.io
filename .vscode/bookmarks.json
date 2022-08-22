@@ -104,14 +104,29 @@
 			"path": "webcomponents/chess-board.js",
 			"bookmarks": [
 				{
-					"line": 113,
+					"line": 152,
 					"column": 20,
-					"label": "BEFORE PLAY"
-				},
+					"label": "received GUID event"
+				}
+			]
+		},
+		{
+			"path": "webcomponents/chess-base-class.js",
+			"bookmarks": [
 				{
-					"line": 584,
-					"column": 7,
-					"label": "PLAY"
+					"line": 139,
+					"column": 28,
+					"label": "dispatch GUID from EventSource"
+				}
+			]
+		},
+		{
+			"path": "webcomponents/chess-match.js",
+			"bookmarks": [
+				{
+					"line": 277,
+					"column": 17,
+					"label": "dispatch in processRows"
 				}
 			]
 		}

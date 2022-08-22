@@ -62,10 +62,9 @@
     }
     // ======================================================== <chess-*>.square
     get square() {
-      return (
-        this.closest(CHESS.__WC_CHESS_SQUARE__) || // closest("<chess-square>");
-        console.error("Can't find <chess-square> from", this)
-      );
+      return this.closest(CHESS.__WC_CHESS_SQUARE__);
+      //|| // closest("<chess-square>");
+      //console.error("Can't find <chess-square> from", this)
     }
   }; // class:ChessBaseSquarePieceElement
 })(); // end IIFE
