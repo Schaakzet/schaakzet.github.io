@@ -71,7 +71,7 @@
               `    <div id="TEST4CHECKBOARDS" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1em"></div>` +
               `  </div>` +
               `  <div>` +
-              `    <chess-show-captured-pieces></chess-show-captured-pieces>` +
+              `    <chess-captured-pieces></chess-captured-pieces>` +
               `    <chess-game-progress></chess-game-progress>` +
               `  </div>` +
               `</div>` +
@@ -159,7 +159,7 @@
         // -------------------------------------------------- fancy console.log
         function consoleLog(playerColor) {
           console.groupCollapsed(
-            `%c resumeMatch %c player: ${playerColor} `, //
+            `%c resumeMatch %c player: ${playerColor} (${ROADSTECHNOLOGY.CHESS.id}) ${ROADSTECHNOLOGY.CHESS.displayname} `, //
             "background:lightgreen",
             "background:" + (playerColor === "WHITE" ? "white;color:black" : "black;color:white") + ";font-size:130%",
             fen
@@ -167,6 +167,8 @@
           log("matchesRow", matchesRow);
           console.groupEnd();
         }
+        // end function consoleLog
+
         if (logDetail > 0) log("assignPlayerByMatchesRow", matchesRow);
         // -------------------------------------------------- init variables
         let {
@@ -185,7 +187,7 @@
         ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(document.location.search).get("id") || ROADSTECHNOLOGY.CHESS.id || localStorage.getItem("wp_user");
         ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(document.location.search).get("name") || ROADSTECHNOLOGY.CHESS.displayname || localStorage.getItem("player");
 
-        if (logDetail > 1) log("User:", ROADSTECHNOLOGY.CHESS);
+        if (logDetail > 0) log("User:", ROADSTECHNOLOGY.CHESS, "player_white:", player_white);
 
         let { id, displayname } = ROADSTECHNOLOGY.CHESS;
 
@@ -266,15 +268,24 @@
         fen,
         tournament_id,
       }) {
-        if (logDetail > 1) log("row", move);
-        let moves = (this.chessboard.moves = []);
+        let chessboard = this.chessboard;
+        if (logDetail > 0) log("updateProgressRow", fromsquare, tosquare, "move:", move);
+        chessboard.checkif_capturePiece(move);
+        let moves = (chessboard.moves = []);
         const isValidMove = !(move == CHESS.APIRT.__STARTGAME__ || move == CHESS.APIRT.__UNDOMOVE__);
+        //! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        //! Don't accept e8xe8 moves (NxN) from the database
+        if (fromsquare == tosquare) {
+          console.error("ignoring move", move);
+          return;
+        }
+        //! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         const isNewMove = !moves.includes(move);
         moves.push(move);
         if (isValidMove && isNewMove) {
-          if (logDetail > 0) log("updateProgressRow : adding chessMove", move, "isUpdating:", this.chessboard.isUpdating);
-          this.chessboard.addChessMove({
-            chessPiece: this.chessboard.getPiece(tosquare), // database does not know which piece it is
+          if (logDetail > 0) log("updateProgressRow : adding chessMove", move, "isUpdating:", chessboard.isUpdating);
+          chessboard.addChessMove({
+            chessPiece: chessboard.getPiece(tosquare), // database does not know which piece it is
             //! NOTE: database fieldnames are lowercase, <chess-board> parameter camelCase
             fromSquare: fromsquare,
             toSquare: tosquare,
@@ -285,24 +296,17 @@
           //chessboard.dispatchChessMove({ fromsquare, tosquare, move });
 
           //! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-          if (this.chessboard.isUpdating) {
-            console.error("BOARD isUpdating! CALL GUID LISTENER HERE? Or just set FEN", fen);
-            this.chessboard.fen = fen;
-            this.chessboard.dispatchChessMove({
+          if (chessboard.isUpdating) {
+            //console.error("BOARD isUpdating! CALL GUID LISTENER HERE? Or just set FEN", fen);
+            chessboard.fen = fen;
+            chessboard.dispatchChessMove({
               fromSquare: fromsquare, //! WHY DO THE NAMES NOT MATCH????
               toSquare: tosquare,
               move,
             });
           } else {
             //! MOVE IS MADE BY A PLAYER
-            this.chessboard.dispatch({
-              name: match_guid, // eventListener is in <chess-board>.listenOnMatchID
-              detail: {
-                match_guid,
-                fen,
-                move,
-              },
-            });
+            chessboard.dispatch_GUID({ fen, move });
           }
           //! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         } else {
@@ -320,23 +324,29 @@
         rows = false, // if false then call database again with match_guid
         match_guid = localStorage.getItem(CHESS.__MATCH_GUID__),
       }) {
+        let chessboard = this.chessboard;
         if (logDetail > 1) log("ROWS:", rows);
 
         const /*function*/ processDatabaseRows = (rows) => {
             if (logDetail > 1) log("Update progress from ", rows.length, "database rows");
             CHESS.log.fen(this, "processDatabaseRows", undefined);
-            this.chessboard.fen = undefined; //! make sure we start with a start board
-            this.chessboard.isUpdating = true;
+            chessboard.fen = undefined; //! make sure we start with a start board
+            chessboard.isUpdating = true;
+            console.group("processDatabaseRows");
             rows.forEach((row) => {
               this.updateProgressRow(row); //! all moves are forced to the next Event Loop
             });
-            this.chessboard.showLastMoveOnBoard();
-
+            chessboard.showLastMoveOnBoard();
+            
             //! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
             //! FORCE isUpdating to false AFTER all moves are added to the board
             setTimeout(() => {
-              console.error("end of processDatabaseRows in setTimeout");
-              this.chessboard.isUpdating = false;
+              console.groupEnd("processDatabaseRows");
+              console.warn("end of processDatabaseRows in setTimeout. player:", chessboard.player, "playerturn:", chessboard.playerturn);
+              if (chessboard.player == chessboard.playerturn) {
+                console.warn(`%c YOUR TURN! `, "background:gold;color:black;font-weight:bold;");
+              }
+              chessboard.isUpdating = false;
             });
             //! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
           };
@@ -419,17 +429,25 @@
         localStorage.removeItem(CHESS.__MATCH_GUID__);
         location.reload();
       }
+      // ================================================== mockMove
+      mockMove() {
+        let move = localStorage.getItem("mockMove") || "d4xc5";
+        move = window.prompt("Enter move (like: e2-e4)", move);
+        localStorage.setItem("mockMove", move); // store user entry as default
+        this.chessboard.mockMove(move);
+      }
       // ================================================== undoMove
       undoMove() {
+        let chessboard = this.chessboard;
         log("UNDO MOVE"); //todo test
-        this.chessboard.dispatchChessMove({ move: "undomove" });
+        chessboard.dispatchChessMove({ move: "undomove" });
         // -------------------------------------------------- dispatch undoMove
         this.dispatch({
           root: document,
           name: "undoMove",
           detail: {
-            chessboard: this.chessboard,
-            toSquare: this.chessboard.lastMove.toSquare,
+            chessboard: chessboard,
+            toSquare: chessboard.lastMove.toSquare,
           },
         });
       }

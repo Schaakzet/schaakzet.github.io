@@ -205,19 +205,29 @@
       // ======================================================== <chess-square>.capturePieceBy
       capturePieceBy(chessPiece = { is: "NO PIECE" }) {
         const { chessboard, piece } = this;
-        const pieceName = piece.is;
         if (piece) {
-          if (piece.isWhite) {
-            chessboard.capturedWhitePieces.push(pieceName);
-            if (chessboard.record) log("Captured White Pieces:", chessboard.capturedWhitePieces);
-          } else {
-            chessboard.capturedBlackPieces.push(pieceName);
-            if (chessboard.record) log("Captured Black Pieces:", chessboard.capturedBlackPieces);
+          const pieceName = piece.is;
+          log(`${this.at} ${this.piece.is}`, `capturePieceBy ${chessPiece.is} at ${chessPiece.at}`);
+          //! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+          //! if the piece is already at the square, then abort
+          if (chessPiece.at == this.at) {
+            console.error(`${chessPiece.is} is already at ${chessPiece.at}`);
+            console.error(`%c Now piece is lost on this board`, "background-color:red;color:yellow;");
+            return false;
           }
+          //! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+          chessboard.capturePiece(pieceName);
           // this.clear();
           // this.append(chessPiece); // put piece in new location
+          chessboard.dispatch_capturePiece({
+            from: chessPiece.at,
+            to: this.at,
+          });
           return pieceName;
-        } else return false;
+        } else {
+          log("No piece to capture on", this.at);
+          return false;
+        }
       }
       // ======================================================== <chess-square>.rankDistance
       rankDistance(toSquare) {

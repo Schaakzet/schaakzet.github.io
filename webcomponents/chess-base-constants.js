@@ -40,6 +40,7 @@
 
       // ********************************************************** Eventname constants in all chess files
       __STORECHESSMOVE__: "STORECHESSMOVE", // send to <chess-match>
+      __CAPTUREDPIECE__: "CAPTUREDPIECE", // send to progress and show captured piece
 
       // ********************************************************** Chess Game constants
       // chess constants

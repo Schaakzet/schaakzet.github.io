@@ -111,16 +111,6 @@
 			]
 		},
 		{
-			"path": "webcomponents/chess-base-class.js",
-			"bookmarks": [
-				{
-					"line": 139,
-					"column": 28,
-					"label": "dispatch GUID from EventSource"
-				}
-			]
-		},
-		{
 			"path": "webcomponents/chess-match.js",
 			"bookmarks": [
 				{

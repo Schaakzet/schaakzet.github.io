@@ -1,7 +1,7 @@
 !(function () {
   // ********************************************************** IIFE
   customElements.define(
-    "chess-show-captured-pieces",
+    "chess-captured-pieces",
     class extends CHESS.ChessBaseElement {
       connectedCallback() {
         super.connectedCallback();
@@ -9,7 +9,11 @@
 
         document.addEventListener("restartMatch", (evt) => this.clear());
         document.addEventListener("undoMove", (evt) => this.deleteMove(evt.detail));
-        document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.processMoves(evt.detail));
+
+        //! Old method listened to _STORECHESSMOVE_ event, but that didn't fire always
+        //document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.processMoves(evt.detail));
+        //! so we listen to the capturedPiece Event from <chess-square>.capturePieceBy
+        document.addEventListener(CHESS.__CAPTUREDPIECE__, (evt) => this.processMoves(evt.detail));
       }
 
       render() {

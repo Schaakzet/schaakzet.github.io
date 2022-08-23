@@ -33,7 +33,7 @@
         {
           name: __COMPONENT_NAME__,
           background: "blue",
-          color:"white",
+          color: "white",
           ...logComponent,
         },
         ...arguments

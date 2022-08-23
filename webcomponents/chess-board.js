@@ -156,9 +156,10 @@
                       this.movePiece(...move.split(movetype)); // from , to
                       if (logDetail > 1) log("FENs move:", move, "\nthis.fen:\t", this.fen, "\nfen:\t\t", fen);
                     });
+                  } else {
+                    CHESS.log.fen(this, "listenOnMatchID", fen);
+                    this.fen = fen;
                   }
-                  CHESS.log.fen(this, "listenOnMatchID", fen);
-                  this.fen = fen;
                 }
               } else {
                 this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, this.fen);
@@ -342,6 +343,7 @@
       }
       // ======================================================== <chess-board>.restart
       resume(match_guid = console.error("No match_guid specified")) {
+        console.error("<chess-board>.resume(guid) code all disabled by Sandro");
         // Old code: Was restart, possible to implement again somewhere else
         // this.clear();
 
@@ -377,6 +379,79 @@
           if (logDetail > 1) log("changePlayer turn:", this.playerturn, "player:", this.player, this.fen);
         }
       }
+      // ======================================================== <chess-board>.dispatch_move
+      dispatch_chessboard_moveEvent({
+        name, // capturePiece OR storemove in Database
+        from, //
+        to,
+        move,
+      }) {
+        this.dispatch({
+          root: this,
+          name,
+          detail: {
+            chessboard: this,
+            fromsquare: from,
+            tosquare: to,
+            move,
+            fen: this.fen,
+          },
+        });
+      }
+      // ======================================================== <chess-board>.capturePiece
+      capturePiece(pieceName) {
+        let chessboard = this;
+        let piece = chessboard.getPiece(pieceName);
+        if (piece.isWhite) {
+          chessboard.capturedWhitePieces.push(piece.is);
+          if (chessboard.record) log("Captured White Pieces:", chessboard.capturedWhitePieces);
+        } else {
+          chessboard.capturedBlackPieces.push(piece.is);
+          if (chessboard.record) log("Captured Black Pieces:", chessboard.capturedBlackPieces);
+        }
+      }
+      // ======================================================== <chess-board>.dispatch_capturePiece
+      dispatch_capturePiece({
+        from = console.error("missing from"), //
+        to,
+      }) {
+        let chessboard = this;
+        chessboard.dispatch_chessboard_moveEvent({
+          name: CHESS.__CAPTUREDPIECE__,
+          from,
+          to,
+          move: from + "x" + to,
+        });
+      }
+      // ======================================================== <chess-board>.checkif_capturePiece
+      checkif_capturePiece(move) {
+        let chessboard = this;
+        if (move.includes("x")) {
+          let [from, to] = move.split("x");
+          const /* function */ piece = (at) => chessboard.getSquare(at).piece.is;
+          log(`%c ${piece(from)} captured %c ${piece(to)}`,"background:green;color:beige", "background:red;color:beige");
+          chessboard.capturePiece(to);
+          chessboard.dispatch_capturePiece({
+            from, //
+            to,
+          });
+        }
+      }
+      // ======================================================== <chess-board>.dispatch_storeMove
+      dispatch_storeMove({
+        fromSquare = false, // <chess-square> from which piece was moved
+        toSquare = false, // <chess-square> to which piece was moved
+        move, // "startgame" e2-e4  d7xh8  O-O-O
+      }) {
+        let chessboard = this;
+        chessboard.dispatch_chessboard_moveEvent({
+          name: CHESS.__STORECHESSMOVE__,
+          chessboard, // chessboard.record TRUE/FALSE if the move will be recorded
+          from: fromSquare && fromSquare.at,
+          to: toSquare && toSquare.at,
+          move,
+        });
+      }
       // ======================================================== <chess-board>.dispatchChessMove
       // Listeners: Captured Pieces, Game Progress
       dispatchChessMove({
@@ -384,22 +459,30 @@
         toSquare = false, // <chess-square> to which piece was moved
         move, // "startgame" e2-e4  d7xh8  O-O-O
       }) {
-        if (this.record && this.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
+        let chessboard = this;
+        if (chessboard.record && chessboard.id !== CHESS.__TESTBOARD_FOR_MOVES__) {
           // emit Event to <chess-match> which records all moves in database
-          this.dispatch({
-            root: document,
-            name: CHESS.__STORECHESSMOVE__,
-            detail: {
-              chessboard: this, // chessboard.record TRUE/FALSE if the move will be recorded
-              fromsquare: fromSquare && fromSquare.at,
-              tosquare: toSquare && toSquare.at,
-              move,
-              fen: this.fen,
-            },
-          });
+          chessboard.dispatch_storeMove({ fromSquare, toSquare, move });
         } else {
           log("NOT dispatching STORECHESSMOVE");
         }
+      }
+      // ======================================================== <chess-board>.dispatch_GUID
+      dispatch_GUID({
+        fen = this.fen, //! is it valid to NOT pass a fen?
+        move,
+      }) {
+        let chessboard = this;
+        let match_guid = chessboard.id;
+        chessboard.dispatch({
+          name: match_guid,
+          detail: {
+            match_guid,
+            fen, //! should be this.fen?
+            move,
+          },
+        });
+        chessboard.checkif_capturePiece(move);
       }
       // ======================================================== <chess-board>.addChessMove
       addChessMove({
@@ -409,10 +492,11 @@
         fen,
         move,
       }) {
-        this.chessMoves.push({
+        let chessboard = this;
+        chessboard.chessMoves.push({
           chessPiece,
-          fromSquare: this.getSquare(fromSquare),
-          toSquare: this.getSquare(toSquare),
+          fromSquare: chessboard.getSquare(fromSquare),
+          toSquare: chessboard.getSquare(toSquare),
           fen,
           move,
         });
@@ -422,17 +506,16 @@
       movePiece(chessPiece, square, animated = true) {
         log(
           "movePiece",
-          "id:"+this.id.substring(0, 10), //
+          "id:" + this.id.substring(0, 10), //
           "chessPiece:",
           isString(chessPiece) ? chessPiece : chessPiece.is,
-          "square:",
+          "to square:",
           square,
           "fen:",
           this.fen
         );
         if (isString(chessPiece)) {
-          square = chessPiece;
-          chessPiece = this.getPiece(square); // convert "e2" to chessPiece IN e2
+          chessPiece = this.getPiece(chessPiece); // convert "e2" to chessPiece IN e2
           if (!chessPiece) {
             log("Er staat geen chesspiece op:", square);
             return;
@@ -446,6 +529,7 @@
 
           // Clear en Passant pawn and add to capturedPiece
           if (this.lastMove && toSquare.at == this.enPassantPosition && chessPiece.isPawn) {
+            console.error("capturePieceBy 1", chessPiece);
             this.lastMove.toSquare.capturePieceBy(chessPiece);
             moveType = CHESS.__MOVETYPE_CAPTURE__;
             if (logDetail > 1) log("We had En Passant. Clear piece.");
@@ -463,6 +547,7 @@
             this.castlingArray = this.castlingArray.filter((item) => item !== removeFENletter);
           }
           // Capture Piece => capturePieceBy
+          console.error(`capturePieceBy 2`, chessPiece.at, chessPiece.is, chessPiece.at, "->", square);
           toSquare.capturePieceBy(chessPiece);
 
           // movePiece
@@ -760,6 +845,14 @@
       adddplaymove(from, to) {
         this._doingmoremoves.unshift([from, to]);
       }
+      // ======================================================== <chess-board>.mockMove
+      mockMove(move = "e2-e4") {
+        CHESS.EVENTSOURCE.dispatchMove(this, {
+          match_guid: this.id, //
+          move,
+          fen: "mockMove:" + move,
+        });
+      }
       // ======================================================== <chess-board>.trymove
       trymove({
         from, // "e2"
@@ -795,6 +888,7 @@
       }
 
       set player(value) {
+        log("set player", value);
         this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYER__, value);
       }
 
@@ -811,6 +905,7 @@
         return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__);
       }
       set playerturn(v) {
+        log("set playerturn", v);
         this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__, v);
       }
       // ============================================================ <chess-board>.updateFENonScreen

@@ -80,7 +80,7 @@
       loadScriptsAsynchronous([
         ["create-html", "todo-list"], // HTML components
         ["h1-chess"],
-        ["chess-game-progress", "chess-show-captured-pieces"],
+        ["chess-game-progress", "chess-captured-pieces"],
         ["chess-match", "chess-match-buttons", "chess-matches", "chess-players"], // Chess Components
         ["chess-availablegames"],
       ]);

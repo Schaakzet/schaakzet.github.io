@@ -4,7 +4,7 @@
   // ********************************************************** logging
 
   // the amount of console.logs displayed in this component
-  let logDetailComponent = 0; //! -1=no logs 0=use global setting >0=custom setting
+  let logDetailComponent = 2; //! -1=no logs 0=use global setting >0=custom setting
   let logComponent = window.CHESS.log[__COMPONENT_NAME__];
   let logDetail = logDetailComponent || logComponent.detail;
 
@@ -43,6 +43,7 @@
       }
       // ======================================================== <chess-piece>.movePieceTo
       movePieceTo(at, animated = true) {
+        log(`${this.is} movePieceTo`, at, animated);
         this.chessboard.movePiece(this, at, animated);
       }
       // ======================================================== <chess-piece>.is
@@ -167,7 +168,7 @@
       }
       // ======================================================== <chess-piece>.potentialMoves
       potentialMoves() {
-        if (logDetail > 1) log("potentialMoves", this.is);
+        if (logDetail > 2) log("potentialMoves", this.at, this.is);
 
         // De array potentialMovesArray is alle mogelijkheden van possibleMove.
         let _potentialMovesArray = [];
@@ -214,7 +215,7 @@
         const pawnAttack = (piececolor, x, y) => {
           const _squareName = this.square.translate(x, y); // "d6"
           const _squareElement = this.chessboard.getSquare(_squareName);
-          if (logDetail > 1) log("SN:", _squareName, "SEL:", _squareElement);
+          if (logDetail > 2) log("SN:", _squareName);//, "SEL:", _squareElement);
           if (_squareElement) {
             // Test of we binnen het bord zijn.
             if (_squareElement.piece) {
@@ -300,11 +301,11 @@
 
           function checkCastlingInterrupt(offset, squareName) {
             if (!castlingInterrupt(playerColor, offset)) {
-              if (logDetail > 1) log("No castling interrupt", squareName);
+              if (logDetail > 2) log("No castling interrupt", squareName);
               square.squareElement(squareName).highlight(CHESS.__EMPTY_SQUARE__);
               _potentialMovesArray.push(squareName);
             } else {
-              if (logDetail > 1) log("Castling not possible", squareName);
+              if (logDetail > 2) log("Castling not possible", squareName);
             }
           }
 
@@ -383,7 +384,7 @@
           // loop all possible moves
           let testboard;
           if (showboardsIn) {
-            if (logDetail > 2) log("To:", to);
+            if (logDetail > 1) log("To:", to);
             // create a new testboard for every possible move
             testboard = showboardsIn.appendChild(
               CHESS.createBoardElement({

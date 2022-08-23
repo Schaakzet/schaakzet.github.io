@@ -17,6 +17,7 @@ button|chess-match:newMatch|New Match` +
 button|chess-match:undoMove|undo last move
 button|chess-match:remise|remise
 button|chess-match:fullScreen|Full Screen
+button|chess-match:mockMove|mockMove
 </create-html>`;
     }
   }

@@ -43,7 +43,7 @@
       }
       // ======================================================== <chess-game-progress>.addMove
       addMove(detail, nr = 1) {
-        if (logDetail > 0) log("addMove nr & evt.detail", nr, {detail});
+        if (logDetail > 0) log("addMove nr & evt.detail", nr,detail.move, {detail});
         this.append(
           Object.assign(document.createElement("div"), {
             innerHTML: `${nr}. ${detail.move}`,
