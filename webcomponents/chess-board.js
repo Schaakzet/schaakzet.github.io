@@ -401,7 +401,7 @@
       // ======================================================== <chess-board>.capturePiece
       capturePiece(pieceName) {
         let chessboard = this;
-        let piece = chessboard.getPiece(pieceName);
+        let piece = chessboard.getPiece(pieceName) || pieceName;
         if (piece.isWhite) {
           chessboard.capturedWhitePieces.push(piece.is);
           if (chessboard.record) log("Captured White Pieces:", chessboard.capturedWhitePieces);
@@ -428,9 +428,10 @@
         let chessboard = this;
         if (move.includes("x")) {
           let [from, to] = move.split("x");
-          const /* function */ piece = (at) => chessboard.getSquare(at).piece.is;
-          log(`%c ${piece(from)} captured %c ${piece(to)}`,"background:green;color:beige", "background:red;color:beige");
-          chessboard.capturePiece(to);
+          const /* function */ piece = (at) => chessboard.getSquare(at).piece;
+          const /* function */ pieceName = (at) => chessboard.getSquare(at).piece.is;
+          log(`${from}x${to} %c ${pieceName(from)} captured %c ${pieceName(to)}`,"background:green;color:beige", "background:red;color:beige");
+          chessboard.capturePiece(piece(to));
           chessboard.dispatch_capturePiece({
             from, //
             to,

@@ -216,7 +216,7 @@
             return false;
           }
           //! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-          chessboard.capturePiece(pieceName);
+          chessboard.capturePiece(piece);
           // this.clear();
           // this.append(chessPiece); // put piece in new location
           chessboard.dispatch_capturePiece({
