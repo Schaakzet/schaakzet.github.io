@@ -9,12 +9,12 @@
     get_availableGames() - internal use only
     deleteMatch() - used by button in <create-html> code
 
-Notes:
-  manages players
-  communicates with server
-  ! looks like deleteMatch Event is prosessed/logged twice
-  !? missing: method resumeGame() - used by button in <create-html> code
-*/
+  Notes:
+    manages players
+    communicates with server
+    ! looks like deleteMatch Event is prosessed/logged twice
+    !? missing: method resumeGame() - used by button in <create-html> code
+  */
   const __AVAILABLEGAMES__ = "AVAILABLEGAMES"; //!! matching name in SQL backend!!
 
   // custom log colors for this file
@@ -43,7 +43,7 @@ Notes:
           this.$createElement({
             tag: "div",
             props: {
-              innerHTML: /* html */ `<h2>${where}</h2>`,
+              innerHTML: /*html*/ `<h2>${where}</h2>`,
             },
           })
         );
@@ -84,27 +84,34 @@ Notes:
                   match_guid,
                 }) => {
                   // ------------------------------------------------- callAPI READ
-                  const /* function */ createHTMLButton = (label, eventValue) => {
+                  const /* function */ createHTMLButton = (label, eventValue, title, target, className) => {
                       //!! function INSIDE .map so we can use row data
                       //! eventValue should be methods on this component?
                       return (
-                        `<create-html>button` + // create <button>
-                        `|${__COMPONENT_NAME__}:${eventValue}:${match_guid}` + // Event name:value:data
-                        `|${label}` + // button label
+                        `<create-html>button` +                                 // create <button>
+                        `|${__COMPONENT_NAME__}:${eventValue}:${match_guid}` +  // Event name:value:data
+                        `|${label}` +                                           // button label
+                        `|${title}` +                                           // button title
+                        `|${target}` +                                          // button target
+                        `|${className}` +                                       // button className
                         `</create-html>`
                       );
                     };
-
                   // ------------------------------------------------- return DOM element in map
                   return this.$createElement({
                     tag: "div",
                     props: {
                       innerHTML:
-                        `white:<b>${player_white}</b> (wp:${wp_user_white}) ${match_guid}` + //
-                        (where === __AVAILABLEGAMES__
-                          ? createHTMLButton("play Black (resume)", "resumeChessGame") //! missing method?
-                          : "") + // no buttons for other tables
-                        createHTMLButton("deleteMatch", "deleteMatch"),
+                        `<span class="match-guid">${match_guid}</span>` +
+                        `<span class="match-player">${player_white}</span>` + 
+                        `<span class="match-player-wp">#${wp_user_white}</span>` +
+                        `<span class="match-player-color">White</span>` +
+                        `<span class="match-actions">` +
+                          (where === __AVAILABLEGAMES__
+                            ? createHTMLButton("Play Black", "resumeChessGame", "Play the match as black", "_self", "btn btn-play") //! missing method?
+                            : "") + // no buttons for other tables
+                          createHTMLButton("Quit", "deleteMatch", "Quit and delete the match", "_self", "btn btn-quit") +
+                        `</span>`
                     },
                   }); // return
                 }
