@@ -28,32 +28,32 @@
         setTimeout(() => {
           // wait till innerHTML is parsed
           this.innerHTML = this.innerHTML
-            .trim() // remove whitespace
-            .split("\n") // split by newline
+            .trim()       // remove whitespace
+            .split("\n")  // split by newline
             .map(
               (
-                line // process each line
+                line      // process each line
               ) =>
                 line
                   .trim() // trim whitespace
                   .split(this.getAttribute("separator") || "|") // split by (defined) separator
             )
             .filter(Boolean) // remove all empty lines
-            .map(([tag, uri, label, title = label, target = "_blank"], idx) => {
+            .map(([tag, uri, label, title = label, target = "_blank", className = ""], idx) => {
               if (tag) {
                 //console.log(idx, tag, uri, label, title, target);
                 let isURI = (typeof uri == "string" && uri.startsWith("http")) || (uri && uri.includes("html"));
                 return (
                   {
                     br: `<br>`,
-                    a: `<a title="${title}" target="${target}" href="${uri}">${label}</a>`,
+                    a: `<a class="${className}" title="${title}" target="${target}" href="${uri}">${label}</a>`,
                     // ------------------------------------------------- BUTTON: goto URI or dispatch event
                     button: isURI
-                      ? `<button onclick="document.location='${uri}'">${label}</button>`
-                      : `<button onclick="this.closest('create-html').dispatch(this,'${uri}')">${label}</button>`,
+                      ? `<button class="${className}" title="${title}" onclick="document.location='${uri}'">${label}</button>`
+                      : `<button class="${className}" title="${title}" onclick="this.closest('create-html').dispatch(this,'${uri}')">${label}</button>`,
                     input:
                       uri == "select"
-                        ? `<select name="${label}" >` +
+                        ? `<select class="${className}" name="${label}" >` +
                           title
                             .split(",")
                             .map((o) => `<option value="${o}">${o}</option>`)
@@ -63,7 +63,7 @@
                   }[tag] || tag
                 );
               } else {
-                return `<b>${uri}</b>`;
+                return `<strong>${uri}</strong>`;
               } // if(tag)
             }) // map
             .join(" - ");
