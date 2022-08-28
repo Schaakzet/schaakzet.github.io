@@ -23,12 +23,16 @@
     // ======================================================== <chess-*>.at
     // returns square location "b8"
     get at() {
-      return (
-        this.isChessPiece
-          ? this.square // for <chess-piece>
-          : this
-      ) // for <chess-square>
-        .getAttribute(CHESS.__WC_ATTRIBUTE_AT__);
+      try {
+        return (
+          this.isChessPiece
+            ? this.square // for <chess-piece>
+            : this
+        ) // for <chess-square>
+          .getAttribute(CHESS.__WC_ATTRIBUTE_AT__);
+      } catch (e) {
+        console.error(this, "\n", e);
+      }
     }
     set at(at) {
       if (this.isChessPiece) {

@@ -17,11 +17,16 @@
   */
   const __AVAILABLEGAMES__ = "AVAILABLEGAMES"; //!! matching name in SQL backend!!
 
+  // ********************************************************** log
   // custom log colors for this file
   function log() {
     console.log(`%c ${__COMPONENT_NAME__} `, "background:blue;color:yellow", ...arguments);
   }
 
+  // ********************************************************** helper functions
+  function matchURL(id, name, match_guid) {
+    return `match.html?id=${id}&name=${name}&match_guid=${match_guid}`;
+  }
   // ********************************************************** define <chess-match>
   customElements.define(
     __COMPONENT_NAME__,
@@ -36,25 +41,65 @@
           this.$createElement({
             tag: "style",
             props: {
-              //! does this work?
-              innerHTML: /*css*/ `:fullscreen {background-color: green}`,
+              innerHTML:
+                /*css*/ `:fullscreen {background-color: green}` + //fullscreen doesn't work?
+                this.localName +
+                `{max-width:1024px}`,
             },
           }),
           this.$createElement({
             tag: "div",
             props: {
-              innerHTML: /*html*/ `<h2>${where}</h2>`,
+              innerHTML: /*html*/ `<h2>${this.getAttribute("title")}</h2>`,
             },
           })
         );
 
         this.get_availableGames(where);
       }
-      // ================================================== deleteMatch
+      // ================================================== action_resumeMatch
+      action_resumeMatch(evt) {
+        let {
+          value, // action_deleteMatch
+          button, // DOM reference to button pressed
+          data: match_guid, // match_guid - was defined as 1st parameter!
+        } = evt.detail;
+        let { id, displayname } = ROADSTECHNOLOGY.CHESS;
+        localStorage.setItem(CHESS.__MATCH_GUID__, match_guid);
+        location.assign(matchURL(id, displayname, match_guid));
+      }
+      // ================================================== action_viewMatch
+      action_viewMatch(evt) {
+        let {
+          value, // action_deleteMatch
+          button, // DOM reference to button pressed
+          data: match_guid, // match_guid - was defined as 1st parameter!
+        } = evt.detail;
+        if (this.contains(button)) {
+          alert("To be implemented; everyone can view existing matches");
+        }
+      }
+      // ================================================== action_deleteMatch
       //! is deleteMatch used?
-      deleteMatch(match_guid) {
-        log("deleteMatch", match_guid);
-        window.CHESS.APIRT.deleteMatchByGUID(match_guid);
+      action_deleteMatch(evt) {
+        let {
+          value, // action_deleteMatch
+          button, // DOM reference to button pressed
+          data: match_guid, // match_guid - was defined as 1st parameter!
+        } = evt.detail;
+        //! all <chess-availablegames> receive the button event
+        //! so we have to check if the button clicked is in 'this' <chess-availablegames>
+        //! otherwise the deletion will be tried for N number of <chess-availablegames>
+        if (this.contains(button)) {
+          window.CHESS.APIRT.deleteMatchByGUID({
+            match_guid,
+            // existing match_guid
+            callback: (evt) => {
+              log("deleteMatch", evt);
+              button.closest("div").remove(); // remove line on screen
+            },
+          });
+        }
       }
       // ================================================== get_availableGames
       get_availableGames(where) {
@@ -74,44 +119,69 @@
                   //!! one match row data:
                   //tournament_id, //
                   wp_user_white,
-                  //wp_user_black,
+                  wp_user_black,
                   player_white,
-                  //player_black,
-                  //starttime,
+                  player_black,
+                  starttime,
                   //endtime,
                   //fen,
                   //result,
                   match_guid,
                 }) => {
                   // ------------------------------------------------- callAPI READ
-                  const /* function */ createHTMLButton = (label, eventValue, title, target, className) => {
+                  const /* function */ createHTMLButton = ({
+                      label, //
+                      method, // matching method on this component
+                      title = label,
+                      target = "",
+                      className = "btn-play",
+                    }) => {
                       //!! function INSIDE .map so we can use row data
-                      //! eventValue should be methods on this component?
-                      return (
-                        `<create-html>button` +                                 // create <button>
-                        `|${__COMPONENT_NAME__}:${eventValue}:${match_guid}` +  // Event name:value:data
-                        `|${label}` +                                           // button label
-                        `|${title}` +                                           // button title
-                        `|${target}` +                                          // button target
-                        `|${className}` +                                       // button className
-                        `</create-html>`
-                      );
+                      let eventValue = this[method] && method;
+                      if (eventValue) {
+                        return (
+                          `<create-html style="display:inline-block">button` + // create <button>
+                          `|${__COMPONENT_NAME__}:${eventValue}:${match_guid}` + // Event name:value:data
+                          `|${label}` + // button label
+                          `|${title}` + // button title
+                          `|${target}` + //! target unused in <button>
+                          `|btn ${className}` + // button className
+                          `</create-html>`
+                        );
+                      } else {
+                        return `${method} not found`;
+                      }
                     };
                   // ------------------------------------------------- return DOM element in map
+
+                  const playerLink = (id, name) => {
+                    return `<a href="${matchURL(id,name,match_guid)}">(${id}) ${name}</a>`;
+                  };
+
+                  // ------------------------------------------------- action buttons
+                  let actionButtons = "";
+                  actionButtons += createHTMLButton({ label: "View Match", method: "action_viewMatch", title: "View the game being played" });
+                  actionButtons += createHTMLButton({
+                    label: "Delete Match",
+                    method: `action_deleteMatch`, //! is name of method in this component ``createButton above ADDS parameters!
+                    title: "Quit and delete the match",
+                    className: "btn btn-quit",
+                  });
+
+                  let playerWHITE = playerLink(wp_user_white, player_white);
+                  let playerBLACK =
+                    wp_user_black > 0
+                      ? playerLink(wp_user_black, player_black) // exsiting player black
+                      : createHTMLButton({ label: "Play Black", method: "action_resumeMatch", title: "Play the match as black" });
+                  // ------------------------------------------------- create DOM element
                   return this.$createElement({
                     tag: "div",
                     props: {
                       innerHTML:
                         `<span class="match-guid">${match_guid}</span>` +
-                        `<span class="match-player">${player_white}</span>` + 
-                        `<span class="match-player-wp">#${wp_user_white}</span>` +
-                        `<span class="match-player-color">White</span>` +
-                        `<span class="match-actions">` +
-                          (where === __AVAILABLEGAMES__
-                            ? createHTMLButton("Play Black", "resumeChessGame", "Play the match as black", "_self", "btn btn-play") //! missing method?
-                            : "") + // no buttons for other tables
-                          createHTMLButton("Quit", "deleteMatch", "Quit and delete the match", "_self", "btn btn-quit") +
-                        `</span>`
+                        `<span class="match-player">${playerWHITE} vs. ${playerBLACK}</span>` +
+                        `<span class="match-starttime">${starttime}</span>` +
+                        `<span class="match-actions">${actionButtons}</span>`,
                     },
                   }); // return
                 }

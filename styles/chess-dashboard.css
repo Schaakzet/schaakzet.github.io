@@ -12,6 +12,7 @@ body {
 button {
   padding: 4px 8px;
   border: 1px solid black;
+  cursor: pointer;
 }
 
 /*
@@ -33,6 +34,9 @@ chess-availablegames > div:nth-child(even) {
 }
 chess-availablegames > div:nth-child(odd) {
   background-color: lightgray;
+}
+chess-availablegames > div:first-of-type {
+  background-color: gold;
 }
 chess-availablegames > div > h2,
 chess-availablegames > div > span {

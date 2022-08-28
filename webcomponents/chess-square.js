@@ -4,7 +4,7 @@
   // ********************************************************** logging
 
   // the amount of console.logs displayed in this component
-  let logDetailComponent = 4; //! -1=no logs 0=use global setting >0=custom setting
+  let logDetailComponent = 1; //! -1=no logs 0=use global setting >0=custom setting
   let logComponent = window.CHESS.log[__COMPONENT_NAME__];
   let logDetail = logDetailComponent || logComponent.detail;
   function log() {
@@ -45,6 +45,11 @@
             this.handleFirstClick();
           }
         });
+        // ----------------------------------------------------- class 'lastmove' updates
+        this.chessboard.addEventListener(CHESS.__CHESSSQUAREUPDATE__, (evt) => {
+          let { squares } = evt.detail;
+          this.classList.toggle("lastmove", squares.includes(this.at));
+        });
       }
       // ======================================================== <chess-square>.handleFirstClick
       handleFirstClick() {
@@ -54,7 +59,9 @@
           if (logDetail > 1) log("potenialMoves:", this.piece.moves);
           this.piece.potentialKingMoves(this.at);
           if (logDetail > 1) log("+KingMoves", this.piece.moves);
+
           this.chessboard.pieceClicked = this.piece; // Hier wordt pieceClicked pas gedefinieerd.
+
           this.piece.disableCheckMakingMoves({
             showboardsIn: document.getElementById("TEST4CHECKBOARDS") || document.body,
           });
@@ -63,10 +70,17 @@
       // ======================================================== <chess-square>.handleSecondClick
       handleSecondClick() {
         const { chessboard, at } = this;
-        let validMove = chessboard.pieceClicked.moves.includes(at);
-        if (chessboard.pieceClicked) {
-          if (validMove) chessboard.movePiece(chessboard.pieceClicked, at);
-          else {
+        const { isFreeplay, pieceClicked } = chessboard;
+        if (pieceClicked) {
+          let validMove = pieceClicked.moves.includes(at);
+          let isSameSquare = at == pieceClicked.at;
+          console.error(isSameSquare, at, pieceClicked.at, pieceClicked.moves, validMove, isSameSquare);
+          if (isSameSquare) {
+            chessboard.pieceClicked = false;
+            chessboard.highlightOff();
+          } else if (isFreeplay || validMove) {
+            chessboard.movePiece(pieceClicked, at);
+          } else {
             this.handleFirstClick();
           }
         } else {

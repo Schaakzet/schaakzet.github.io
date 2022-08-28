@@ -8,7 +8,7 @@
         this.render();
 
         document.addEventListener("restartMatch", (evt) => this.clear());
-        document.addEventListener("undoMove", (evt) => this.deleteMove(evt.detail));
+        document.addEventListener(CHESS.__UNDOMATCHMOVE__, (evt) => this.deleteMove(evt.detail));
 
         //! Old method listened to _STORECHESSMOVE_ event, but that didn't fire always
         //document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => this.processMoves(evt.detail));
@@ -17,8 +17,12 @@
       }
 
       render() {
-        let style = "<style>#showWhite img, #showBlack img{width:30px}</style>";
-        this.innerHTML = style + "<div id='showWhite'></div><br /><div id='showBlack'></div>";
+        this.innerHTML =
+          `<style>` +
+          `#showWhite img, #showBlack img{width:30px}` + // width of captured pieces
+          `</style>` +
+          `<div id='showWhite'></div>` +
+          `<div id='showBlack'></div>`;
       }
 
       clear() {

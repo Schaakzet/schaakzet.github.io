@@ -7,6 +7,7 @@ customElements.define(
       this.innerHTML =
         /*css*/ `<create-html>
 a|index.html|schaakzet
+a|seats.html|Seats
 |Play:
 button|chess-match:removeMatch|Quit Match
 button|chess-match:newMatch|New Match` +
@@ -14,7 +15,7 @@ button|chess-match:newMatch|New Match` +
         // `button|chess-match:myFEN|My FEN` +
         // `button|chess-match:forceBlackPlayer|Force Black` +
         `
-button|chess-match:undoMove|undo last move
+button|chess-match:undoLastMove|undo move
 button|chess-match:remise|remise
 button|chess-match:fullScreen|Full Screen
 button|chess-match:mockMove|mockMove

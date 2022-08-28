@@ -1,4 +1,45 @@
 !(function () {
+  //! ********************************************************** Generic code
+
+  // URLSearchParam - gets URL parameters
+  // let id = URLSearchParam("id");
+  window.URLSearchParam = (s) => new URLSearchParams(document.location.search).get(s);
+
+  // ROADSTECHNOLOGY is set by WordPress, if not where mocking it
+  if (!window.ROADSTECHNOLOGY) {
+    window.ROADSTECHNOLOGY = {
+      CHESS: {
+        id: URLSearchParam("id"),
+        displayname: URLSearchParam("name"),
+      },
+    };
+    console.log(`%c WORDPRESS MOCK DATA: `, "background:red;color:yellow", window.ROADSTECHNOLOGY.CHESS);
+  }
+  window.initRoadsTechnologyPlayer = (
+    newid = URLSearchParam("id"), // URL
+    newdisplayname = URLSearchParam("name")
+  ) => {
+    try {
+      let { id, displayname } = window.ROADSTECHNOLOGY.CHESS;
+      window.ROADSTECHNOLOGY.CHESS.id = newid || id || localStorage.getItem("wp_user");
+      window.ROADSTECHNOLOGY.CHESS.displayname = newdisplayname || displayname || localStorage.getItem("player");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  console.log(`%c initRoadsTechnologyPlayer `, "background:green;color:yellow", window.ROADSTECHNOLOGY.CHESS);
+
+  console.log(
+    `%c localStorage: `,
+    "background:green;color:yellow",
+    ["wp_user", "player", "match_guid", "fen"].reduce((userStorage, key) => {
+      userStorage[key] = localStorage.getItem(key);
+      return userStorage;
+    }, {})
+  );
+
+  //! ********************************************************** Schaakzet
+
   if (window.CHESS) {
     console.error("Don't load schaakzet.js again!");
     return; // prevent loading again
@@ -85,7 +126,7 @@
         ["chess-availablegames"],
       ]);
 
-      console.groupCollapsed(`%c Loaded ${loaded.length} scripts `, "background:green;color:gold");
+      console.groupCollapsed(`%c Loaded ${loaded.length} scripts `, "background:green;color:yellow");
       loaded.map((args) => console.log(...args));
       console.groupEnd();
     }

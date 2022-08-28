@@ -7,14 +7,14 @@
       // add constants to CHESS object
       // ********************************************************** LOGGING Levels
       log: {
-        "BaseClass": { detail: 0, stacktrace: 0 },
+        BaseClass: { detail: 0, stacktrace: 0 },
         "api-rt": { detail: 0, stacktrace: 0 },
         "chess-board": { detail: 0 },
         "chess-match": { detail: 0 },
         "chess-piece": { detail: 0 },
         "chess-square": { detail: 0 },
         fen: (component, label, value) => {
-          console.logColor({ name: "SET FEN",background:"red" }, `${component.localName}.${label}`,value||"START FEN");
+          console.logColor({ name: "SET FEN", background: "red" }, `${component.localName}.${label}`, value || "START FEN");
         }, // log FEN mutations
       },
       // ********************************************************** HTML CSS
@@ -38,9 +38,15 @@
       __WC_ATTRIBUTE_DEFENDEDBY__: "defendedby", // <chess-square defendedby="Ne3,Qe8">
       __WC_ATTRIBUTE_MOVESFROM__: "movesfrom", // <chess-square movesfrom="Pg2, qh4">
 
+      // ********************************************************** FEN
+      __STARTFEN__: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -",
+      __FEN_LETTERS__: "RNBQKPrnbqkp",
+
       // ********************************************************** Eventname constants in all chess files
       __STORECHESSMOVE__: "STORECHESSMOVE", // send to <chess-match>
       __CAPTUREDPIECE__: "CAPTUREDPIECE", // send to progress and show captured piece
+      __DO_BOARD_ANALYSIS__: "DO_BOARD_ANALYSIS", // send to <chess-board> to do board analysis
+      __CHESSSQUAREUPDATE__: "CHESSSQUAREUPDATE", // send to <chess-board> to update chess square
 
       // ********************************************************** Chess Game constants
       // chess constants
@@ -198,7 +204,7 @@
   // "R" -> "wit-toren"
   // "wit-toren" -> "R"
   let FENMap = new Map(); // see MDN Map documentation
-  let FENletters = "RNBQKPrnbqkp".split(""); // create an array of letters
+  let FENletters = CHESS.__FEN_LETTERS__.split(""); // create an array of letters
   CHESS.__PLAYER_COLORS__.forEach((color) =>
     CHESS.__PIECE_NAMES__.forEach((name) => {
       const piece = color + "-" + name;

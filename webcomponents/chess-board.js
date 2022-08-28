@@ -18,6 +18,25 @@
         ...arguments
       );
   }
+  // ********************************************************** class BoardMoves
+  class BoardMoves extends Array {
+    // ======================================================== BoardMoves.constructor
+    constructor(...args) {
+      super(...args);
+    }
+    //! push(move) DON'T USE THIS FUNCTION, USE addMove()
+    // ======================================================== BoardMoves.addMove
+    addMove(move) {
+      this.push(move);
+    }
+    deleteLastMove() {
+      return this.pop();
+    }
+    // ======================================================== BoardMoves.getMoves
+    get lastMove() {
+      return this.slice(-1)[0];
+    }
+  }
 
   /***********************************************************************/
   customElements.define(
@@ -32,13 +51,17 @@
         super();
         this.capturedBlackPieces = [];
         this.capturedWhitePieces = [];
-        this.chessMoves = [];
+        this.chessMovesHistory = new BoardMoves();
         this.doingCastling = false;
       }
 
+      // ======================================================== <chess-board>.isFreeplay
+      isFreeplay() {
+        return true;
+      }
       // ======================================================== <chess-board>.doAnalysis
       get doAnalysis() {
-        return this.hasAttribute("analysis") || true;
+        return this.hasAttribute(CHESS.__DO_BOARD_ANALYSIS__) || false; // default NO analysis
       }
       // ======================================================== <chess-board>.connectedCallback
       connectedCallback() {
@@ -142,7 +165,7 @@
                 // ----------------------------- startgame
                 if (!this.hasAttribute("player")) this.player = CHESS.__PLAYER_WHITE__;
                 this.updatePlayerBlack(match_guid);
-              } else if (move == "undomove") {
+              } else if (move == "_undomove") {
                 this.undoMove();
               } else if (this.fen != fen) {
                 // ----------------------------- process move
@@ -164,8 +187,9 @@
               } else {
                 this.setAttribute(CHESS.__WC_ATTRIBUTE_FEN__, this.fen);
               }
-            }
-          };
+              this.showLastMoveOnBoard(); // end match-guid Listener
+            } // if (this.id == match_guid)
+          }; // listenFunc
           // -------------------------------------------------- remove existing listener
           if (this._listening) {
             listenRoot.removeEventListener(this._listening.id, this._listening.func);
@@ -341,6 +365,10 @@
           this.getSquare(square).clear();
         }
       }
+      // ======================================================== <chess-board>.reload
+      reload() {
+        location.reload();
+      }
       // ======================================================== <chess-board>.restart
       resume(match_guid = console.error("No match_guid specified")) {
         console.error("<chess-board>.resume(guid) code all disabled by Sandro");
@@ -349,7 +377,7 @@
 
         // this.capturedWhitePieces = [];
         // this.capturedBlackPieces = [];
-        // this.chessMoves = [];
+        // this.chessMovesHistory = [];
 
         // localStorage.removeItem("fen");
         // this.fen = undefined; // force start position
@@ -367,8 +395,8 @@
       }
       // ======================================================== <chess-board>.highlightOff
       highlightOff() {
-        for (let element of this.squares) {
-          let chessSquare = this.getSquare(element);
+        for (let square of this.squares) {
+          let chessSquare = this.getSquare(square);
           chessSquare.highlight(false);
         }
       }
@@ -430,7 +458,7 @@
           let [from, to] = move.split("x");
           const /* function */ piece = (at) => chessboard.getSquare(at).piece;
           const /* function */ pieceName = (at) => chessboard.getSquare(at).piece.is;
-          log(`${from}x${to} %c ${pieceName(from)} captured %c ${pieceName(to)}`,"background:green;color:beige", "background:red;color:beige");
+          log(`${from}x${to} %c ${pieceName(from)} captured %c ${pieceName(to)}`, "background:green;color:beige", "background:red;color:beige");
           chessboard.capturePiece(piece(to));
           chessboard.dispatch_capturePiece({
             from, //
@@ -494,7 +522,7 @@
         move,
       }) {
         let chessboard = this;
-        chessboard.chessMoves.push({
+        chessboard.chessMovesHistory.addMove({
           chessPiece,
           fromSquare: chessboard.getSquare(fromSquare),
           toSquare: chessboard.getSquare(toSquare),
@@ -560,8 +588,9 @@
           const move = fromSquare.at + moveType + toSquare.at;
           if (logDetail > 1) log("chessPiece, from, to, move", chessPiece, fromSquare, toSquare, move);
 
-          const save2chessMoves = () => {
-            if (this.player === this.playerturn)
+          const saveMoveToChessMovesHistory = () => {
+            if (true || this.player === this.playerturn) {
+              //! todo check if this check is needed
               this.addChessMove({
                 chessPiece, //
                 fromSquare, //
@@ -569,6 +598,9 @@
                 fen: lastFEN, //
                 move,
               });
+            } else {
+              log("NOT saving move to chessMovesHistory because player != playerturn", this.isUpdating);
+            }
           };
 
           const /*function*/ store_Dispatch_Move = (move) => {
@@ -591,19 +623,18 @@
               // });
             } else {
               // Rook in castling mode
-              this.chessMoves.pop(); // delete rook move
+              this.chessMovesHistory.deleteLastMove(); // delete rook move
               let savedFEN = this.lastMove.fen;
-              this.chessMoves.pop(); // delete king move
-              save2chessMoves(); // save castling move
+              this.chessMovesHistory.deleteLastMove(); // delete king move
+              saveMoveToChessMovesHistory(); // save castling move
               this.lastMove.fen = savedFEN;
-
               this.changePlayer();
               store_Dispatch_Move(this.doingCastling);
               this.doingCastling = false;
             }
           } else {
             // regular move
-            save2chessMoves();
+            saveMoveToChessMovesHistory();
 
             this.changePlayer();
             store_Dispatch_Move(fromSquare.at + moveType + toSquare.at);
@@ -631,40 +662,44 @@
       }
       // ======================================================== <chess-board>.showLastMoveOnBoard
       showLastMoveOnBoard() {
-        let chessMoves = this.chessMoves;
-        // remove lastmove CSS color from previous move
-        if (chessMoves.length) {
-          if (logDetail > 1) log("Last chessMoves", chessMoves);
-          let { fromSquare, toSquare } = chessMoves.slice(-2)[0];
-          if (fromSquare) fromSquare.classList.remove("lastmove");
-          else console.warn("fromSquare is undefined");
-          toSquare.classList.remove("lastmove");
-          // set lastmove CSS color to current move
-          if (this.lastMove.fromSquare && this.lastMove.toSquare) {
-            this.lastMove.fromSquare.classList.add("lastmove");
-            this.lastMove.toSquare.classList.add("lastmove");
-          }
+        if (this.lastMove) {
+          const /*function*/ updateLastMoveSquares = (squares) =>
+              this.dispatch({
+                name: CHESS.__CHESSSQUAREUPDATE__,
+                detail: {
+                  squares,
+                },
+              });
+          updateLastMoveSquares([]); // empty array resets all squares, removes 'lastmove' class
+          updateLastMoveSquares([
+            // sets 'lastmove' class on squares
+            this.lastMove.fromSquare.at, // fromSquare
+            this.lastMove.toSquare.at, // toSquare
+          ]);
+        } else {
+          console.warn("No lastMove on board");
         }
       }
       // ======================================================== <chess-board>.initAnalysis
       // initAnalysis wordt aangeroepen in einde Click-event.
       initAnalysis() {
-        // console.error("initAnalysis");
         if (this.doAnalysis) {
+          console.warn("initAnalysis");
           CHESS.analysis(this, CHESS.__ANALYSIS_PRE__);
         }
       }
       // ======================================================== <chess-board>.lastMove
       get lastMove() {
-        if (this.chessMoves.length) {
-          return this.chessMoves.slice(-1)[0];
+        if (this.chessMovesHistory.length) {
+          return this.chessMovesHistory.lastMove;
         }
       }
       // ======================================================== <chess-board>.undoMove
       undoMove() {
+        //! action="UNDOMOVE" "CLEARMOVES" + MATCH_GUID
         if (this.lastMove) {
           this.fen = this.lastMove.fen; // board is correct again
-          this.chessMoves.pop();
+          this.chessMovesHistory.deleteLastMove();
         }
       }
       // ======================================================== <chess-board>.findPieceSquare
@@ -698,7 +733,7 @@
         this.docs(this.querySelector(CHESS.__WC_CHESS_PIECE__));
       }
       // ======================================================== <chess-board>.fen SETTER/GETTER
-      set fen(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -") {
+      set fen(fenString = CHESS.__STARTFEN__) {
         if (logDetail > 2) log("Set fen START\t", fenString);
         // TODO: Waarom hier?? Omdat er altijd een castlingArray moet zijn als je een fen op het bord zet.
         this.castlingArray = ["K", "Q", "k", "q"];
@@ -816,6 +851,47 @@
         // console.warn("this.innerHTML", this.innerHTML);
         return fenString;
       } // get fen()
+      // ======================================================== <chess-board>.all shit with pieces
+      //! TODO
+      allPieces() {
+        return CHESS.__STARTFEN__
+          .split(" ")[0]
+          .split("")
+          .filter((x) => CHESS.__FEN_LETTERS__.includes(x)) // remove digits and /
+          .map((fenLetter) => CHESS.convertFEN(fenLetter));
+      }
+      boardPieces() {
+        // return an array of pieces on the board.
+        let pieces = [];
+        for (const square of this.squares) {
+          let piece = this.getSquare(square).piece;
+          if (piece) {
+            pieces.push(piece.is);
+          }
+        }
+        return pieces;
+      }
+      capturedPieces() {
+        // return an array of pieceNames that are captured.
+        console.log(666, this.allPieces());
+        console.log(666, this.boardPieces());
+        let boardPieces = this.boardPieces();
+        let remaining = this.allPieces();
+        let captured = [];
+        for (const piece of boardPieces) {
+          let index = remaining.indexOf(piece);
+          console.log(piece, index, remaining.length, captured.length);
+          if (index > -1) {
+            remaining.splice(index, 1);
+          } else {
+            captured.push(piece);
+          }
+        }
+        return {
+          remaining,
+          captured,
+        };
+      }
       // ======================================================== <chess-board>.record GETTER
       get record() {
         return this.hasAttribute(CHESS.__WC_ATTRIBUTE_RECORD__);
@@ -906,8 +982,9 @@
         return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__);
       }
       set playerturn(v) {
-        log("set playerturn", v);
+        log("set playerturn", v, "lastMove:", this.lastMove?.move);
         this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__, v);
+        this.showLastMoveOnBoard();
       }
       // ============================================================ <chess-board>.updateFENonScreen
       updateFENonScreen() {

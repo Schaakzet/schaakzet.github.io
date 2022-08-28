@@ -20,6 +20,15 @@
           this.read_matches();
         });
       }
+    // ======================================================== <chess-matches>.resumeChessGame
+    resumeChessGame(evt) {
+      let match_guid = evt.detail.data;
+      let { id, displayname } = ROADSTECHNOLOGY.CHESS;
+
+      localStorage.setItem(CHESS.__MATCH_GUID__, match_guid);
+      location.assign(`match.html?id=${id}&name=${displayname}&match_guid=${match_guid}` /* , "_blank" */);
+      // this.chessboard.fen = fen;
+    }
       // ======================================================== <chess-matches>.read_matches
       read_matches() {
         CHESS.APIRT.callAPI({
@@ -65,7 +74,7 @@
                       onclick: (evt) => {
                         if (evt.ctrlKey) {
                           miniboard.remove();
-                          window.CHESS.APIRT.deleteMatchByGUID(match_guid);
+                          window.CHESS.APIRT.deleteMatchByGUID({match_guid});
                         } else if (evt.shiftKey) {
                           this.resumeChessGame(match_guid, miniboard.fen);
                         }

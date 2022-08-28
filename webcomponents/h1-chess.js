@@ -9,6 +9,7 @@ customElements.define(
         href="https://github.com/Schaakzet/schaakzet.github.io">development</a> ${document.location.pathname}</h1>` +
         `<create-html>
             a|index.html|index
+            a|seats.html|Seats
             |Play:
             a|match.html|match
             a|dashboard.html|dashboard

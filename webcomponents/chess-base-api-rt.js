@@ -23,7 +23,7 @@
   // ********************************************************** logging
 
   // the amount of console.logs displayed in this component
-  let logDetailComponent = 1; //! -1=no logs 0=use global setting >0=custom setting
+  let logDetailComponent = 4; //! -1=no logs 0=use global setting >0=custom setting
   let logComponent = window.CHESS.log[__COMPONENT_NAME__];
   let logDetail = logDetailComponent || logComponent.detail;
 
@@ -47,6 +47,7 @@
   Object.assign(CHESS.APIRT, {
     __STARTGAME__: "startgame",
     __UNDOMOVE__: "undomove",
+    __UNDOMATCHMOVE__: "undoMatchMove",
     __API_RECORDS__: __API__ + "crud/index.php/records/", //! old CRUD API, before Bart created our own
     __API_SCHAAKZET__: __API__ + __API_CHESSGAME__ + "/?action=",
     __API_MATCHES__: __API__ + __API_CHESSGAME__,
@@ -60,18 +61,19 @@
 
     // add CHESS.APIRT.functions
     // ================================================== deleteMatchByGUID
-    deleteMatchByGUID: (guid) => {
-      fetch(CHESS.APIRT.__API_SCHAAKZET__ + "DELETEMATCH" + "&match_guid=" + guid, {
-        method: "GET",
-        headers: CHESS.APIRT.__API_HEADERS__,
-      });
-      return;
-      //! todo: replace with proper API call
+    deleteMatchByGUID: ({
+      match_guid, //
+      callback = (evt) => {
+        // default callback can be overridden
+        log("deleted Match", match_guid, evt);
+      },
+    }) => {
       CHESS.APIRT.callAPI({
         action: "DELETEMATCH",
         body: {
-          match_guid: guid,
+          match_guid,
         },
+        callback,
       });
     },
     // ================================================== callAPI
@@ -113,7 +115,7 @@
       fetch(uri, options)
         .then((response) => response.json())
         .then((json_response) => {
-          if (logDetail > 1) log("JSON Response:", json_response);
+          if (logDetail > 0) log("JSON Response:", json_response);
           let rowcount = json_response.rows?.length;
           if (rowcount == 1) {
             if (logDetail > 1) log(`fetched ${body.action} ${body.where || ""}:`, { ROW: json_response.rows[0] });

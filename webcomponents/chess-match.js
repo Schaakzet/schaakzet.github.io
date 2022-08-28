@@ -39,7 +39,7 @@
         this.render();
 
         setTimeout(() => {
-          let match_guid = localStorage.getItem(CHESS.__MATCH_GUID__);
+          let match_guid = localStorage.getItem(CHESS.__MATCH_GUID__) || URLSearchParam("match_guid");
           if (match_guid) {
             this.resumeMatch(match_guid);
           } else {
@@ -57,6 +57,8 @@
       }
       // ================================================== <chess-match>.render
       render() {
+        let doAnalysis = CHESS.__DO_BOARD_ANALYSIS__;
+        doAnalysis = "NOANALYSIS";
         this.append(
           Object.assign(document.createElement("style"), {
             innerHTML: CSS_Match,
@@ -67,7 +69,7 @@
               (this.hasAttribute("playernames") ? `<div class="match_playernames"></div>` : ``) +
               `<div id="match_and_progress">` +
               `  <div>` +
-              `    <chess-board record labels analysis></chess-board>` +
+              `    <chess-board record labels ${doAnalysis}></chess-board>` +
               `    <div id="TEST4CHECKBOARDS" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1em"></div>` +
               `  </div>` +
               `  <div>` +
@@ -86,13 +88,18 @@
         this.addListeners = () => {}; // attach listeners only once
       }
 
+      // ================================================== <chess-match>.createMatchPlayer
+      createMatchPlayer(player_id, player_name, player_color) {
+        window.initRoadsTechnologyPlayer(
+          URLSearchParam("id") || this.getRandomID(1000), // id
+          URLSearchParam("name") || prompt("Enter your Displayname", "Anonymous")
+        );
+      }
       // ================================================== <chess-match>.createMatch
       createMatch() {
         if (logDetail > 0) log("createMatch");
-        ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(window.location.search).get("id") || this.getRandomID(1000);
-        ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(window.location.search).get("name") || prompt("Enter your Displayname", "Anonymous");
-        localStorage.setItem("wp_user", ROADSTECHNOLOGY.CHESS.id);
-        localStorage.setItem("player", ROADSTECHNOLOGY.CHESS.displayname);
+        this.createMatchPlayer();
+
         let { id, displayname } = ROADSTECHNOLOGY.CHESS;
         if (confirm("Do you want to start a new match as player white?")) {
           // -------------------------------------------------- callAPI
@@ -184,8 +191,8 @@
           match_guid,
         } = matchesRow;
         // -------------------------------------------------- determine current player
-        ROADSTECHNOLOGY.CHESS.id = new URLSearchParams(document.location.search).get("id") || ROADSTECHNOLOGY.CHESS.id || localStorage.getItem("wp_user");
-        ROADSTECHNOLOGY.CHESS.displayname = new URLSearchParams(document.location.search).get("name") || ROADSTECHNOLOGY.CHESS.displayname || localStorage.getItem("player");
+        //! TODO use generic code
+        window.initRoadsTechnologyPlayer(); //set ROADSTECHNOLOGY.CHESS.player stuff (by global function in schaakzet.js file)
 
         if (logDetail > 0) log("User:", ROADSTECHNOLOGY.CHESS, "player_white:", player_white);
 
@@ -239,7 +246,9 @@
         });
       }
       // ================================================== <chess-match>.startMatch_send_startgame_to_database
-      startMatch_send_startgame_to_database(id = localStorage.getItem(CHESS.__MATCH_GUID__)) {
+      startMatch_send_startgame_to_database(
+        id = localStorage.getItem(CHESS.__MATCH_GUID__) || this.chessboard.id// match_guid
+      ) {
         // ask database if there are matchmoves entries
         // only if there are no matchmoves entries, then start game
         CHESS.APIRT.callAPI({
@@ -332,21 +341,25 @@
             CHESS.log.fen(this, "processDatabaseRows", undefined);
             chessboard.fen = undefined; //! make sure we start with a start board
             chessboard.isUpdating = true;
+            this.logMoves = [];
+            //!! groupCollapsed does not work on FireFox!
             console.group("processDatabaseRows");
             rows.forEach((row) => {
               this.updateProgressRow(row); //! all moves are forced to the next Event Loop
             });
             chessboard.showLastMoveOnBoard();
-            
+
             //! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
             //! FORCE isUpdating to false AFTER all moves are added to the board
             setTimeout(() => {
-              console.groupEnd("processDatabaseRows");
-              console.warn("end of processDatabaseRows in setTimeout. player:", chessboard.player, "playerturn:", chessboard.playerturn);
-              if (chessboard.player == chessboard.playerturn) {
-                console.warn(`%c YOUR TURN! `, "background:gold;color:black;font-weight:bold;");
+              let { player, playerturn } = chessboard;
+              console.groupEnd("processDatabaseRows", this.logMoves);
+              console.warn("end of processDatabaseRows in setTimeout. player:", player, "playerturn:", playerturn);
+              if (player == playerturn) {
+                log(`YOUR TURN! %c ${player}`, "background:red;color:beige;font-weight:bold;font-size:120%");
               }
               chessboard.isUpdating = false;
+              // chessboard.showLastMoveOnBoard(); // probably not required as board guid listener is called after this?
             });
             //! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
           };
@@ -367,6 +380,8 @@
         player_white,
         player_black,
       }) {
+        if (player_white == "null") player_white = "PlayerWhite";
+        if (player_black == "null") player_black = "PlayerBlack";
         CHESS.APIRT.callAPI({
           action: "UPDATE",
           body: {
@@ -412,7 +427,20 @@
           },
         });
       }
-
+      // ================================================== undoLastMove
+      undoLastMove() {
+        let chessboard = this.chessboard;
+        CHESS.APIRT.callAPI({
+          action: "UNDOMOVE",
+          body: {
+            id: chessboard.id, // GUID
+          },
+          callback: () => {
+            log("undoLastMove", ...arguments);
+          },
+        });
+        chessboard.reload();
+      }
       // ================================================== initGame
       initGame(match_guid) {
         log("initGame", match_guid);
@@ -440,11 +468,11 @@
       undoMove() {
         let chessboard = this.chessboard;
         log("UNDO MOVE"); //todo test
-        chessboard.dispatchChessMove({ move: "undomove" });
+        chessboard.dispatchChessMove({ move: CHESS.__UNDOMOVE__ });
         // -------------------------------------------------- dispatch undoMove
         this.dispatch({
           root: document,
-          name: "undoMove",
+          name: CHESS.__UNDOMATCHMOVE__,
           detail: {
             chessboard: chessboard,
             toSquare: chessboard.lastMove.toSquare,

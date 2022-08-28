@@ -86,7 +86,9 @@
         cancelable,
       },
     }) {
-      if (logDetail > 0) log(`${root.localName||"no localName"} dispatch:`,{[name]:detail});      root.dispatchEvent(
+      const isNotSquareUpdate = name !== CHESS.__CHESSSQUAREUPDATE__;
+      if (logDetail > 0 && isNotSquareUpdate) log(`${root.localName || "no localName"} dispatch:`, { [name]: detail });
+      root.dispatchEvent(
         new CustomEvent(name, {
           ...options, //
           detail,
@@ -103,15 +105,6 @@
     // generic createElement function
     $createElement({ tag = "div", props = {} }) {
       return Object.assign(document.createElement(tag), props);
-    }
-    // ======================================================== BaseElement.resumeChessGame
-    resumeChessGame(evt) {
-      let { id, displayname } = ROADSTECHNOLOGY.CHESS;
-
-      localStorage.setItem(CHESS.__MATCH_GUID__, evt.detail.data);
-      location.assign(`match.html?id=${id}&name=${displayname}` /* , "_blank" */);
-
-      // this.chessboard.fen = fen;
     }
   }; // end ChessBaseElement
   // ********************************************************** ChessBaseElement

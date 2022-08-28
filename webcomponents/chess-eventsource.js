@@ -3,7 +3,7 @@
   const __COMPONENT_NAME__ = "EventSource";
   // ********************************************************** logging
   // the amount of console.logs displayed in this component
-  let logDetailComponent = 4; //! -1=no logs 0=use global setting >0=custom setting
+  let logDetailComponent = 1; //! -1=no logs 0=use global setting >0=custom setting
   let logComponent = window.CHESS.log[__COMPONENT_NAME__];
   let logDetail = logDetailComponent || logComponent.detail;
 
@@ -38,16 +38,24 @@
         evtSource.onerror = (evt) => {
           log(`%c onerror`, "background:red;color:white");
           console.timeEnd("EVENTSOURCE");
+          evtSource.close();
           CHESS.EVENTSOURCE.initialize({ root });
         };
         evtSource.onmessage = (evt) => {
-          if (evt.data) {
-            CHESS.EVENTSOURCE.dispatchMove(
-              chessboard,
-              JSON.parse(evt.data) //! from database: {match_guid, move, fen}
-            );
+          console.error("Would like to restart board here");
+          let forcedRestart_instead_of_build_board_step_by_step = false;
+          if (forcedRestart_instead_of_build_board_step_by_step) {
+            let { match_guid } = evt.data;
+            chessboard.closest("chess-game").restartMatch(match_guid);
           } else {
-            log("EventSource Reset, with", evt);
+            if (evt.data) {
+              CHESS.EVENTSOURCE.dispatchMove(
+                chessboard,
+                JSON.parse(evt.data) //! from database: {match_guid, move, fen}
+              );
+            } else {
+              log("EventSource Reset, with", evt);
+            }
           }
         };
       } catch (e) {

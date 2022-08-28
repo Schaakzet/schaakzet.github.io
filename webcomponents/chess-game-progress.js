@@ -29,7 +29,7 @@
 
         this.nr = 1;
         document.addEventListener(CHESS.__STORECHESSMOVE__, (evt) => {
-          this.addMove(evt.detail, this.nr);
+          this.addProgressMove(evt.detail, this.nr);
         });
         document.addEventListener("restartMatch", (evt) => this.clear());
       }
@@ -41,16 +41,16 @@
       render() {
         this.style = `display:grid;grid:1fr/1fr 1fr;gap:1em`;
       }
-      // ======================================================== <chess-game-progress>.addMove
-      addMove(detail, nr = 1) {
-        if (logDetail > 0) log("addMove nr & evt.detail", nr,detail.move, {detail});
+      // ======================================================== <chess-game-progress>.addProgressMove
+      addProgressMove(detail, nr = 1) {
+        if (logDetail > 0) log("addProgressMove nr & evt.detail", nr,detail.move, {detail});
         this.append(
           Object.assign(document.createElement("div"), {
             innerHTML: `${nr}. ${detail.move}`,
           })
         );
         this.nr++;
-      } // addMove
+      } // addProgressMove
     } // class <chess-game-progress>
   ); // customElements.define
   // ********************************************************** end IIFE
