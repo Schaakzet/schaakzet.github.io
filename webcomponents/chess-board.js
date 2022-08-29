@@ -693,6 +693,7 @@
         if (this.chessMovesHistory.length) {
           return this.chessMovesHistory.lastMove;
         }
+        return undefined; // keep ESlint quiet, every programmer should know functions return undefined by default
       }
       // ======================================================== <chess-board>.undoMove
       undoMove() {
