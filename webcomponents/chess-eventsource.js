@@ -38,8 +38,8 @@
         evtSource.onerror = (evt) => {
           log(`%c onerror`, "background:red;color:white");
           console.timeEnd("EVENTSOURCE");
-          evtSource.close();
-          CHESS.EVENTSOURCE.initialize({ root });
+          //evtSource.close();
+          //CHESS.EVENTSOURCE.initialize({ root });
         };
         evtSource.onmessage = (evt) => {
           console.error("Would like to restart board here");
