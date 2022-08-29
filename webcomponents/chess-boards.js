@@ -17,7 +17,7 @@
       // ======================================================== <chess-boards>.render
       render() {
         let boardElements = this.innerHTML
-          .split(/[\n\|#]/) // accepts newline | and # as 3 separators
+          .split(/[\n|#]/) // accepts newline | and # as 3 separators
           .map((fen, idx) => {
             fen = fen.trim();
             if (fen == "") return false;
