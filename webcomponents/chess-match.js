@@ -91,7 +91,7 @@
       // ================================================== <chess-match>.createMatchPlayer
       createMatchPlayer(player_id, player_name, player_color) {
         window.initRoadsTechnologyPlayer(
-          URLSearchParam("id") || this.getRandomID(1000), // id
+          URLSearchParam("id") || this.getRandomID(), // id
           URLSearchParam("name") || prompt("Enter your Displayname", "Anonymous")
         );
       }
@@ -138,11 +138,6 @@
           // show availableGames (seats.html):
           location.assign(`seats.html?id=${wp_user_black}&name=${player_black}`);
         }
-      }
-
-      // ================================================== <chess-match>.getRandomID()
-      getRandomID(value) {
-        return Math.floor(Math.random() * value);
       }
 
       // ================================================== <chess-match>.setPlayerTitles()
@@ -247,7 +242,7 @@
       }
       // ================================================== <chess-match>.startMatch_send_startgame_to_database
       startMatch_send_startgame_to_database(
-        id = localStorage.getItem(CHESS.__MATCH_GUID__) || this.chessboard.id// match_guid
+        id = localStorage.getItem(CHESS.__MATCH_GUID__) || this.chessboard.id // match_guid
       ) {
         // ask database if there are matchmoves entries
         // only if there are no matchmoves entries, then start game

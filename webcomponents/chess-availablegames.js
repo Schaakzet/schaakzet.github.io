@@ -59,14 +59,23 @@
       }
       // ================================================== action_resumeMatch
       action_resumeMatch(evt) {
+        //! all <chess-availablegames> receive the button event
+        //! so we have to check if the button clicked is in 'this' <chess-availablegames>
+        //! otherwise the deletion will be done for N number of <chess-availablegames>
         let {
-          value, // action_deleteMatch
+          //! properties in evt.detail:
+          // value, // action_deleteMatch
           button, // DOM reference to button pressed
           data: match_guid, // match_guid - was defined as 1st parameter!
         } = evt.detail;
-        let { id, displayname } = ROADSTECHNOLOGY.CHESS;
-        localStorage.setItem(CHESS.__MATCH_GUID__, match_guid);
-        location.assign(matchURL(id, displayname, match_guid));
+        if (this.contains(button)) {
+          let { id, displayname } = ROADSTECHNOLOGY.CHESS;
+          //! if no id/displayname exist, generate them
+          id = id || this.getRandomID();
+          if (!displayname) displayname = prompt(`(Player Black) What is your name?`);
+          localStorage.setItem(CHESS.__MATCH_GUID__, match_guid);
+          location.assign(matchURL(id, displayname, match_guid));
+        }
       }
       // ================================================== action_viewMatch
       action_viewMatch(evt) {
@@ -82,18 +91,12 @@
       // ================================================== action_deleteMatch
       //! is deleteMatch used?
       action_deleteMatch(evt) {
-        let {
-          value, // action_deleteMatch
-          button, // DOM reference to button pressed
-          data: match_guid, // match_guid - was defined as 1st parameter!
-        } = evt.detail;
         //! all <chess-availablegames> receive the button event
         //! so we have to check if the button clicked is in 'this' <chess-availablegames>
-        //! otherwise the deletion will be tried for N number of <chess-availablegames>
+        //! otherwise the deletion will be done for N number of <chess-availablegames>
         if (this.contains(button)) {
           window.CHESS.APIRT.deleteMatchByGUID({
-            match_guid,
-            // existing match_guid
+            match_guid: evt.detail.data, // existing match_guid
             callback: (evt) => {
               log("deleteMatch", evt);
               button.closest("div").remove(); // remove line on screen
@@ -155,7 +158,7 @@
                   // ------------------------------------------------- return DOM element in map
 
                   const playerLink = (id, name) => {
-                    return `<a href="${matchURL(id,name,match_guid)}">(${id}) ${name}</a>`;
+                    return `<a href="${matchURL(id, name, match_guid)}">(${id}) ${name}</a>`;
                   };
 
                   // ------------------------------------------------- action buttons

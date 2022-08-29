@@ -106,6 +106,10 @@
     $createElement({ tag = "div", props = {} }) {
       return Object.assign(document.createElement(tag), props);
     }
+    // ================================================== BaseElement.getRandomID()
+    getRandomID(value = 1000) {
+      return Math.floor(Math.random() * value);
+    }
   }; // end ChessBaseElement
   // ********************************************************** ChessBaseElement
 })(); // end IIFE
