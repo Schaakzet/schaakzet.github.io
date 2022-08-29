@@ -214,7 +214,6 @@
       }
       set pieceName(pieceName) {
         this.setAttribute(CHESS.__WC_ATTRIBUTE_PIECENAME__, pieceName);
-        return pieceName;
       }
       // ======================================================== <chess-square>.capturePieceBy
       capturePieceBy(chessPiece = { is: "NO PIECE" }) {
