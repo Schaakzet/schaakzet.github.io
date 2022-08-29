@@ -38,21 +38,27 @@
         evtSource.onerror = (evt) => {
           log(`%c onerror`, "background:red;color:white");
           console.timeEnd("EVENTSOURCE");
+          // 29/8/2022: Bart says connection automatically recovers, next lines not needed
           //evtSource.close();
           //CHESS.EVENTSOURCE.initialize({ root });
         };
         evtSource.onmessage = (evt) => {
-          console.error("Would like to restart board here");
+          console.warn("Would like to restart whole board here, if code gets too complex creating board by every move");
           let forcedRestart_instead_of_build_board_step_by_step = false;
           if (forcedRestart_instead_of_build_board_step_by_step) {
             let { match_guid } = evt.data;
             chessboard.closest("chess-game").restartMatch(match_guid);
           } else {
             if (evt.data) {
-              CHESS.EVENTSOURCE.dispatchMove(
-                chessboard,
-                JSON.parse(evt.data) //! from database: {match_guid, move, fen}
-              );
+              let { match_guid, move } = evt.data;
+              if (match_guid === chessboard.id) {
+                CHESS.EVENTSOURCE.dispatchMove(
+                  chessboard,
+                  JSON.parse(evt.data) //! from database: {match_guid, move, fen}
+                );
+              } else {
+                console.warn(`Received Move:${move} from another board`);
+              }
             } else {
               log("EventSource Reset, with", evt);
             }
