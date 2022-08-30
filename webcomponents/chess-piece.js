@@ -22,9 +22,6 @@
 
   /***********************************************************************/
 
-  // const HTML_ImageChessPiece = (name) => `<img src="https://schaakzet.github.io/img/${name}.png">`;
-  const HTML_ImageChessPiece = (name) => `<img src="https://schaakzet.github.io/img/${name}.svg">`;
-
   // ********************************************************** <chess-piece is="wit-paard" at="D5"> Web Component
   customElements.define(
     __COMPONENT_NAME__,
@@ -38,7 +35,7 @@
         // if is attribute changed, render new image
         //!! make sure chess-board has rendered, because attributeChangedCallback is called before render
         customElements.whenDefined(CHESS.__WC_CHESS_BOARD__).then(() => {
-          this.innerHTML = HTML_ImageChessPiece(newValue);
+          this.innerHTML = CHESS.HTML_ImageChessPiece(newValue);
         });
       }
       // ======================================================== <chess-piece>.movePieceTo
