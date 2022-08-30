@@ -18,6 +18,8 @@
         }, // log FEN mutations
       },
       // ********************************************************** HTML CSS
+      __WHITE__: "white",
+      __BLACK__: "black",
       // TODO: create as attribute and property on <chess-board> so user can select theme colors
       __CLASSNAME_WHITESQUARE__: "white_square",
       __CLASSNAME_BLACKSQUARE__: "black_square",
@@ -26,6 +28,7 @@
       __WC_CHESS_PIECE__: "chess-piece",
       __WC_CHESS_SQUARE__: "chess-square",
       __WC_CHESS_BOARD__: "chess-board",
+      __WC_CHESS_MATCH__: "chess-match",
       // Web Component attributes
       __WC_ATTRIBUTE_AT__: "at", // <chess-square at="a8" piece="wit-koning">
       __WC_ATTRIBUTE_PIECENAME__: "piece", // <chess-square piece="wit-koning">
@@ -47,6 +50,7 @@
       __CAPTUREDPIECE__: "CAPTUREDPIECE", // send to progress and show captured piece
       __DO_BOARD_ANALYSIS__: "DO_BOARD_ANALYSIS", // send to <chess-board> to do board analysis
       __CHESSSQUAREUPDATE__: "CHESSSQUAREUPDATE", // send to <chess-board> to update chess square
+      __CHESSBOARD_READY__: "CHESSBOARD_READY", // send to notify progress
 
       // ********************************************************** Chess Game constants
       // chess constants
@@ -215,5 +219,6 @@
   );
   Object.assign(CHESS, {
     convertFEN: (name) => FENMap.get(name), // return R or wit-toren
+    HTML_ImageChessPiece : (name) => `<img src="https://schaakzet.github.io/img/${name}.svg">`
   });
 })(); // end of IIFE

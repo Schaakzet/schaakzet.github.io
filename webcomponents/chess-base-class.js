@@ -95,6 +95,15 @@
         })
       );
     }
+    // ======================================================== BaseElement.get chessboard
+    get chessboard() {
+      log(666);
+      return this.closest(CHESS.__WC_CHESSBOARD__) || this.closest(CHESS.__WC_CHESSBOARD__);
+    }
+    // ======================================================== BaseElement.get chessmatch
+    get chessmatch() {
+      return this.closest("chess-match");
+    }
     // ======================================================== BaseElement.listen2matchmoves
     listen2matchmoves(
       root = this // disppatch matchid name event from this root (this = default)

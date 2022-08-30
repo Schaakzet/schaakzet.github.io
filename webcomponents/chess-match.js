@@ -347,14 +347,9 @@
             //! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
             //! FORCE isUpdating to false AFTER all moves are added to the board
             setTimeout(() => {
-              let { player, playerturn } = chessboard;
               console.groupEnd("processDatabaseRows", this.logMoves);
-              console.warn("end of processDatabaseRows in setTimeout. player:", player, "playerturn:", playerturn);
-              if (player == playerturn) {
-                log(`YOUR TURN! %c ${player}`, "background:red;color:beige;font-weight:bold;font-size:120%");
-              }
               chessboard.isUpdating = false;
-              // chessboard.showLastMoveOnBoard(); // probably not required as board guid listener is called after this?
+              chessboard.ready_for_play();
             });
             //! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
           };

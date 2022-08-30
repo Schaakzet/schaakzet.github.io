@@ -209,7 +209,7 @@
           body: { id: match_guid },
           callback: ({ rows }) => {
             let { player_white, player_black, wp_user_white, wp_user_black } = rows[0];
-            this.closest("chess-match").setPlayerTitles(player_white, player_black, wp_user_white, wp_user_black);
+            this.chessmatch.setPlayerTitles(player_white, player_black, wp_user_white, wp_user_black);
           },
         });
       }
@@ -605,7 +605,7 @@
 
           const /*function*/ store_Dispatch_Move = (move) => {
               if (this.player !== this.playerturn && !this.isTestboard) {
-                this.closest("chess-match").storeMove({
+                this.chessmatch.storeMove({
                   chessboard: this,
                   move,
                   fen: this.fen,
@@ -854,48 +854,51 @@
       } // get fen()
       // ======================================================== <chess-board>.all shit with pieces
       //! TODO
-      allPieces() {
-        return CHESS.__STARTFEN__
-          .split(" ")[0]
-          .split("")
-          .filter((x) => CHESS.__FEN_LETTERS__.includes(x)) // remove digits and /
-          .map((fenLetter) => CHESS.convertFEN(fenLetter));
-      }
-      boardPieces() {
+      piecesAdministration() {
+        let pieces = (this.piecenames = {
+          all: CHESS.__STARTFEN__
+            .split(" ")[0]
+            .split("")
+            .filter((x) => CHESS.__FEN_LETTERS__.includes(x)) // remove digits and /
+            .map((fenLetter) => CHESS.convertFEN(fenLetter)),
+        });
         // return an array of pieces on the board.
-        let pieces = [];
+        pieces.board = [];
         for (const square of this.squares) {
           let piece = this.getSquare(square).piece;
-          if (piece) {
-            pieces.push(piece.is);
-          }
+          if (piece) pieces.board.push(piece.is);
         }
-        return pieces;
-      }
-      capturedPieces() {
         // return an array of pieceNames that are captured.
-        console.log(666, this.allPieces());
-        console.log(666, this.boardPieces());
-        let boardPieces = this.boardPieces();
-        let remaining = this.allPieces();
-        let captured = [];
-        for (const piece of boardPieces) {
-          let index = remaining.indexOf(piece);
-          console.log(piece, index, remaining.length, captured.length);
-          if (index > -1) {
-            remaining.splice(index, 1);
-          } else {
-            captured.push(piece);
-          }
-        }
-        return {
-          remaining,
-          captured,
-        };
+        pieces.captured = [...pieces.all];
+        pieces.board.map((x, idx) => {
+          let i = pieces.captured.indexOf(x);
+          if (i > -1) delete pieces.captured[i];
+          return x;
+        });
+        pieces.captured = pieces.captured.filter((x) => x);
+        pieces.capturedWhite = pieces.captured.filter((n) => n.startsWith(CHESS.__PLAYER_WHITE__));
+        pieces.capturedBlack = pieces.captured.filter((n) => n.startsWith(CHESS.__PLAYER_BLACK__));
+        console.log(this.piecenames);
       }
       // ======================================================== <chess-board>.record GETTER
       get record() {
         return this.hasAttribute(CHESS.__WC_ATTRIBUTE_RECORD__);
+      }
+      // ======================================================== <chess-board>.ready_for_play(){
+      ready_for_play() {
+        let chessboard = this;
+        let { player, playerturn } = chessboard;
+        if (player == playerturn) {
+          log(`YOUR TURN! %c ${player}`, "background:red;color:beige;font-weight:bold;font-size:120%");
+        }
+        this.piecesAdministration();
+        this.dispatch({
+          name: CHESS.__CHESSBOARD_READY__, //
+          detail: {
+            chessboard: this,
+            match_guid: this.id,
+          },
+        });
       }
       // ======================================================== <chess-board>.play
       play(moves = this._doingmoremoves) {
