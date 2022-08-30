@@ -146,9 +146,18 @@
       }
       // ======================================================== <chess-board>.attributeChangedCallback
       attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue && oldValue !== newValue && name == CHESS.__WC_ATTRIBUTE_FEN__) {
-          CHESS.log.fen(this, "attributeChanged", newValue);
-          this.fen = newValue;
+        if (oldValue) {
+          if (oldValue !== newValue && name == CHESS.__WC_ATTRIBUTE_FEN__) {
+            log(this, "attributeChanged", newValue);
+            this.fen = newValue;
+          }
+        } else {
+          //! for first call, delay until all squares are on the board
+          if (name == CHESS.__WC_ATTRIBUTE_FEN__) {
+            setTimeout(() => {
+              this.fen = newValue;
+            });
+          }
         }
       }
       // ======================================================== <chess-board>.listenOnMatchID
