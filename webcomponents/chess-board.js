@@ -810,24 +810,26 @@
               const square = this.files[file] + this.ranks[rank]; // "a8"
               const piece = this.getPiece(square);
               if (piece) {
-                const fenPiece = CHESS.convertFEN(piece.is);
-                if (emptySquareCount != 0) {
+                // if there where empty square, add them to the fen
+                if (emptySquareCount > 0) {
                   fen = fen + emptySquareCount;
                   emptySquareCount = 0;
                 }
-                fen = fen + fenPiece;
+                fen = fen + CHESS.convertFEN(piece.is); // add FEN letter
               } else {
                 emptySquareCount++;
               }
             }
+            // fill remaining empty squares on one rank
             if (rank < 8) {
-              if (emptySquareCount != 0) {
+              if (emptySquareCount > 0) {
                 fen = fen + emptySquareCount;
                 emptySquareCount = 0;
               }
+              // separate ranks by /
               if (rank > 0) fen = fen + "/";
-            }
-          }
+            }// if (rank < 8)
+          }// for rank
         } //end if
         fenParts.push(fen);
         // player
@@ -862,7 +864,13 @@
         return fenString;
       } // get fen()
       // ======================================================== <chess-board>.all shit with pieces
-      //! TODO
+      /**
+       * create <chess-board>.pieceNams Object
+       * {
+       *  board: ["wit-toren",...] // all pieces currently on the board
+       * 
+       * }
+       */
       piecesAdministration() {
         let pieces = (this.piecenames = {
           all: CHESS.__STARTFEN__
@@ -887,7 +895,6 @@
         pieces.captured = pieces.captured.filter((x) => x);
         pieces.capturedWhite = pieces.captured.filter((n) => n.startsWith(CHESS.__PLAYER_WHITE__));
         pieces.capturedBlack = pieces.captured.filter((n) => n.startsWith(CHESS.__PLAYER_BLACK__));
-        console.log(this.piecenames);
       }
       // ======================================================== <chess-board>.record GETTER
       get record() {
@@ -995,7 +1002,7 @@
         return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__);
       }
       set playerturn(v) {
-        log("set playerturn", v, "lastMove:", this.lastMove?.move);
+        log("set playerturn:", v, "player:",this.player,"lastMove:", this.lastMove?.move);
         this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__, v);
         this.showLastMoveOnBoard();
       }
