@@ -451,8 +451,10 @@
       mockMove() {
         let move = localStorage.getItem("mockMove") || "d4xc5";
         move = window.prompt("Enter move (like: e2-e4)", move);
-        localStorage.setItem("mockMove", move); // store user entry as default
-        this.chessboard.mockMove(move);
+        if (move) {
+          localStorage.setItem("mockMove", move); // store user entry as default
+          this.chessboard.mockMove(move);
+        }
       }
       // ================================================== undoMove
       undoMove() {
