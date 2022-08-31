@@ -23,6 +23,7 @@
       let { id, displayname } = window.ROADSTECHNOLOGY.CHESS;
       window.ROADSTECHNOLOGY.CHESS.id = newid || id || localStorage.getItem("wp_user");
       window.ROADSTECHNOLOGY.CHESS.displayname = newdisplayname || displayname || localStorage.getItem("player");
+      
     } catch (e) {
       console.error(e);
     }

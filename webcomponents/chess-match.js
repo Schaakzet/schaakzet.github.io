@@ -189,6 +189,17 @@
         //! TODO use generic code
         window.initRoadsTechnologyPlayer(); //set ROADSTECHNOLOGY.CHESS.player stuff (by global function in schaakzet.js file)
 
+        let localStoragePlayer = localStorage.getItem("match_player");
+        if (localStoragePlayer) {
+          if (localStoragePlayer == CHESS.__PLAYER_WHITE__) {
+            ROADSTECHNOLOGY.CHESS.displayname = player_white;
+            ROADSTECHNOLOGY.CHESS.id = wp_user_white;
+          } else {
+            ROADSTECHNOLOGY.CHESS.displayname = player_black;
+            ROADSTECHNOLOGY.CHESS.id = wp_user_black;
+          }
+        }
+
         if (logDetail > 0) log("User:", ROADSTECHNOLOGY.CHESS, "player_white:", player_white);
 
         let { id, displayname } = ROADSTECHNOLOGY.CHESS;
@@ -200,7 +211,7 @@
           this.chessboard.player = CHESS.__PLAYER_WHITE__;
           if (logDetail > 0) log("chessboard.player", this.chessboard.player);
           // this.updateProgressFromDatabase({ match_guid });
-          this.updatePlayers({
+          this.updatePlayersinDatabase({
             ...matchesRow, // all of matchesRow
             wp_user_white: id, // overwrite wp_user_white with WordPress_id
             player_white: displayname, // overwrite player_white with WordPress_displayname
@@ -209,12 +220,15 @@
           consoleLog("BLACK");
           this.chessboard.player = CHESS.__PLAYER_BLACK__;
           // this.updateProgressFromDatabase({ match_guid });
-          this.updatePlayers({
+          this.updatePlayersinDatabase({
             ...matchesRow, // all of matchesRow
             wp_user_black: id, // overwrite wp_user_black with WordPress_id
             player_black: displayname, // overwrite player_black with WordPress_displayname
           });
         }
+        console.log(666,this.chessboard)
+        localStorage.setItem("match_player", this.chessboard.player);
+
         // -------------------------------------------------- init <chess-board>
         this.setPlayerTitles(player_white, player_black, wp_user_white, wp_user_black);
         this.chessboard.setPlayerAndFEN(this.chessboard.player, fen); // set attribute on <chess-board> set pieces on <chess-board>
@@ -362,8 +376,8 @@
             callback: ({ rows }) => processDatabaseRows(rows),
           });
       }
-      // ================================================== updatePlayers
-      updatePlayers({
+      // ================================================== updatePlayers_inDatabase
+      updatePlayersinDatabase({
         match_guid, // matchesRow
         wp_user_white,
         wp_user_black,
@@ -413,7 +427,7 @@
           },
           // -------------------------------------------------- callback
           callback: ({ rows }) => {
-            log("move saved", rows);
+            log("move saved", rows[0].move, rows);
           },
         });
       }
@@ -491,7 +505,7 @@
       }
       // ================================================== forceBlackPlayer
       forceBlackPlayer() {
-        this.updatePlayers({
+        this.updatePlayersinDatabase({
           match_guid: this.chessboard.id,
           wp_user_white: ROADSTECHNOLOGY.CHESS.id,
           wp_user_black: this.getRandomID(),
