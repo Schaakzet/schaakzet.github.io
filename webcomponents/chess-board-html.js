@@ -83,7 +83,7 @@
     //display GUID on every marked <chess-board debug>
     /*html*/ `<style id="config_debuginformation" onload="this.disabled=false">` +
     // display debuginfo as chess board layer; but not as grid
-    /*css*/ `#chessboard_debuginfo {background-color: rgba(150,250,150,0.5);height:auto;width:100%;white-space: normal;display:block;border:0;padding:0; }` +
+    /*css*/ `#chessboard_debuginfo {background-color: rgba(150,250,150,0.5);height:auto;width:100%;white-space: normal;display:block;border:0;padding:0;font-size:10px}` +
     /*html*/ `</style>` +
     //
     //! attack and defend shadows on pieces:

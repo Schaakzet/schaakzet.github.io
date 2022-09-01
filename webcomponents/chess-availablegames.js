@@ -91,6 +91,11 @@
       // ================================================== action_deleteMatch
       //! is deleteMatch used?
       action_deleteMatch(evt) {
+        let {
+          value, // action_deleteMatch
+          button, // DOM reference to button pressed
+          data: match_guid, // match_guid - was defined as 1st parameter!
+        } = evt.detail;
         //! all <chess-availablegames> receive the button event
         //! so we have to check if the button clicked is in 'this' <chess-availablegames>
         //! otherwise the deletion will be done for N number of <chess-availablegames>

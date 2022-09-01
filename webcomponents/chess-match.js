@@ -148,7 +148,9 @@
             if (!name || name == "") return "<i>onbekend</i>";
             return name;
           }
-          match_playernames.innerHTML = `Match ${preventEmptyName(p1)} (${wp_user_white}) vs ${preventEmptyName(p2)} (${wp_user_black})`;
+          let H = "H3";
+          //match_playernames.innerHTML = `<${H}> Match <b>${preventEmptyName(p1)}</b> (${wp_user_white}) vs <b>${preventEmptyName(p2)}</b> (${wp_user_black})</${H}>`;
+          match_playernames.innerHTML = `<${H}> Match <b>${preventEmptyName(p1)}</b> vs <b>${preventEmptyName(p2)}</b></${H}>`;
         }
       }
       // ================================================== <chess-match>.isSamePlayer
@@ -226,7 +228,7 @@
             player_black: displayname, // overwrite player_black with WordPress_displayname
           });
         }
-        console.log(666,this.chessboard)
+        console.log(666, this.chessboard);
         localStorage.setItem("match_player", this.chessboard.player);
 
         // -------------------------------------------------- init <chess-board>
