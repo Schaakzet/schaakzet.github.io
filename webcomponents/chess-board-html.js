@@ -36,7 +36,9 @@
     /*css*/ `chess-board{--chessboardbgcolor:grey}` +
     /*css*/ `chess-board{background:var(--chessboardbgcolor)}` +
     /*css*/ `chess-board{border:calc(var(--chess_board_resized_width)/40) solid var(--chessboardbgcolor)}` +
-    /*css*/ `chess-board{border-bottom-color:white}` +
+    /*css*/ `chess-board::before{content:" player:" attr(player) " turn:" attr(playerturn);position:absolute;margin-top:-1em;color:beige}` +
+    /*css*/ `chess-board[playerturn="wit"]{border-bottom-color:white}` +
+    /*css*/ `chess-board[playerturn="zwart"]{border-top-color:black}` +
     /*css*/ `chess-board{display:none;position:relative}` +
     /*css*/ `chess-board:after{content:"";display:block;padding-bottom:100%}` + // make sure chessboard displays as a square
     /* position multiple layers on top of eachother */

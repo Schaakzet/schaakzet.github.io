@@ -409,11 +409,27 @@
           chessSquare.highlight(false);
         }
       }
+      // ======================================================== <chess-board>.turnBoard
+      turnBoard() {
+        this.changePlayer();
+        this.changePlayerTurn()
+      }
       // ======================================================== <chess-board>.changePlayer
-      changePlayer() {
+      changePlayer(evt) {
         if (this.player) {
-          this.playerturn = CHESS.otherPlayer(this.playerturn); // todo Naar FEN
-          if (logDetail > 1) log("changePlayer turn:", this.playerturn, "player:", this.player, this.fen);
+          this.player = CHESS.otherPlayer(this.player);
+        }
+      }
+      // ======================================================== <chess-board>.changePlayer
+      changePlayerTurn(evt) {
+        if (this.player) {
+          let [fen, color, ...rest] = this.fen.split(" ");
+          //! this.playerturn is set inside set fen!!
+          this.fen = [
+            fen, // original FEN
+            color == "b" ? "w" : "b", // change player color
+            ...rest, // rest of FEN
+          ].join(" ");
         }
       }
       // ======================================================== <chess-board>.dispatch_move
@@ -828,8 +844,8 @@
               }
               // separate ranks by /
               if (rank > 0) fen = fen + "/";
-            }// if (rank < 8)
-          }// for rank
+            } // if (rank < 8)
+          } // for rank
         } //end if
         fenParts.push(fen);
         // player
@@ -868,7 +884,7 @@
        * create <chess-board>.pieceNams Object
        * {
        *  board: ["wit-toren",...] // all pieces currently on the board
-       * 
+       *
        * }
        */
       piecesAdministration() {
@@ -1002,7 +1018,7 @@
         return this.getAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__);
       }
       set playerturn(v) {
-        log("set playerturn:", v, "player:",this.player,"lastMove:", this.lastMove?.move);
+        log("set playerturn:", v, "player:", this.player, "lastMove:", this.lastMove?.move);
         this.setAttribute(CHESS.__WC_ATTRIBUTE_PLAYERTURN__, v);
         this.showLastMoveOnBoard();
       }
