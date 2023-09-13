@@ -1,0 +1,27 @@
+body{
+    background-color: limegreen;
+}
+
+.wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+main-menu{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem 0;
+}
+
+custom-button{
+    border : 1px solid hotpink;
+    background-color: beige;
+    padding: 0.25rem;
+    align-self: center;
+}
+
+custom-button:hover{
+    background-color: navy;
+    cursor: default;
+}

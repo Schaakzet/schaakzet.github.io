@@ -1,0 +1,18 @@
+chess-piece{
+    width: var(--square-size);
+    height: var(--square-size);
+    pointer-events: none;
+}
+
+chess-piece > img{
+    height: inherit;
+    width: inherit;
+}
+
+chess-piece[black]{
+
+}
+
+chess-piece[white]{
+
+}

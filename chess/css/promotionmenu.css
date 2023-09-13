@@ -1,0 +1,16 @@
+promotion-menu{
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-row: var(--grid-row);
+    grid-column: var(--grid-col);
+    height: -webkit-fill-available;
+    width: -webkit-fill-available;
+    background-color: #6c686ade;
+    z-index: 11;
+}
+
+promotion-menu > *{
+    width: calc(var(--square-size) * 4);
+    height: calc(var(--square-size) * 4);
+}

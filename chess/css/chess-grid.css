@@ -1,0 +1,44 @@
+:root{
+    --square-size : 5vw;
+    --square-color-1 : #ddd;
+    --square-color-2 : #444;
+}
+
+chess-grid{
+    display: grid;
+    grid-template-columns: repeat(var(--x),var(--square-size));
+    width: fit-content;
+    justify-items: center;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+}
+
+chess-tile{
+    width: var(--square-size);
+    height: var(--square-size);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+chess-tile[light]{
+    background-color: var(--square-color-1);
+}
+
+chess-tile[dark]{
+    background-color: var(--square-color-2);
+}
+
+[selected]{
+    box-shadow: inset 0 0 calc(var(--square-size) * 0.5) #0d8cd6;
+}
+[move]{
+    box-shadow: inset 0 0 calc(var(--square-size) * 0.5) #28e90e;
+}
+[attack]{
+    box-shadow: inset 0 0 calc(var(--square-size) * 0.5) #da1111;
+}
+[defend]{
+    box-shadow: inset 0 0 calc(var(--square-size) * 0.5) #3911da;
+}
