@@ -25,7 +25,7 @@ class ChessPiece extends HTMLElement{
             team && this.toggleAttribute(team, true);
             //make img
             const img = document.createElement('img');
-            img.src = `https://schaakzet.github.io/svg/${team}-${type}.svg`;
+            img.src = `https://schaakzet.github.io/Svg/${team}-${type}.svg`;
             img.width = 80;
             img.height = 80;
             this.append(img);
