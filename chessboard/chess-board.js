@@ -157,7 +157,7 @@ class ChessBoard extends HTMLElement {
 
     dbMove(e){
         const data = e.detail;
-        const [toCell,fromCell] = this.moveInterpreter(data.move,data.fen);
+        const [toCell,fromCell] = this.moveInterpreter(data.move,this.fen);
         console.log(fromCell,toCell);
         this.moveHandler(toCell,fromCell,`db`);
     }
@@ -210,14 +210,7 @@ moveHandler(toCell,fromCell,type = false,promotion = false){
         this.updateFen(toCell,fromCell,piece);
     
         //timeout to wait for the animation to be done so draw works for only 2 kings remain
-        setTimeout(() => {
-            //check win ?
-            if(this.checkWin()){
-                const winner = '';//get color or stalemate
-                console.warn('we have a winner');
-                this.HandleWin(winner);
-            }
-            
+        setTimeout(() => {          
             //update draggable
             this.updateDraggable();
         
@@ -226,6 +219,11 @@ moveHandler(toCell,fromCell,type = false,promotion = false){
                 //send move
                 //todo
                 this.db.move(this.id,move,this.fen);
+            }
+            //check win ?
+            if(this.checkWin()){
+                console.warn('we have a winner');
+                this.HandleWin(this.checkWin(),type);
             }
         });
     }
@@ -359,8 +357,17 @@ updateDraggable(){
         return this.checkCheckMate? this.color =='white'? 'black' : 'white' : this.checkStaleMate? 'draw' : false;
     }
 
-    HandleWin(color){
+    HandleWin(color,db=false){
         // white black draw
+        //send to db if db move is false so only 1 board sends the query
+        db != 'db' && this.db.endGame(color);
+        //todo make somthing onscreen to show endstate
+        const div = document.createElement(`h3`);
+        div.id = `winmsg`;
+        div.classList.add(`wrapper`);
+        div.innerText = color != 'draw'? `${color} has won` : `its a ${color}`;
+        this.parentElement.append(div); 
+
     }
 
 //end check win stuf

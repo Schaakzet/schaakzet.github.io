@@ -50,6 +50,7 @@ class GameContainer extends HTMLElement{
         this.clear();
         console.log(e);
         const banner = document.createElement(`label`);
+        banner.classList.add(`wrapper`);
         banner.innerText = `ID = ` + id;
         this.prepend(banner);
         const chesBoard = new ChessBoard(id,true,player);
