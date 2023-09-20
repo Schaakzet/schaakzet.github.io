@@ -1,3 +1,4 @@
+import { Chatbox } from './chatbox.js';
 import './chessboard/chess-board.js';
 import { ChessBoard } from './chessboard/chess-board.js';
 import { MenuButton } from './customButton.js';
@@ -12,7 +13,6 @@ class GameContainer extends HTMLElement{
 
         if(this.playerData == null){
             localStorage.setItem('playerData',JSON.stringify({'userID' : uuidv4()}));
-            this.playerData = localStorage.getItem('playerData');
         }
 
         //ws
@@ -112,6 +112,7 @@ class GameContainer extends HTMLElement{
         // const newgameBtn = this.makeButton(`newgame`,`new game`,this,this.btnNewGame);
         // this.append(newgameBtn);
         this.append(new MainMenu());
+        // this.append(new Chatbox());
 
     }
 

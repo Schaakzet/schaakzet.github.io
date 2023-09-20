@@ -40,7 +40,5 @@ class optionmenu extends Menu{
 
 }
 customElements.define(`option-menu`,optionmenu);
-
-
-
+console.log(`optionmenu.js loaded`);
 export {optionmenu,MainMenu};
