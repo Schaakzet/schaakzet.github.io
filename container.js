@@ -1,10 +1,10 @@
-import { Chatbox } from './chatbox.js';
+import { RTChatbox } from 'https://rtdb.nl/rtchatbox.js';
 import './chessboard/chess-board.js';
 import { ChessBoard } from './chessboard/chess-board.js';
 import { MenuButton } from './customButton.js';
-import { DbHandler } from './dbcaller.js';
 import {importCss, uuidv4 } from './functions.js';
 import { MainMenu } from './optionmenu.js';
+import { RtSocket} from "https://rtdb.nl/rtsocket.js";
 
 
 class GameContainer extends HTMLElement{
@@ -12,15 +12,32 @@ class GameContainer extends HTMLElement{
         super()
 
         if(this.playerData == null){
-            localStorage.setItem('playerData',JSON.stringify({'userID' : uuidv4()}));
+            const userName = prompt('wats ur username?');
+            localStorage.setItem('playerData',JSON.stringify({'userID' : uuidv4(),userName}));
         }
 
         //ws
-        this.ws = new DbHandler;
+        document.ws = new RtSocket;
     }
 
     get playerData(){
         return JSON.parse(localStorage.getItem('playerData'));
+    }
+
+    get userID(){
+        return this.playerData.userID;
+    }
+
+    get userName(){
+        return this.playerData.userName;
+    }
+
+    get boardID(){
+        return this.getAttribute(`boardid`);
+    }
+
+    get ws(){
+        return document.ws;
     }
 
     connectedCallback(){
@@ -52,6 +69,7 @@ class GameContainer extends HTMLElement{
         const banner = document.createElement(`label`);
         banner.classList.add(`wrapper`);
         banner.innerText = `ID = ` + id;
+        this.setAttribute(`boardid`,id);
         this.prepend(banner);
         const chesBoard = new ChessBoard(id,true,player);
         console.log(chesBoard);
@@ -62,6 +80,7 @@ class GameContainer extends HTMLElement{
         console.log(e);
         const banner = document.createElement(`label`);
         banner.innerText = `ID = ` + e.detail;
+        this.setAttribute(`boardid`,e.detail);
         this.prepend(banner);
         const chesBoard = new ChessBoard(e.detail,true);
         console.log(chesBoard);
@@ -112,12 +131,16 @@ class GameContainer extends HTMLElement{
         // const newgameBtn = this.makeButton(`newgame`,`new game`,this,this.btnNewGame);
         // this.append(newgameBtn);
         this.append(new MainMenu());
-        // this.append(new Chatbox());
-
+        
+    }
+    
+    makeChatbox(){
+        this.append(new RTChatbox());
     }
 
     clear(){
-        this.innerHTML = '';
+        // this.innerHTML = '';
+        this.childNodes.forEach(node => node.nodeName != `CHAT-BOX` && node.remove());
     }
     btnNewGame(e){
         //the this for the funtion is button so wen need to pass the button to 

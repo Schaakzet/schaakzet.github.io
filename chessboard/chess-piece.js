@@ -233,7 +233,7 @@ class ChessPiece extends HTMLElement{
             a.length > 0 && arr.push(a);
 
             [a,x,y] = [[],this.cell.x -1,this.cell.y -1];
-            // bottom right
+            // top left
             while(x >= 0 && y >= 0 ){
                 a.push(this.grid.getCell(x,y));
                 x--;

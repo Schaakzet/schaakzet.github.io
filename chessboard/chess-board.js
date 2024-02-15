@@ -3,7 +3,6 @@ import { importCss } from "../functions.js";
 import { ChessPlayer } from "./chess-player.js";
 import { ChessPiece } from "./chess-piece.js";
 import {promotionMenu} from "./promotionMenu.js";
-import {DbHandler } from "../dbcaller.js";
 
 //todo
 /*
@@ -158,8 +157,9 @@ class ChessBoard extends HTMLElement {
     dbMove(e){
         const data = e.detail;
         const [toCell,fromCell] = this.moveInterpreter(data.move,this.fen);
-        console.log(fromCell,toCell);
-        this.moveHandler(toCell,fromCell,`db`);
+        //todo add promotion 
+        const promotion = data.move.length == 6 ? data.move[5] : false;
+        this.moveHandler(toCell,fromCell,`db`, promotion);
     }
 
     moveInterpreter(move,fen){
@@ -184,7 +184,7 @@ class ChessBoard extends HTMLElement {
 
 //movement functions
 
-moveHandler(toCell,fromCell,type = false,promotion = false){
+async moveHandler(toCell,fromCell,type = false,promotion = false){
     if(toCell.nodeName !=  "CHESS-TILE"){
         toCell = this.gridNode.getCell(toCell);
         fromCell = this.gridNode.getCell(fromCell);
@@ -198,35 +198,35 @@ moveHandler(toCell,fromCell,type = false,promotion = false){
     
     //check promotion
     if(piece.type == 'pawn' && !promotion && (this.rows[0].includes(toCell) || this.rows[this.rowCount -1].includes(toCell))){
-        this.pawnPromotion(fromCell,toCell,type);
+         promotion = await this.pawnPromotion();
         
-    }else{
-        //move piece
-        const move = piece.type == 'king' && (toCell.x - fromCell.x) % 2 == 0 && toCell.y == fromCell.y? this.castlingMove(toCell,fromCell,piece,type) : this.normalMove(toCell,fromCell,piece,type,promotion);
-        this.clearSelected();
-        this.updateLog(move);
-    
-        //update fen
-        this.updateFen(toCell,fromCell,piece);
-    
-        //timeout to wait for the animation to be done so draw works for only 2 kings remain
-        setTimeout(() => {          
-            //update draggable
-            this.updateDraggable();
-        
-            //send to db?
-            if(type != 'db'){
-                //send move
-                //todo
-                this.db.move(this.id,move,this.fen);
-            }
-            //check win ?
-            if(this.checkWin()){
-                console.warn('we have a winner');
-                this.HandleWin(this.checkWin(),type);
-            }
-        });
     }
+    //move piece
+    const move = piece.type == 'king' && (toCell.x - fromCell.x) % 2 == 0 && toCell.y == fromCell.y? this.castlingMove(toCell,fromCell,piece,type) : this.normalMove(toCell,fromCell,piece,type,promotion);
+    this.clearSelected();
+    this.updateLog(move);
+
+    //update fen
+    this.updateFen(toCell,fromCell,piece);
+
+    //timeout to wait for the animation to be done so draw works for only 2 kings remain
+    setTimeout(() => {          
+        //update draggable
+        this.updateDraggable();
+    
+        //send to db?
+        if(type != 'db'){
+            //send move
+            //todo
+            this.db.move(this.id,move,this.fen);
+        }
+        //check win ?
+        if(this.checkWin()){
+            console.warn('we have a winner');
+            this.HandleWin(this.checkWin(),type);
+        }
+    });
+    
 
 }
 
@@ -293,10 +293,21 @@ animatePiece(to,piece){
      to.append(piece);
 }
 
-pawnPromotion(fromCell,toCell,type){
+async pawnPromotion(){
     console.log('pawnpromote');
+    const menu = new promotionMenu() 
     //show promotion menu
-    this.append(new promotionMenu(fromCell,toCell,type));
+    this.append(menu);
+    //make the promise and the resolve on the click listners from the menu to wait user imput
+    return new Promise(resolve => {
+        menu.imgs.map(img => {
+            img.addEventListener('click', () =>{
+
+                resolve(img.value);
+                menu.remove();
+            })
+        })
+    })
 }
 
 updateLog(move){

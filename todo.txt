@@ -1,0 +1,5 @@
+make replay function
+visial update
+
+! wait for input with promote
+using await? or promt or make a custom <dialog>

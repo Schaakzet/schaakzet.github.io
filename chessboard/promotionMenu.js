@@ -1,11 +1,8 @@
 import { ChessPiece } from "./chess-piece.js";
 import { importCss } from "../functions.js";
 class promotionMenu extends HTMLElement{
-    constructor(fromCell,toCell,drag){
+    constructor(){
         super()
-        this.fromCell = fromCell;
-        this.toCell = toCell;
-        this.moveType = drag;
         importCss('promotionmenu.css');
     }
 
@@ -31,6 +28,10 @@ class promotionMenu extends HTMLElement{
         }).filter(n => n)[0];
     }
 
+    get imgs() {
+        return Array.from(this.querySelectorAll(`img`));
+    }
+
     constructImage(attr){
         attr.value.split(",").map(value =>{
             console.log(this.board.turnColor);
@@ -39,7 +40,6 @@ class promotionMenu extends HTMLElement{
             const team = ltr == ltr.toUpperCase()? 'white' : 'black';
             const img = document.createElement(`img`);
             img.value = ltr
-            img.onclick = (e =>{this.buttonHandler(img.value)});
             img.src = `./svg/${team}-${value}.svg`;
             img.width = 80;
             img.height = 80;
@@ -47,11 +47,6 @@ class promotionMenu extends HTMLElement{
         });
     }
 
-    buttonHandler(ltr){
-        console.log(this.moveType);
-        this.board.moveHandler(this.toCell,this.fromCell,this.moveType,ltr)
-        this.remove();
-    }
 }
 customElements.define('promotion-menu', promotionMenu);
 export {promotionMenu};

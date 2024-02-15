@@ -23,6 +23,11 @@ class MenuButton extends HTMLElement {
                 this.innerText = 'options';
                 this.onclick = this.btnJoinGame;
             break;
+            case 'observer':
+                this.id = `observer`;
+                this.innerText = 'observe';
+                this.onclick = this.btnObserve
+            break;
 
         }
     }
@@ -71,6 +76,10 @@ class MenuButton extends HTMLElement {
     btnMultieplayer(e){
         //generate a lobybrowser with
         this.ws.getOpenGames();
+    }
+
+    btnObserve(e){
+        this.ws.getOngoingGames();
     }
 
 

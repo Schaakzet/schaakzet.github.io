@@ -26,6 +26,7 @@ class MainMenu extends Menu {
         // this.append(new MenuButton('joinGame'));
         this.append(new MenuButton('multieplayer'));
         // this.append(new MenuButton('options'));
+        this.append(new MenuButton('observer'));
     }
 
 }

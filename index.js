@@ -19,10 +19,11 @@
     todo add more
 */
 
-import { GameContainer } from "./container.js";
+import  "./container.js";
 
 const container = document.querySelector(`game-container`);
 container.makeMainmenu();
+// container.makeChatbox();
 
 
 // const chesBoard = document.createElement(`chess-board`);
