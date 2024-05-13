@@ -18,6 +18,7 @@ class GameContainer extends HTMLElement{
 
         //ws
         document.ws = new RtSocket;
+        document.addEventListener(`rt-firstmsg`, e => this.checkws(e));
     }
 
     get playerData(){
@@ -58,6 +59,12 @@ class GameContainer extends HTMLElement{
             (el && el != document && el != window && el.closest(selector)) ||
             this.closestElement(selector, el.getRootNode().host)
         );
+    }
+
+    checkws(e){
+        console.log(typeof e.detail);
+        //check if arnos ws is up
+        if (typeof e.detail == 'object') this.makeChessBoard({detail:{response:'no other player',player : 'player1'}});
     }
 
     //todo remake to make implement generic game

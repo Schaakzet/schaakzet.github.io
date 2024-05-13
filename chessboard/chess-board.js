@@ -6,10 +6,7 @@ import {promotionMenu} from "./promotionMenu.js";
 
 //todo
 /*
-include board color
-allow all movement until a color is asigned to board
-leave a way to walk for script input
-send a msg to api when a move has been send and board has coresponding atribute
+check if solo or multie board then 
 
 */
 
@@ -212,10 +209,14 @@ async moveHandler(toCell,fromCell,type = false,promotion = false){
     //timeout to wait for the animation to be done so draw works for only 2 kings remain
     setTimeout(() => {          
         //update draggable
+        //check solo board then change player to otherplayer
+        if(this.id == 'no other player'){
+            this.player = this.player == 'w'? 'b': 'w';
+        }
         this.updateDraggable();
     
         //send to db?
-        if(type != 'db'){
+        if(type != 'db' && this.id !='no other player'){
             //send move
             //todo
             this.db.move(this.id,move,this.fen);
